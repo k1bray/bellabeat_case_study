@@ -1775,11 +1775,6 @@ GROUP BY
 ORDER BY
 	count_of_daily_weight_records DESC;
 
-
-
-
-
-
 /*
 The following query begins a section where I hope to explore any relationship between activity levels
 and participation in other features.  In this case I am looking at the weight_log table.
