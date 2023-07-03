@@ -1760,21 +1760,6 @@ GROUP BY
 ORDER BY
 	count_daily_sleep_records_per_id DESC;
 
-
-
-SELECT
-	daily_activity.Id
-	,COUNT(weight_log.date) AS count_of_daily_weight_records
-FROM	
-	daily_activity
-	LEFT JOIN weight_log 
-		ON weight_log.Id = daily_activity.Id 
-		AND weight_log.date = daily_activity.ActivityDate
-GROUP BY
-	daily_activity.Id
-ORDER BY
-	count_of_daily_weight_records DESC;
-
 /*
 The following query begins a section where I hope to explore any relationship between activity levels
 and participation in other features.  In this case I am looking at the weight_log table.
