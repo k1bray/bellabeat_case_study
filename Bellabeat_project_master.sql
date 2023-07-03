@@ -1739,7 +1739,7 @@ SELECT TOP 1
 FROM weight_log;
 
 /*
-The following qery shows a table with distinct Id's and counts of records for dailt steps, sleep, and weight.
+The following query shows a table with distinct Id's and counts of records for dailt steps, sleep, and weight.
 */
 
 SELECT
