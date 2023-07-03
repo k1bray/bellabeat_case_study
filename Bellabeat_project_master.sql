@@ -1559,7 +1559,7 @@ FROM
 	daily_activity
 	LEFT JOIN daily_sleep 
 		ON dailY_sleep.Id = daily_activity.Id 
-		AND dailY_sleep.SleepDay = daily_activity.ActivityDate
+		AND daily_sleep.SleepDay = daily_activity.ActivityDate
 GROUP BY
 	daily_activity.Id
 ORDER BY
@@ -1726,9 +1726,54 @@ What are the participation rates for the user pool for different trackable funct
 	-step counting
 */
 
+SELECT TOP 1
+	*
+FROM daily_activity;
+
+SELECT TOP 1
+	*
+FROM daily_sleep;
+
+SELECT TOP 1
+	*
+FROM weight_log;
+
+/*
+The following qery shows a table with distinct Id's and counts of records for dailt steps, sleep, and weight.
+*/
+
+SELECT
+	DISTINCT(daily_activity.Id)
+	,COUNT(daily_activity.TotalSteps) AS count_daily_step_records_per_id
+	,COUNT(SleepDay) AS count_daily_sleep_records_per_id
+	,COUNT(WeightKg) AS count_daily_weight_records_per_id
+FROM	
+	daily_activity
+	LEFT JOIN daily_sleep 
+		ON dailY_sleep.Id = daily_activity.Id 
+		AND daily_sleep.SleepDay = daily_activity.ActivityDate
+	LEFT JOIN weight_log
+		ON daily_sleep.Id = weight_log.Id
+		AND daily_sleep.SleepDay = weight_log.Date
+GROUP BY
+	daily_activity.Id
+ORDER BY
+	count_daily_sleep_records_per_id DESC;
 
 
 
+SELECT
+	daily_activity.Id
+	,COUNT(weight_log.date) AS count_of_daily_weight_records
+FROM	
+	daily_activity
+	LEFT JOIN weight_log 
+		ON weight_log.Id = daily_activity.Id 
+		AND weight_log.date = daily_activity.ActivityDate
+GROUP BY
+	daily_activity.Id
+ORDER BY
+	count_of_daily_weight_records DESC;
 
 
 
@@ -1807,7 +1852,7 @@ GO
 DROP TABLE IF EXISTS #avg_steps_daily
 SELECT
 	DISTINCT(Id),
-	AVG(TotalSteps) AS avg_daily_steps
+	ROUND(AVG(TotalSteps), 0) AS avg_daily_steps
 INTO #avg_steps_daily
 FROM	
 	daily_activity
