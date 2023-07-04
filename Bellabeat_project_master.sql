@@ -49,6 +49,8 @@ FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='daily_intensity';
 
 
+-- Exploring the minute_calories_narrow table
+
 SELECT * FROM minute_calories_narrow;
 
 
@@ -57,8 +59,7 @@ SELECT * FROM minute_calories_narrow;
 SELECT * FROM daily_activity;   -- 940 rows
 
 
-
--- Checking the table schema
+-- Checking the daily_activity table schema
 
 SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
@@ -321,6 +322,9 @@ The records for some users appear to be incomplete.
 The following query shows that there was not full participation across the board for all features.
 Ordering by the sleep_records_per_id ascending shows that there are 9 users where calorie records were taken, but 
 not sleep records.
+
+It makes sense that features that use an automatic data collection process are going to have a higher 
+participation rate than features that require the user to manually interact with.
 */
 
 DROP TABLE IF EXISTS #sleep_count
@@ -775,7 +779,9 @@ in the dataset, or could be legitimate as manual entries.  Either way, there are
 cause any anomaly in the analysis of any significance that would warrant their removal.
 
 The fact that they are there could be an opportunity to pose a question about the population of the user group that 
-manually enters their step data instead of having it be automatically collected by their fitness tracker.
+manually enters their step data instead of having it be automatically collected by their fitness tracker.  Unfortunately,
+The dataset does not provide information in the daily_activity table in regard to data collection method - i.e. manual
+vs. automatic.
 */
 
 SELECT 24 * 60; 	-- There are 1440 minutes in a day
@@ -789,10 +795,35 @@ WHERE
 ORDER BY
 	TotalSteps DESC;
 
-
 /*
-Taking a look at the daily_activity table in DESC order by the SedentaryMinutes column.
+Check to see if there are any records in the daily_activity table that show no device usage or App interaction
+at all in a 24 hour period.  The results show that there are 4 records that fit.
+
+4 out of 940 is insignificant and not likely to influence any results in a material way.
 */
+
+SELECT
+	*	-- 4 records
+FROM
+	daily_activity
+WHERE
+	TotalSteps = 0 AND
+	TotalDistance = 0 AND
+	TrackerDistance = 0 AND
+ 	LoggedActivitiesDistance = 0 AND
+	VeryActiveDistance = 0 AND
+	ModeratelyActiveDistance = 0 AND
+	LightActiveDistance = 0 AND
+	SedentaryActiveDistance = 0 AND
+	VeryActiveMinutes = 0 AND
+	FairlyActiveMinutes = 0 AND
+	LightlyActiveMinutes = 0 AND
+	Calories = 0 AND
+	SedentaryMinutes = 1440
+ORDER BY
+	TotalSteps DESC;
+
+-- Taking a look at the daily_activity table in DESC order by the SedentaryMinutes column.
 
 SELECT 
 	* 
@@ -835,6 +866,8 @@ ORDER BY
 The following query shows 25 records where the TotalSteps > 0, but showing no distance values at any activity level.
 
 Again, this could be caused by the manual entry feature and may not be "bad data".
+
+Also, something to consider is that severall of the records have wicked low step counts.
 */
 
 SELECT
@@ -878,6 +911,13 @@ ORDER BY
 /*
 The following query is similar to a previous query in that it shows 7 records where the step count
 is > 0, but all active minutes categories are = 0.
+
+These records could be indicative of manual logging for steps and/or distance figures.
+However, these records show the TotalDistance = TrackerDistance.  According to the data dictionary,
+the TrackerDistance figure is  the "Total kilometers tracked by Fitbit device."  Along with the calorie
+figures > 0, this could point to corrupted data.  However, it's only 7 records out of 940.
+
+I'll need to evaluate whether they should be altered or removed.
 */
 
 SELECT	-- 7 rows affected
@@ -895,6 +935,9 @@ ORDER BY
 
 /*
 The following query shows 77 records where there were 0 steps taken in a day.
+
+This is similar to a previous query that just looked at records (79 in total) that were sedentary 
+for a 24 hour period.
 */
 
 SELECT
@@ -909,8 +952,9 @@ WHERE
 	AND SedentaryActiveDistance = 0;
 
 /*
-The following query shows a list of 15 Id's where the total daily steps as well as all the active
-distances = 0.  The list is grouped by Id and shows a count per Id of how many days of 0 activity.
+The following query builds on the previous query and shows a list of the 15 Id's where the total daily 
+steps as well as all the active distances = 0.  The list is grouped by Id and shows a count per Id 
+of how many days of 0 activity.
 
 4 out of the 15 have at least 10 days of 0 activity.
 */
@@ -944,9 +988,10 @@ WHERE
 	Calories = 0;
 
 /*
-The following query show 11 records where there is a discrepancy between the TotalDistance and the TrackerDistance
+The following query show 11 records where there is a discrepancy between the TotalDistance and the 
+TrackerDistance columns.
 
-This discrepancy could be explained by the manual entry feature of the FitBit fitness trackers.
+This discrepancy could be explained by the manual entry feature of the Fitbit fitness trackers.
 */
 
 SELECT
@@ -955,6 +1000,31 @@ FROM
 	daily_activity
 WHERE
 	TotalDistance != TrackerDistance;
+
+
+/*
+The results of the following queries both return zero rows.  Since the data dictionary is vague
+on their definitions, the information is, at best, of limited value.
+*/
+
+SELECT *
+FROM 
+	daily_activity
+WHERE
+	LoggedActivitiesDistance = TrackerDistance
+	AND
+	LoggedActivitiesDistance != 0;
+
+
+SELECT *
+FROM 
+	daily_activity
+WHERE
+	LoggedActivitiesDistance = TotalDistance
+	AND
+	LoggedActivitiesDistance != 0;
+
+
 
 /*
 The following query shows 32 records where the LoggedActivitiesDistance does NOT equal 0.
@@ -972,7 +1042,7 @@ WHERE
 	LoggedActivitiesDistance != 0;
 
 /*
-Checkiing the character length of daily_activity.Id
+Checking the character length of daily_activity.Id
 */
 
 SELECT 
@@ -1137,7 +1207,7 @@ FROM
 
 /*
 A quick visual scan is possible for these results because the dataset is so small.  It shows
-that the figures in Kg, pounds, and BMI are all in line with each other with no discenable 
+that the figures in Kg, pounds, and BMI are all in line with each other with no discernable 
 anomalies.
 */
 
@@ -1253,8 +1323,8 @@ SELECT * FROM #avg_steps_daily;
 The following query JOIN's the two previous queries to show the list of Id's, # of full days, # of partial days,
 and their average daily steps over the case study period.
 
-Looking over the distribution, there does not appear to be a correlation between high average daily step counts and
-all day device wearing.
+Looking over the distribution, there does not appear to be a direct correlation between high average daily step 
+counts and all day device wearing.
 */
 
 DROP TABLE IF EXISTS #avg_steps_daily
@@ -1293,7 +1363,6 @@ ORDER BY
 
 /*
 The following query uses a single Id record to double check the figures from the previous query.
-
 */
 
 SELECT 
@@ -1308,15 +1377,8 @@ GROUP BY
 ;
 
 /*
-What percentage of users are wearing their devices "all day"?
-
-What percentage of users are NOT wearing their devices "all day"?
-
-	-What daily percentage of wear time would be a suitable cutoff?
-	-What would be the minimum acceptable device wear time for consideration?
-
-----------------------------------------------------------------------------------------------------
-I'm having trouble with the second half of the query below.
+Exploring which users are wearing their devices "all day"
+and which users are NOT wearing their devices "all day".
 */
 
 DROP TABLE IF EXISTS #count_days_wearing
@@ -1339,6 +1401,8 @@ SELECT
 	,full_day
 	,partial_day
 	,ROUND((partial_day / full_day), 2) AS days_wear_ratio
+	,(partial_day / 31) * 100 AS partial_day_wear_pct
+	,(full_day / 31) * 100 AS full_day_wear_pct
 FROM
 	#count_days_wearing
 ORDER BY 
@@ -1346,8 +1410,6 @@ ORDER BY
 
 
 SELECT * FROM #count_days_wearing;
-
-
 
 /*
 What does an average hourly user device wear-time distribution look like?
@@ -1573,7 +1635,7 @@ SELECT
 	daily_activity.Id
 	,ROUND((AVG(totalMinutesAsleep) / 60), 1) AS 'AVG Hours Asleep'
 	,ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 1) AS 'AVG Time Awake In Bed'
- 	,ROUND(AVG(daily_activity.TotalSteps),0) AS 'AVG Daily Calories'
+ 	,ROUND(AVG(daily_activity.TotalSteps),0) AS 'AVG Daily Steps'
 FROM	
 	daily_activity
 	LEFT JOIN daily_sleep 
@@ -1666,7 +1728,7 @@ ORDER BY
 	,DATENAME(WEEKDAY, Date);
 
 /*
-Finding the AVG weight per user in kg and pounds.
+Finding the AVG weight per user in kg and converted to pounds.
 */
 
 SELECT
@@ -1694,11 +1756,14 @@ This query shows a list of user Id's and a count of their weight_log records sep
 manual and automatic recording of entries.
 
 No one used both methods.  They either used one or the other.
+
+The two users with the highest and most consistent weight log records each used different 
+methods of data recording.
 */
 
 SELECT
---	COUNT(*) AS 'Total Record Count'
-	Id
+	COUNT(*) AS 'Total Record Count Per User'
+	,Id
 	,COUNT(CASE WHEN IsManualReport = 'True' THEN IsManualReport ELSE NULL END) AS 'Manual Record'
 	,COUNT(CASE WHEN IsManualReport = 'False' THEN IsManualReport ELSE NULL END) AS 'Automatic Record'
 FROM
@@ -1712,9 +1777,9 @@ manual or automatic recording of weight info.
 */
 
 SELECT
-	COUNT(*) AS 'Total Record Count'
-	,COUNT(CASE WHEN IsManualReport = 'True' THEN IsManualReport ELSE NULL END) AS 'Manual Record'
-	,COUNT(CASE WHEN IsManualReport = 'False' THEN IsManualReport ELSE NULL END) AS 'Automatic Record'
+	COUNT(*) AS 'Total Record Count' -- 67 records
+	,COUNT(CASE WHEN IsManualReport = 'True' THEN IsManualReport ELSE NULL END) AS 'Manual Record' -- 41 records
+	,COUNT(CASE WHEN IsManualReport = 'False' THEN IsManualReport ELSE NULL END) AS 'Automatic Record' -- 26 records
 FROM
 	weight_log
 
@@ -1726,6 +1791,7 @@ What are the participation rates for the user pool for different trackable funct
 	-step counting
 */
 
+-- scratchpad area
 SELECT TOP 1
 	*
 FROM daily_activity;
@@ -1739,7 +1805,7 @@ SELECT TOP 1
 FROM weight_log;
 
 /*
-The following query shows a table with distinct Id's and counts of records for dailt steps, sleep, and weight.
+The following query shows a table with distinct Id's and counts of records for daily steps, sleep, and weight.
 */
 
 SELECT
@@ -1812,7 +1878,9 @@ counts of records per Id for wearing the device all day, as well as the average 
 The results are sparse, at best.
 There does not appear to be any significant correlation between either how long someone wears their
 fitness tracker, or the average of how many steps they take in a day, against the number of weight records
-they log.
+they log.  In fact, the two users with the highest and most consistent weight log records, not only had 
+opposite data collection methods, but also have opposite habits regarding all-day/partial-day wear of their
+devices.
 */
 
 DROP TABLE IF EXISTS #weight_records_count
