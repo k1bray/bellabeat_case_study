@@ -795,6 +795,24 @@ WHERE
 ORDER BY
 	TotalSteps DESC;
 
+-- Simply another way to write the query above and get the same results.
+
+SELECT
+	*
+FROM
+	daily_activity
+WHERE
+	SedentaryMinutes IN 
+	(
+	SELECT
+		MAX(SedentaryMinutes)
+	FROM
+		daily_activity
+	)
+ORDER BY	
+	TotalSteps DESC
+	;
+
 /*
 Check to see if there are any records in the daily_activity table that show no device usage or App interaction
 at all in a 24 hour period.  The results show that there are 4 records that fit.
@@ -1308,7 +1326,7 @@ The following query shows a list of all the user Id's and their average daily st
 DROP TABLE IF EXISTS #avg_steps_daily
 SELECT
 	DISTINCT(Id),
-	ROUND(AVG(TotalSteps), 0) AS avg_daily_steps
+	ROUND(AVG(TotalSteps), 0)  AS avg_daily_steps
 INTO #avg_steps_daily
 FROM	
 	daily_activity
@@ -1602,6 +1620,24 @@ ORDER BY
 	DATEPART(WEEKDAY, ActivityDate)
 	,DATENAME(WEEKDAY, ActivityDate);
 
+
+/*
+What hour of the day on average are users most active?
+*/
+
+SELECT TOP 100 * FROM hourly_steps;
+
+
+SELECT
+	DATEPART(HOUR, ActivityHour) AS 'Hour of Day'
+	,ROUND(AVG(StepTotal), 0) AS 'AVG Steps Per Hour'
+FROM 
+	hourly_steps
+GROUP BY
+	DATEPART(HOUR, ActivityHour)
+ORDER BY
+	DATEPART(HOUR, ActivityHour)
+;
 
 /*
 Exploring how users are wearing their devices while they sleep.
