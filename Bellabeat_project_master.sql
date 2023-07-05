@@ -1359,7 +1359,7 @@ counts and all day device wearing.
 DROP TABLE IF EXISTS #avg_steps_daily
 SELECT
 	DISTINCT(Id),
-	AVG(TotalSteps) AS avg_daily_steps
+	ROUND(AVG(TotalSteps), 0) AS avg_daily_steps
 INTO #avg_steps_daily
 FROM	
 	daily_activity
