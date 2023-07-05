@@ -249,7 +249,8 @@ SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='daily_sleep';
 
--- Finding the count of users in the daily_sleep table, the earliest and latest days in the study, as well as the calendar math from start to finish
+-- Finding the count of users in the daily_sleep table, the earliest and latest days in the study, 
+as well as the calendar math from start to finish
 
 SELECT
     COUNT(DISTINCT Id) AS user_count -- 24 users
@@ -270,7 +271,8 @@ SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='hourly_intensity';
 
--- Finding the count of users in the hourly_intensity table, the earliest and latest days in the study, as well as the calendar math from start to finish
+-- Finding the count of users in the hourly_intensity table, the earliest and latest days in the study, 
+as well as the calendar math from start to finish
 
 SELECT
     COUNT(DISTINCT Id) AS user_count -- 33 users
@@ -293,7 +295,8 @@ SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='minute_sleep';
 
--- Finding the count of users in the minute_sleep table, the earliest and latest days in the study, as well as the calendar math from start to finish
+-- Finding the count of users in the minute_sleep table, the earliest and latest days in the study, 
+as well as the calendar math from start to finish
 
 SELECT
     COUNT(DISTINCT Id) AS user_count -- 24 users
@@ -305,7 +308,8 @@ SELECT
 FROM
     minute_sleep;
 
--- Finding the count of users in the weight_log table, the earliest and latest days in the study, as well as the calendar math from start to finish
+-- Finding the count of users in the weight_log table, the earliest and latest days in the study, 
+as well as the calendar math from start to finish
 
 SELECT
     COUNT(DISTINCT Id) AS user_count -- 8 users
@@ -360,7 +364,7 @@ FROM
 	FULL JOIN #sleep_count
 	ON #calorie_count.Id = #sleep_count.Id
 ORDER BY
-    sleep_records_per_id;
+    sleep_records_per_id DESC;
 
 /*
 Check for duplicate rows in daily_activity table.
@@ -594,7 +598,7 @@ DROP TABLE	-- Executed
 	minute_sleep;
 
 /*
-Renaming minute_sleep2 to minute_sleep and completing the replacement of the table with no dupilicates.
+Renaming minute_sleep2 to minute_sleep and completed the replacement of the table with no dupilicates.
 */
 
 USE [CaseStudy2-Bellabeat];
@@ -850,7 +854,8 @@ FROM
 ORDER BY
 	SedentaryMinutes DESC;
 
--- Looking at how many records show users wearing their devices for a 24 hour period, thus giving a complete daily usage record.
+-- Looking at how many records show users wearing their devices for a 24 hour period, thus giving a 
+complete daily usage record.
 
 SELECT	
 	COUNT(*)	-- 478 records
@@ -860,7 +865,7 @@ WHERE
 	VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes = 1440;
 
 /*
-Looking a list of Id's and how many full days they wore their fitness tracker.
+Looking at a list of Id's and how many full days they wore their fitness tracker.
 
 The resulting list is for 28 users.  Since there are 33 users in the study, that means that 5 users
  never wore their device for a full day during the study.  Also, 5 out of the 28 (or 33 total) wore
@@ -1006,7 +1011,7 @@ WHERE
 	Calories = 0;
 
 /*
-The following query show 11 records where there is a discrepancy between the TotalDistance and the 
+The following query shows 11 records where there is a discrepancy between the TotalDistance and the 
 TrackerDistance columns.
 
 This discrepancy could be explained by the manual entry feature of the Fitbit fitness trackers.
@@ -1134,6 +1139,7 @@ Checking the MAX() for total Steps
 */
 
 SELECT
+TOP 1
 	*
 FROM
 	daily_activity
@@ -1143,13 +1149,15 @@ ORDER BY
 /*
 Checking the MIN() for total Steps
 
-703 Steps and 1km
+0 steps and 0km (which was to be expected)
 */
 
 SELECT
+TOP 1
 	*
 FROM
 	daily_activity
+-- WHERE TotalSteps > 0	-- 4 steps and 0km if this criteria is added
 ORDER BY
 	TotalSteps;
 
@@ -1179,18 +1187,17 @@ an hour.
 Likewise, a TotalIntensity value of 0 would be equally reasonable for someone who is sedentary for an hour.
 */
 
-SELECT *
+SELECT 
+TOP 1
+*
 FROM hourly_intensity
 ORDER BY TotalIntensity DESC;
-
-SELECT *
+GO
+SELECT 
+TOP 1
+*
 FROM hourly_intensity
 ORDER BY TotalIntensity;
-
-SELECT *
-FROM minute_intensity_narrow
-WHERE Id = 5577150313
-	AND Intensity > 0;
 
 -- Checking the minute_sleep table for outliers
 /*
@@ -1205,11 +1212,15 @@ All values fall within those parameters and no outliers appear to be present.
 
 select * from minute_sleep;
 
-SELECT *
+SELECT 
+TOP 1
+*
 FROM minute_sleep
 ORDER BY value DESC;
-
-SELECT *
+GO
+SELECT 
+TOP 1
+*
 FROM minute_sleep
 ORDER BY value;
 
@@ -1399,35 +1410,20 @@ Exploring which users are wearing their devices "all day"
 and which users are NOT wearing their devices "all day".
 */
 
-DROP TABLE IF EXISTS #count_days_wearing
+--DROP TABLE IF EXISTS #count_days_wearing
 SELECT
 	DISTINCT Id
 	,COUNT(CASE WHEN VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes = 1440 
 		THEN 1 ELSE NULL END) as full_day
 	,COUNT(CASE WHEN VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes != 1440 
 		THEN 0 ELSE NULL END) as partial_day
-INTO #count_days_wearing
+--INTO #count_days_wearing
 FROM	
 	daily_activity
 GROUP BY
 	Id;
-
-GO
-
-SELECT 
-	Id
-	,full_day
-	,partial_day
-	,ROUND((partial_day / full_day), 2) AS days_wear_ratio
-	,(partial_day / 31) * 100 AS partial_day_wear_pct
-	,(full_day / 31) * 100 AS full_day_wear_pct
-FROM
-	#count_days_wearing
-ORDER BY 
-	full_day DESC;
-
-
-SELECT * FROM #count_days_wearing;
+--GO
+--SELECT * FROM #count_days_wearing;
 
 /*
 What does an average hourly user device wear-time distribution look like?
@@ -1452,9 +1448,9 @@ SELECT
 	,TotalDistance
 	,TrackerDistance
 	,Calories
-	,ROUND((VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes) / 60, 2) AS total_active_hours
-INTO	
-	#daily_active_hours
+	,ROUND((VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes) / 60, 2) 
+		AS total_active_hours
+INTO #daily_active_hours
 FROM 
 	daily_activity;
 GO
@@ -1496,7 +1492,8 @@ SELECT
 	COUNT(CASE WHEN total_active_hours between 16 AND 17.99 THEN total_active_hours ELSE NULL END) +
 	COUNT(CASE WHEN total_active_hours between 18 AND 19.99 THEN total_active_hours ELSE NULL END) +
 	COUNT(CASE WHEN total_active_hours between 20 AND 21.99 THEN total_active_hours ELSE NULL END) +
-	COUNT(CASE WHEN total_active_hours between 22 AND 24 THEN total_active_hours ELSE NULL END)) AS total_count_records
+	COUNT(CASE WHEN total_active_hours between 22 AND 24 THEN total_active_hours ELSE NULL END)) 
+		AS total_count_records
 FROM 
 	#daily_active_hours
 --GROUP BY
@@ -1509,7 +1506,7 @@ Taking a count of records per Id in the daily_activity table
 The results from the previous query show a tally of records for each time-block.  The results from the
 following query show a tally of records in the table grouped by Id.  Not all users have the same number 
 of records.
-21 out of the 33 total users show 31 days of activity.
+21 out of the 33 total users show 31 days of activity (which is the full length of the study).
 */
 
 
@@ -1647,7 +1644,9 @@ SELECT *
 FROM daily_sleep;
 
 /*
-Finding a count of records per user Id.
+Finding a count of sleep records per user Id.  To get a complete list of all Id's in the study
+I JOINed the daily_sleep table with the daily_activity table.  This shows which Id's have no
+records in the daily_sleep table.
 */
 
 SELECT
@@ -1656,7 +1655,7 @@ SELECT
 FROM	
 	daily_activity
 	LEFT JOIN daily_sleep 
-		ON dailY_sleep.Id = daily_activity.Id 
+		ON daily_sleep.Id = daily_activity.Id 
 		AND daily_sleep.SleepDay = daily_activity.ActivityDate
 GROUP BY
 	daily_activity.Id
@@ -1675,8 +1674,8 @@ SELECT
 FROM	
 	daily_activity
 	LEFT JOIN daily_sleep 
-		ON dailY_sleep.Id = daily_activity.Id 
-		AND dailY_sleep.SleepDay = daily_activity.ActivityDate
+		ON daily_sleep.Id = daily_activity.Id 
+		AND daily_sleep.SleepDay = daily_activity.ActivityDate
 GROUP BY
 	daily_activity.Id
 ORDER BY 
