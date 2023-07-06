@@ -56,7 +56,8 @@ SELECT * FROM minute_calories_narrow;
 
 -- Exploring the daily_activity table
 
-SELECT * FROM daily_activity;   -- 940 rows
+SELECT * FROM daily_activity
+ORDER BY Id DESC;   -- 940 rows
 
 
 -- Checking the daily_activity table schema
