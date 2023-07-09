@@ -1415,9 +1415,9 @@ and which users are NOT wearing their devices "all day".
 SELECT
 	DISTINCT Id
 	,COUNT(CASE WHEN VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes = 1440 
-		THEN 1 ELSE NULL END) as full_day
+		THEN 1 ELSE NULL END) as count_full_day
 	,COUNT(CASE WHEN VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes != 1440 
-		THEN 0 ELSE NULL END) as partial_day
+		THEN 0 ELSE NULL END) as count_partial_day
 --INTO #count_days_wearing
 FROM	
 	daily_activity
@@ -1455,8 +1455,22 @@ INTO #daily_active_hours
 FROM 
 	daily_activity;
 GO
-SELECT * 
+SELECT * 	-- Checking the contents of the temp table
 FROM #daily_active_hours;
+
+/*
+Finding an average daily wear time per user Id.
+*/
+
+SELECT
+	Id
+	,ROUND(AVG(total_active_hours), 1) AS avg_active_hours_per_Id
+FROM
+	#daily_active_hours
+GROUP BY
+	Id
+ORDER BY
+	avg_active_hours_per_Id DESC;
 
 /*
 Looking at a distribution of daily count of hourly wear times with a total count of records.
@@ -1479,7 +1493,8 @@ SELECT
 	,COUNT(CASE WHEN total_active_hours between 16 AND 17.99 THEN total_active_hours ELSE NULL END) AS '16-18 hr'
 	,COUNT(CASE WHEN total_active_hours between 18 AND 19.99 THEN total_active_hours ELSE NULL END) AS '18-20 hr'
 	,COUNT(CASE WHEN total_active_hours between 20 AND 21.99 THEN total_active_hours ELSE NULL END) AS '20-22 hr'
-	,COUNT(CASE WHEN total_active_hours between 22 AND 24 THEN total_active_hours ELSE NULL END) AS '22-24 hr'
+	,COUNT(CASE WHEN total_active_hours between 22 AND 23.9 THEN total_active_hours ELSE NULL END) AS '22-24 hr'
+	,COUNT(CASE WHEN total_active_hours = 24 THEN total_active_hours ELSE NULL END) AS '24 hr'
 	
 	,(COUNT(CASE WHEN total_active_hours BETWEEN 0 AND 0.99 THEN total_active_hours ELSE NULL END) +
 	COUNT(CASE WHEN total_active_hours between 1 AND 1.99 THEN total_active_hours ELSE NULL END) +
