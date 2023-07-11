@@ -251,7 +251,7 @@ FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='daily_sleep';
 
 -- Finding the count of users in the daily_sleep table, the earliest and latest days in the study, 
-as well as the calendar math from start to finish
+-- as well as the calendar math from start to finish
 
 SELECT
     COUNT(DISTINCT Id) AS user_count -- 24 users
