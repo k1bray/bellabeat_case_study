@@ -1993,3 +1993,16 @@ Is there a connection/correlation between dailyactivity and sleep quality/habits
 Specifically, do higher daily step counts correlate with longer duration/more restful sleep?
 */
 
+Select TOP 10 
+	Id
+	,ActivityDate
+	,TotalSteps
+	,Calories
+FROM 
+	daily_activity;
+
+GO
+
+Select TOP 10 *
+FROM 
+	daily_sleep;
