@@ -856,7 +856,7 @@ ORDER BY
 	SedentaryMinutes DESC;
 
 -- Looking at how many records show users wearing their devices for a 24 hour period, thus giving a 
-complete daily usage record.
+-- complete daily usage record.
 
 SELECT	
 	COUNT(*)	-- 478 records
@@ -1929,7 +1929,7 @@ counts of records per Id for wearing the device all day, as well as the average 
 The results are sparse, at best.
 There does not appear to be any significant correlation between either how long someone wears their
 fitness tracker, or the average of how many steps they take in a day, against the number of weight records
-they log.  In fact, the two users with the highest and most consistent weight log records, not only had 
+they log.  In fact, the two users with the highest and most consistent weight log records, not utilized 
 opposite data collection methods, but also have opposite habits regarding all-day/partial-day wear of their
 devices.
 */
@@ -1986,3 +1986,10 @@ ORDER BY
 	weight.weight_records_per_id DESC
 	,avg.avg_daily_steps DESC
 ;
+
+/*
+Is there a connection/correlation between dailyactivity and sleep quality/habits?
+
+Specifically, do higher daily step counts correlate with longer duration/more restful sleep?
+*/
+
