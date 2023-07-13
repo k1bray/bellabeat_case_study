@@ -1993,7 +1993,7 @@ Is there a connection/correlation between dailyactivity and sleep quality/habits
 Specifically, do higher daily step counts correlate with longer duration/more restful sleep?
 */
 
-Select TOP 10 
+Select TOP 5
 	Id
 	,ActivityDate
 	,TotalSteps
@@ -2003,6 +2003,25 @@ FROM
 
 GO
 
-Select TOP 10 *
+Select TOP 5 
+	*
 FROM 
 	daily_sleep;
+
+GO
+
+SELECT TOP 5
+	*
+FROM
+	minute_sleep;
+
+/*
+I need a query that compares daily total step counts with sleep quality.  The daily_sleep table has columns
+for TotalMinutesAsleep and TotalTimeInBed.  It also has a column for TotalSleepRecords for that day.  The
+minute_sleep table has a column for value which respresents a measure for the users state of rest at 
+that minute.  If I extract the 'date' from the minute_sleep.date column, the minute_sleep.value column, 
+when taken in daily aggregation, would most likely represent more than one 'daily sleep record',
+due to the nature of time math, and that the 'date' column rolls over in the middle of the night
+when it would be likely that most users where sleeping.
+*/
+
