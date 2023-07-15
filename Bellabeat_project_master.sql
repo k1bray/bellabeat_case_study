@@ -1039,6 +1039,7 @@ WHERE
 	AND
 	LoggedActivitiesDistance != 0;
 
+Go
 
 SELECT *
 FROM 
@@ -1343,11 +1344,15 @@ INTO #avg_steps_daily
 FROM	
 	daily_activity
 GROUP BY
-	Id
-ORDER BY
 	Id;
+
 GO
-SELECT * FROM #avg_steps_daily;
+
+SELECT 
+	*
+FROM 
+	#avg_steps_daily
+ORDER BY avg_daily_steps DESC;
 
 /*
 The following query JOIN's the two previous queries to show the list of Id's, # of full days, # of partial days,
@@ -1422,7 +1427,9 @@ SELECT
 FROM	
 	daily_activity
 GROUP BY
-	Id;
+	Id
+ORDER BY
+	count_full_day DESC;
 --GO
 --SELECT * FROM #count_days_wearing;
 
@@ -1439,6 +1446,7 @@ SELECT TOP 100
 * 
 FROM daily_activity;
 
+-- Creating #daily_active_hours temp table
 
 DROP TABLE IF EXISTS #daily_active_hours
 SELECT 
@@ -1454,13 +1462,17 @@ SELECT
 INTO #daily_active_hours
 FROM 
 	daily_activity;
-GO
-SELECT * 	-- Checking the contents of the temp table
-FROM #daily_active_hours;
 
-/*
-Finding an average daily wear time per user Id.
-*/
+GO
+
+SELECT * 	-- Checking the contents of the temp table
+FROM #daily_active_hours
+ORDER BY 
+--	TotalSteps DESC
+	total_active_hours DESC
+;
+
+--Finding an average daily wear time per user Id based on #daily_active_hours.
 
 SELECT
 	Id
@@ -1537,7 +1549,8 @@ ORDER BY
 	count_of_daily_records DESC;
 
 /*
-What day of the week do users wear their devices most?  Least?
+What day of the week do users wear their devices most based on total count of daily records sorted by 
+day of the week (Tuesday)?  Least (Monday)?
 */
 
 SELECT 
@@ -1558,10 +1571,6 @@ Using the previous query,
 What is the average number of steps per day of the week.
 What is the average number of calories burned per day of the week.
 */
-
-SELECT TOP 100 
-* 
-FROM daily_activity;
 
 SELECT 
 	DATEPART(WEEKDAY, ActivityDate) AS 'Day # of Week'
@@ -1638,6 +1647,7 @@ ORDER BY
 What hour of the day on average are users most active?
 */
 
+--scratchpad
 SELECT TOP 100 * FROM hourly_steps;
 
 
@@ -1654,16 +1664,15 @@ ORDER BY
 
 /*
 Exploring how users are wearing their devices while they sleep.
-*/
-
-SELECT *
-FROM daily_sleep;
-
-/*
 Finding a count of sleep records per user Id.  To get a complete list of all Id's in the study
 I JOINed the daily_sleep table with the daily_activity table.  This shows which Id's have no
 records in the daily_sleep table.
 */
+
+--scratchpad
+SELECT *
+FROM daily_sleep;
+
 
 SELECT
 	daily_activity.Id
@@ -1680,25 +1689,30 @@ ORDER BY
 
 /*
 Finding the AVG hours asleep and time spent awake in bed per user Id.
+
+By changing the JOIN type from FULL to INNER the query eliminates or excludes any users from the 
+daily_activity table that would contain a NULL in any of the sleep-related columns.
 */
 
 SELECT
 	daily_activity.Id
+	,COUNT(SleepDay) AS count_of_daily_sleep_records
 	,ROUND((AVG(totalMinutesAsleep) / 60), 1) AS 'AVG Hours Asleep'
-	,ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 1) AS 'AVG Time Awake In Bed'
+	,ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 1) AS 'AVG Mins Awake In Bed'
  	,ROUND(AVG(daily_activity.TotalSteps),0) AS 'AVG Daily Steps'
 FROM	
 	daily_activity
-	LEFT JOIN daily_sleep 
+	INNER JOIN daily_sleep 
 		ON daily_sleep.Id = daily_activity.Id 
 		AND daily_sleep.SleepDay = daily_activity.ActivityDate
 GROUP BY
 	daily_activity.Id
 ORDER BY 
-	'AVG Hours Asleep' DESC;
+	'AVG Daily Steps' DESC;
 
 /*
 Finding the number of records for each day of the week.
+Wednesday has the highest number of records and Monday has the least.
 */
 
 SELECT 
@@ -1716,13 +1730,17 @@ ORDER BY
 
 /*
 Finding the AVG hours asleep and AVG time spent awake in bed per day of the week.
+Sunday has both the highest value for AVG Hours Asleep and the highest value for AVG Mins Awake In Bed.
+Thursday inches in behind for the least AVG Hours Asleep for the week.  Except for Sunday and Wednesday
+The AVG values are all so close that I had to expand the ROUND() out to 2 deciaml places for a higher
+degree of acuracy.  Thursday also has the lowest value of the week for the AVG Mins Awake In Bed
 */
 
 SELECT 
 	DATEPART(WEEKDAY, SleepDay) AS 'Day # of Week'
 	,DATENAME(WEEKDAY, SleepDay) AS 'Day of Week'
-	,ROUND((AVG(totalMinutesAsleep) / 60), 1) AS 'AVG Hours Asleep'
-	,ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 1) AS 'AVG Time Awake In Bed'
+	,ROUND((AVG(totalMinutesAsleep) / 60), 2) AS 'AVG Hours Asleep'
+	,ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 2) AS 'AVG Mins Awake In Bed'
 FROM
 	daily_sleep
 GROUP BY
@@ -1733,16 +1751,31 @@ ORDER BY
 	,DATENAME(WEEKDAY, SleepDay);
 
 /*
+What is the overall AVG Hours Asleep for the user group (6.99 hours)?
+
+What is the overall AVG Mins Awake for the user group (39.31 mins)?
+*/
+
+SELECT 
+	ROUND((AVG(totalMinutesAsleep) / 60), 2) AS 'AVG Hours Asleep' -- 6.99 Hours
+	,ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 2) AS 'AVG Mins Awake In Bed' -- 39.31 Mins
+FROM
+	daily_sleep
+
+
+/*
 Exploration of how users are logging their weight.
 */
 
 SELECT *
-FROM weight_log;
+FROM weight_log
+ORDER BY
+	Date;
 
 /*
 Finding a count of records per user Id in the weight_log table.
 
-The denisty of records is quite sparse.
+The density of records is quite sparse.
 */
 
 SELECT
@@ -1763,6 +1796,9 @@ Finding the number of records for each day of the week of the weight_log table.
 
 Given how sparse this table is, These results are mainly focused on the activity of a very
 small group of people.
+
+Observation:
+Users were least likely to log their weight on Friday and Saturday.
 */
 
 SELECT 
@@ -1786,6 +1822,8 @@ SELECT
 	Id
 	,ROUND(AVG(WeightKg), 1) AS 'AVG Weight(kg) per User'
 	,ROUND((AVG(WeightKg) * 2.20462), 1) AS 'AVG Weight(lbs) per User'
+	,MAX(WeightKg) AS max_wt
+	,MIN(WeightKg) AS min_weight
 FROM
 	weight_log
 GROUP BY
@@ -1794,11 +1832,80 @@ ORDER BY
 	'AVG Weight(kg) per User' DESC;
 
 /*
+Pulling out the records for the two users that most utilized the weight_log feature.
+*/
+
+SELECT
+	Id
+	,ROUND(AVG(WeightKg), 1) AS 'AVG Weight(kg) per User'
+	,ROUND((AVG(WeightKg) * 2.20462), 1) AS 'AVG Weight(lbs) per User'
+	,MAX(WeightKg) AS max_wt
+	,MIN(WeightKg) AS min_weight
+FROM
+	weight_log
+WHERE
+	Id = '6962181067'
+	OR
+	Id = '8877689391'
+GROUP BY
+	Id
+ORDER BY
+	'AVG Weight(kg) per User' DESC;
+
+/*
+For the two users that had the most records in the weight_log table, how did their weight values 
+change over the course of the study period?
+
+Id = '6962181067' at 63kg on 2016-04-12 and ended at 62kg on 2016-05-12  61 kg was their min 
+weight for the study period.
+
+Id = '8877689391' at 86kg on 2016-04-12 and ended at 84kg on 2016-05-12. 84kg was their min 
+weight for the study period
+*/
+
+SELECT TOP 1
+	*
+FROM
+	weight_log
+WHERE
+	Id = '6962181067'
+ORDER BY
+	Date;
+GO
+SELECT TOP 1
+	*
+FROM
+	weight_log
+WHERE
+	Id = '6962181067'
+ORDER BY
+	Date DESC;
+GO
+SELECT TOP 1
+	*
+FROM
+	weight_log
+WHERE
+	Id = '8877689391'
+ORDER BY
+	Date;
+GO
+SELECT TOP 1
+	*
+FROM
+	weight_log
+WHERE
+	Id = '8877689391'
+ORDER BY
+	Date DESC;
+
+/*
 Exploration of USERS logging their weight automatically vs manually reporting.
 
 Exploration of weight logs automatically vs manually reported.
 */
 
+--scratchpad
 SELECT *
 FROM weight_log;
 
@@ -1815,8 +1922,10 @@ methods of data recording.
 SELECT
 	COUNT(*) AS 'Total Record Count Per User'
 	,Id
-	,COUNT(CASE WHEN IsManualReport = 'True' THEN IsManualReport ELSE NULL END) AS 'Manual Record'
-	,COUNT(CASE WHEN IsManualReport = 'False' THEN IsManualReport ELSE NULL END) AS 'Automatic Record'
+	,COUNT(CASE WHEN IsManualReport = 'True' THEN IsManualReport ELSE NULL END) 
+		AS 'Manual Record'
+	,COUNT(CASE WHEN IsManualReport = 'False' THEN IsManualReport ELSE NULL END) 
+		AS 'Automatic Record'
 FROM
 	weight_log
 GROUP BY
@@ -1829,8 +1938,10 @@ manual or automatic recording of weight info.
 
 SELECT
 	COUNT(*) AS 'Total Record Count' -- 67 records
-	,COUNT(CASE WHEN IsManualReport = 'True' THEN IsManualReport ELSE NULL END) AS 'Manual Record' -- 41 records
-	,COUNT(CASE WHEN IsManualReport = 'False' THEN IsManualReport ELSE NULL END) AS 'Automatic Record' -- 26 records
+	,COUNT(CASE WHEN IsManualReport = 'True' THEN IsManualReport ELSE NULL END) 
+		AS 'Manual Record' -- 41 records
+	,COUNT(CASE WHEN IsManualReport = 'False' THEN IsManualReport ELSE NULL END) 
+		AS 'Automatic Record' -- 26 records
 FROM
 	weight_log
 
@@ -1856,7 +1967,8 @@ SELECT TOP 1
 FROM weight_log;
 
 /*
-The following query shows a table with distinct Id's and counts of records for daily steps, sleep, and weight.
+The following query shows a table with distinct Id's and counts of records for daily steps, sleep, 
+and weight.
 */
 
 SELECT
@@ -1882,6 +1994,7 @@ The following query begins a section where I hope to explore any relationship be
 and participation in other features.  In this case I am looking at the weight_log table.
 */
 
+--scratchpad
 SELECT * FROM weight_log;
 
 -- This query brings up a list of the user Id's in the weight_log table.
@@ -1903,7 +2016,7 @@ Taking a count of records per Id.
 The results aren't very impressive.
 Out of 8 Ids, 6 have single digits, one has 24, and one has 30.
 
-Created a temp table to be able to JOIN the results with the other records counts from previous.
+Created a temp table to be able to JOIN the results with the other record counts from previous.
 */
 
 DROP TABLE IF EXISTS #weight_records_count
@@ -1988,7 +2101,7 @@ ORDER BY
 ;
 
 /*
-Is there a connection/correlation between dailyactivity and sleep quality/habits?
+Is there a connection/correlation between daily activity and sleep quality/habits?
 
 Specifically, do higher daily step counts correlate with longer duration/more restful sleep?
 */
@@ -2023,5 +2136,87 @@ that minute.  If I extract the 'date' from the minute_sleep.date column, the min
 when taken in daily aggregation, would most likely represent more than one 'daily sleep record',
 due to the nature of time math, and that the 'date' column rolls over in the middle of the night
 when it would be likely that most users where sleeping.
+
+
+daily_activity.TotalSteps
+daily_activity.Calories
+
+daily_sleep.TotalMinutesAsleep
+daily_sleep.TotalMinutesInBed
+
+minute_sleep.value
 */
 
+SELECT
+	daily_activity.Id
+	,TotalSteps
+	,Calories
+FROM
+	daily_activity
+
+
+
+
+DROP TABLE IF EXISTS #avg_steps_daily
+SELECT
+	DISTINCT(Id),
+	ROUND(AVG(TotalSteps), 0) AS avg_daily_steps
+INTO #avg_steps_daily
+FROM	
+	daily_activity
+GROUP BY
+	Id
+ORDER BY
+	Id;
+
+GO
+
+SELECT
+	DISTINCT act.Id
+	,COUNT(CASE WHEN VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes = 1440 
+		THEN 1 ELSE NULL END) as 'Full Day'
+	,COUNT(CASE WHEN VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes != 1440 
+		THEN 0 ELSE NULL END) as 'Partial Day'
+	,avg_daily_steps
+FROM	
+	daily_activity AS act
+LEFT JOIN
+	#avg_steps_daily AS avg
+		ON act.Id = avg.Id
+GROUP BY
+	act.Id
+	,avg_daily_steps
+--	,ActivityDate
+ORDER BY
+	avg_daily_steps DESC
+
+
+
+
+
+
+
+
+
+	SELECT 
+	DATEPART(WEEKDAY, ActivityDate) AS 'Day # of Week'
+	,DATENAME(WEEKDAY, ActivityDate) AS 'Day of Week'
+	,ROUND(AVG(TotalSteps), 0) AS 'AVG Steps Per Day'
+	,ROUND(AVG(Calories), 1) AS 'AVG Calories Per Day'
+	,ROUND(AVG(TotalDistance), 1) AS 'AVG Total Distance Per Day'
+	,ROUND(AVG(VeryActiveMinutes), 0) AS 'AVG Very Active Minutes Per Day'
+	,ROUND(AVG(FairlyActiveMinutes), 0) AS 'AVG Fairly Active Minutes Per Day'
+	,ROUND(AVG(LightlyActiveMinutes), 0) AS 'AVG Lightly Active Minutes Per Day'
+	,ROUND(AVG(SedentaryMinutes), 0) AS 'AVG Sedentary Distance Per Day'
+	,ROUND(AVG(VeryActiveDistance), 0) AS 'AVG Very Active Distance Per Day'
+	,ROUND(AVG(ModeratelyActiveDistance), 0) AS 'AVG Fairly Active Distance Per Day'
+	,ROUND(AVG(LightActiveDistance), 0) AS 'AVG Lightly Active Distance Per Day'
+	,ROUND(AVG(SedentaryActiveDistance), 0) AS 'AVG Sedentary Distance Per Day'
+FROM
+	daily_activity
+GROUP BY
+	DATEPART(WEEKDAY, ActivityDate)
+	,DATENAME(WEEKDAY, ActivityDate)
+ORDER BY
+	DATEPART(WEEKDAY, ActivityDate)
+	,DATENAME(WEEKDAY, ActivityDate);
