@@ -1979,7 +1979,7 @@ SELECT
 FROM	
 	daily_activity
 	LEFT JOIN daily_sleep 
-		ON dailY_sleep.Id = daily_activity.Id 
+		ON daily_sleep.Id = daily_activity.Id 
 		AND daily_sleep.SleepDay = daily_activity.ActivityDate
 	LEFT JOIN weight_log
 		ON daily_sleep.Id = weight_log.Id
@@ -2123,7 +2123,7 @@ FROM
 
 GO
 
-SELECT TOP 5
+SELECT TOP 20
 	*
 FROM
 	minute_sleep;
@@ -2147,12 +2147,73 @@ daily_sleep.TotalMinutesInBed
 minute_sleep.value
 */
 
+
+SELECT
+	Id
+	,COUNT(CASE WHEN value = 1 THEN Id ELSE NULL END) AS asleep
+	,COUNT(CASE WHEN value = 2 THEN Id ELSE NULL END) AS restless
+	,COUNT(CASE WHEN value = 3 THEN Id ELSE NULL END) AS awake
+FROM
+	minute_sleep
+GROUP BY
+	Id
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 SELECT
 	daily_activity.Id
 	,TotalSteps
 	,Calories
 FROM
 	daily_activity
+
+
+SELECT 
+	Id
+	,COUNT(date) AS records_per_id
+FROM
+	minute_sleep
+GROUP BY
+	Id
+ORDER BY
+	records_per_id DESC;
+
+
+
+
+
+
+SELECT
+	daily_activity.Id
+	,COUNT(daily_activity.TotalSteps) AS count_daily_step_records_per_id
+	,COUNT(minute_sleep.date) AS count_minute_sleep_records_per_id
+FROM	
+	daily_activity
+	FULL OUTER JOIN minute_sleep 
+		ON minute_sleep.Id = daily_activity.Id 
+	--	AND minute_sleep.date = daily_activity.ActivityDate
+GROUP BY
+	daily_activity.Id
+ORDER BY
+	count_minute_sleep_records_per_id DESC;
+
+
+
+
+
+
 
 
 
@@ -2198,7 +2259,7 @@ ORDER BY
 
 
 
-	SELECT 
+SELECT 
 	DATEPART(WEEKDAY, ActivityDate) AS 'Day # of Week'
 	,DATENAME(WEEKDAY, ActivityDate) AS 'Day of Week'
 	,ROUND(AVG(TotalSteps), 0) AS 'AVG Steps Per Day'
