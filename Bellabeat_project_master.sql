@@ -2705,3 +2705,74 @@ WHERE
 	OR TotalSteps != 0;
 
 
+/*
+Trying to figure out if there is potential to use the minuteSleep table to gain insight on sleep patterns.
+
+From the fitabase Database dictionary:
+	1 = asleep
+	2 = restless
+	3 = awake
+*/
+
+SELECT
+	DATEPART(WEEKDAY, date) AS '# Day of Week'
+	,DATENAME(WEEKDAY, date) AS 'Day of Week'
+	,(COUNT(CASE WHEN value = 1 THEN 'Asleep' ELSE NULL END))/33 AS 'AVG Minutes Asleep'
+	,(COUNT(CASE WHEN value = 2 THEN 'Restless' ELSE NULL END))/33 AS 'AVG Minutes Restless'
+	,(COUNT(CASE WHEN value = 3 THEN 'Awake' ELSE NULL END))/33 AS 'AVG Minutes Awake'
+	--,ROUND((CAST((AVG(TotalMinutesAsleep)) AS FLOAT)/60), 2) AS 'AVG Hours Asleep'
+	--,AVG(TotalTimeInBed) AS 'AVG Mins in Bed'
+	--,ROUND((CAST((AVG(TotalTimeInBed)) AS FLOAT)/60), 2) AS 'AVG Hours in Bed'
+	--,ROUND((((CAST(AVG(TotalMinutesAsleep) AS FLOAT) / CAST(AVG(TotalTimeInBed) AS FLOAT)) * 100)), 0) AS 'Sleep Time % in Bed'
+FROM
+	minute_sleep
+WHERE
+	date IS NOT NULL
+GROUP BY
+	DATEPART(WEEKDAY, date)
+	,DATENAME(WEEKDAY, date)
+ORDER BY
+	DATEPART(WEEKDAY, date);
+
+
+
+
+
+/*
+Finding the percentage of time that people are sleeping vs the total time they spend in bed.
+*/
+
+SELECT
+	Id
+	,ROUND((((CAST(AVG(TotalMinutesAsleep) AS FLOAT) / CAST(AVG(TotalTimeInBed) AS FLOAT)) * 100)), 0) 
+		AS 'Sleep Time % in Bed'
+FROM
+	daily_sleep
+GROUP BY
+	Id
+ORDER BY
+	'Sleep Time % in Bed';
+
+/*
+Comparison of AVG time spent sleeping vs AVG time spent in bed by day of the week.
+*/
+
+SELECT
+	DATEPART(WEEKDAY, SleepDay) AS 'Day of Week'
+	,DATENAME(WEEKDAY, SleepDay) AS 'Name Day of Week'
+	,ROUND(AVG(TotalMinutesAsleep), 1) AS 'AVG Mins Asleep'
+	,ROUND((CAST((AVG(TotalMinutesAsleep)) AS FLOAT)/60), 2) AS 'AVG Hours Asleep'
+	,ROUND(AVG(TotalTimeInBed), 1) AS 'AVG Mins in Bed'
+	,ROUND((CAST((AVG(TotalTimeInBed)) AS FLOAT)/60), 2) AS 'AVG Hours in Bed'
+	,ROUND((((CAST(AVG(TotalMinutesAsleep) AS FLOAT) / CAST(AVG(TotalTimeInBed) AS FLOAT)) * 100)), 0) 
+		AS 'Sleep Time % in Bed'
+FROM
+	daily_sleep
+GROUP BY
+	DATEPART(WEEKDAY, SleepDay)
+	,DATENAME(WEEKDAY, SleepDay)
+ORDER BY
+	DATEPART(WEEKDAY, SleepDay);
+
+
+
