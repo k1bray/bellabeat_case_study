@@ -2148,15 +2148,46 @@ minute_sleep.value
 */
 
 
+SELECT *
+FROM minute_sleep
+WHERE
+	Id IS NULL
+
+
+SELECT *
+FROM minute_sleep
+WHERE
+	date IS NULL
+
+
+SELECT *
+FROM minute_sleep
+WHERE
+	value IS NULL
+
+SELECT *
+FROM minute_sleep
+WHERE
+	logId IS NULL
+
+
+
+
+
 SELECT
-	Id
+	DATEPART(WEEKDAY, date) AS 'Day # of Week'
+	,DATENAME(WEEKDAY, date) AS 'Day of Week'
 	,COUNT(CASE WHEN value = 1 THEN Id ELSE NULL END) AS asleep
 	,COUNT(CASE WHEN value = 2 THEN Id ELSE NULL END) AS restless
 	,COUNT(CASE WHEN value = 3 THEN Id ELSE NULL END) AS awake
 FROM
 	minute_sleep
 GROUP BY
-	Id
+	DATEPART(WEEKDAY, date)
+	,DATENAME(WEEKDAY, date)
+ORDER BY
+	DATEPART(WEEKDAY, date)
+	,DATENAME(WEEKDAY, date);
 
 
 
@@ -2281,3 +2312,396 @@ GROUP BY
 ORDER BY
 	DATEPART(WEEKDAY, ActivityDate)
 	,DATENAME(WEEKDAY, ActivityDate);
+
+
+/*
+One thing to keep in mind is that in the wight_log table there is a column for 'Fat' which is mostly
+comprised of NULL values.  This is another underutilized feature of the Fitbit tracker.
+*/
+
+
+/*
+I found an article that was talking about optimal heart rate during exercise.  I was trying to find a count of the minutes that 
+users were spending in their "optimal" heart rate.  Of course, this is all age and fitness level dependent.
+However, I thought it was a good idea.
+
+This is the error message I got:
+Msg 130, Level 15, State 1, Line 47
+Cannot perform an aggregate function on an expression containing an aggregate or a subquery.
+*/
+
+SELECT
+	Id
+	,COUNT (*) AS 'Records Per User'
+	,COUNT(CASE WHEN Value BETWEEN (MAX(Value) * 0.5) AND (MAX(Value) * 0.7) Then Id ELSE NULL END)
+	,AVG(Value) AS 'AVG Heart Rate'
+	,MIN(Value) AS 'MIN Heart Rate'
+	,MAX(Value) AS 'MAX Heart Rate'
+	,MAX(Value) - MIN(Value) AS 'Range Of Heart Rate'
+FROM
+	seconds_heartrate
+GROUP BY
+	Id;
+
+/*
+In the following query I created a temp table that used the records from the secondsHeartrate table and added columns
+for the range of "optimal" workout heart rate.  I was thinking that maybe I could do a count based on the MAX heart rate
+grouped by Id which would show how much time users are spending in the "zone". 
+*/
+
+DROP TABLE IF EXISTS #heart_rate_range
+SELECT
+	Id
+	,Time 
+	,Value
+	,Value * 0.5 AS '0.5 Value'
+	,Value * 0.7 AS '0.7 Value'
+INTO #heart_rate_range
+FROM 
+	seconds_heartrate
+;
+
+SELECT * FROM #heart_rate_range;
+
+
+
+
+
+
+
+
+/*
+AVG daily total dailyActivity by day of the week.
+*/
+
+SELECT
+	DATEPART(WEEKDAY, ActivityDate) AS 'day of week'
+	,DATENAME(WEEKDAY, ActivityDate) AS 'Name Day of Week'
+	,AVG(TotalSteps) AS 'AVG Tot Steps/Day'
+	--,ROUND(AVG(TotalDistance), 1) AS 'AVG Tot Dist km/Day'
+	--,ROUND(AVG(TrackerDistance), 1) AS 'AVG Tracked Dist km/Day'
+	--,ROUND(AVG(VeryActiveDistance), 1) AS 'AVG Very Active Dist km/Day'
+	--,ROUND(AVG(ModeratelyActiveDistance), 1) AS 'AVG Mod Active Dist km/Day'
+	--,ROUND(AVG(LightActiveDistance), 1) AS 'AVG Lt Active Dist km/Day'
+	--,ROUND(AVG(SedentaryActiveDistance), 3) AS 'AVG Sed Active Dist km/Day'
+	,AVG(VeryActiveMinutes) AS 'AVG Very Active Mins/Day'
+	,AVG(FairlyActiveMinutes) AS 'AVG Mod Active Mins/Day'
+	,AVG(LightlyActiveMinutes) AS 'AVG Lt Active Mins/Day'
+	,AVG(SedentaryMinutes) AS 'AVG Sed Active Mins/Day'
+	,AVG(Calories) AS 'AVG Cals/Day'
+FROM
+	daily_activity
+GROUP BY
+	DATEPART(WEEKDAY, ActivityDate)
+	,DATENAME(WEEKDAY, ActivityDate)
+ORDER BY
+	'day of week';
+
+
+
+
+
+/*
+AVG daily total distance in km per user overall
+The following query shows that there is a sizable variance between the highest (13.21) average and the lowest (0.63)
+This query is useful to show the variance in average daily distance between the most active user to the least active user.
+*/
+
+SELECT
+	 Id
+	,ROUND(AVG(TotalDistance), 1) AS 'AVG total Dist in km/Day'
+FROM
+	daily_activity
+GROUP BY
+	Id
+ORDER BY
+	'AVG total Dist in km/Day' DESC;
+
+
+
+/*
+AVG daily total distance in km overall for the test pool per day.
+This query shows that the test pool daily average is 5.5km/day.
+However, that is total distance and does not group by activity intensity.
+*/
+
+SELECT
+	ROUND(AVG(TotalDistance), 1) AS 'AVG total Dist in km/Day' -- 5.5
+FROM
+	daily_activity;	
+
+
+
+
+/*
+AVG Active minutes per day of the week when corresponding activity minutes are > 0.
+
+The two linked queries below show some interesting differences, but also some interesting
+similarities.  The column for 'AVG Sed Active Mins/Day' is almost identical with only a slight
+difference on Thursday.  'AVG Lt Active Mins/Day' shows some moderate differences.
+'AVG Mod Active Mins/Day' and 'AVG Very Active Mins/Day' both show significant differences.
+These differences occur when days with '0' minutes of activity in a certain level is logged.
+
+The question is whether days with a '0' should be treated as an outlier, or included in the 
+calculated results.
+*/
+
+SELECT 
+	DATEPART(WEEKDAY, ActivityDate) AS 'Day of Week'
+	,DATENAME(WEEKDAY, ActivityDate) AS 'Name Day of Week'
+	,AVG(CASE WHEN VeryActiveMinutes > 0 THEN VeryActiveMinutes ELSE NULL END) AS 'AVG Very Active Mins/Day'
+	,AVG(CASE WHEN FairlyActiveMinutes > 0 THEN FairlyActiveMinutes ELSE NULL END) AS 'AVG Mod Active Mins/Day'
+	,AVG(CASE WHEN LightlyActiveMinutes > 0 THEN LightlyActiveMinutes ELSE NULL END) AS 'AVG Lt Active Mins/Day'
+	,AVG(CASE WHEN SedentaryMinutes > 0 THEN SedentaryMinutes ELSE NULL END) AS 'AVG Sed Active Mins/Day'
+FROM
+	daily_activity
+GROUP BY
+	DATEPART(WEEKDAY, ActivityDate)
+	,DATENAME(WEEKDAY, ActivityDate)
+ORDER BY
+	DATEPART(WEEKDAY, ActivityDate);
+GO
+SELECT 
+	DATEPART(WEEKDAY, ActivityDate) AS 'Day of Week'
+	,DATENAME(WEEKDAY, ActivityDate) AS 'Name Day of Week'
+	,AVG(CASE WHEN VeryActiveMinutes >= 0 THEN VeryActiveMinutes ELSE NULL END) AS 'AVG Very Active Mins/Day'
+	,AVG(CASE WHEN FairlyActiveMinutes >= 0 THEN FairlyActiveMinutes ELSE NULL END) AS 'AVG Mod Active Mins/Day'
+	,AVG(CASE WHEN LightlyActiveMinutes >= 0 THEN LightlyActiveMinutes ELSE NULL END) AS 'AVG Lt Active Mins/Day'
+	,AVG(CASE WHEN SedentaryMinutes >= 0 THEN SedentaryMinutes ELSE NULL END) AS 'AVG Sed Active Mins/Day'
+FROM
+	daily_activity
+GROUP BY
+	DATEPART(WEEKDAY, ActivityDate)
+	,DATENAME(WEEKDAY, ActivityDate)
+ORDER BY
+	DATEPART(WEEKDAY, ActivityDate);
+
+
+
+
+
+/*
+AVG active distance in km by (corresponding) active minutes per day of the week
+*/
+
+SELECT 
+	DATEPART(WEEKDAY, ActivityDate) AS 'Day of Week'
+	,DATENAME(WEEKDAY, ActivityDate) AS 'Name Day of Week'
+	,ROUND(AVG(CASE WHEN VeryActiveMinutes > 0 THEN VeryActiveDistance ELSE NULL END), 1) AS 'AVG Very Active Dist km/Day'
+	,ROUND(AVG(CASE WHEN FairlyActiveMinutes > 0 THEN ModeratelyActiveDistance ELSE NULL END), 1) AS 'AVG Mod Active Dist km/Day'
+	,ROUND(AVG(CASE WHEN LightlyActiveMinutes > 0 THEN LightActiveDistance ELSE NULL END), 1) AS 'AVG Lt Active Dist km/Day'
+	,ROUND(AVG(CASE WHEN SedentaryMinutes > 0 THEN SedentaryActiveDistance ELSE NULL END), 3) AS 'AVG Sed Active Dist km/Day'
+FROM
+	daily_activity
+GROUP BY
+	DATEPART(WEEKDAY, ActivityDate)
+	,DATENAME(WEEKDAY, ActivityDate)
+ORDER BY
+	DATEPART(WEEKDAY, ActivityDate);
+
+
+
+
+/*
+AVG Active distance in km per day of the week when cooresponding distances are > 0.
+
+The results of this query are similar to the results from the previous one.
+However, there are slight differences, especially in the AVG SedentaryActiveMinutes Column.
+*/
+
+SELECT 
+	DATEPART(WEEKDAY, ActivityDate) AS 'Day of Week'
+	,DATENAME(WEEKDAY, ActivityDate) AS 'Name Day of Week'
+	,ROUND(AVG(CASE WHEN VeryActiveDistance > 0 THEN VeryActiveDistance ELSE NULL END), 1) AS 'AVG Very Active Dist km/Day'
+	,ROUND(AVG(CASE WHEN ModeratelyActiveDistance > 0 THEN ModeratelyActiveDistance ELSE NULL END), 1) AS 'AVG Mod Active Dist km/Day'
+	,ROUND(AVG(CASE WHEN LightActiveDistance > 0 THEN LightActiveDistance ELSE NULL END), 1) AS 'AVG Lt Active Dist km/Day'
+	,ROUND(AVG(CASE WHEN SedentaryActiveDistance > 0 THEN SedentaryActiveDistance ELSE NULL END), 3) AS 'AVG Sed Active Dist km/Day'
+FROM
+	daily_activity
+GROUP BY
+	DATEPART(WEEKDAY, ActivityDate)
+	,DATENAME(WEEKDAY, ActivityDate)
+ORDER BY
+	DATEPART(WEEKDAY, ActivityDate);
+
+
+/*
+This was a query from a table that I created that combined all of the hourly data into one table.
+The next several queries use this table.
+
+
+
+
+Overall averages of the hourly table per day of the week
+
+*NOTE*
+According to the data dictionary, TotalIntensity is the value calculated by adding all the minute-level 
+intensity values that occurred within the hour
+and the AverageIntensity is the average intensity state exhibited during that hour (TotalIntensity 
+for that ActivityHour divided by 60).
+*/
+
+SELECT
+	DATEPART(WEEKDAY, ActivityHour) AS 'day of week'
+	,DATENAME(WEEKDAY, ActivityHour) AS 'Name Day of Week'
+	,AVG(StepTotal) AS 'AVG Total Steps Per hour'
+	,AVG(TotalIntensity) AS 'AVG Total Intensity Per Hour'
+	,ROUND(AVG(AverageIntensity), 3) AS 'AVG Hourly Intensity Average Per Hour'
+	,AVG(Calories) AS 'AVG Calories Per Hour'
+FROM
+	hourly_activity
+GROUP BY
+	DATEPART(WEEKDAY, ActivityHour)
+	,DATENAME(WEEKDAY, ActivityHour)
+ORDER BY
+	'day of week';
+
+
+/*
+What time of day had the highest AVG step count?
+*/
+
+SELECT TOP 1
+	 DATEPART(HOUR, ActivityHour) AS 'Hour of Day'	-- 18:00
+	,AVG(StepTotal) AS 'AVG Steps/Hour'
+FROM
+	hourlyActivity
+GROUP BY
+	DATEPART(HOUR, ActivityHour)
+ORDER BY
+	'AVG Steps/Hour' DESC;
+
+/*
+What time of day had the lowest AVG step count?
+*/
+
+SELECT TOP 1
+	 DATEPART(HOUR, ActivityHour) AS 'Hour of Day'	-- 03:00
+	,AVG(StepTotal) AS 'AVG Steps/Hour'
+FROM
+	hourlyActivity
+GROUP BY
+	DATEPART(HOUR, ActivityHour)
+ORDER BY
+	'AVG Steps/Hour';
+
+/*
+Showing a full day distribution of AVG step count per hour
+*/
+
+SELECT
+	 DATEPART(HOUR, ActivityHour) AS 'Hour of Day'
+	,AVG(StepTotal) AS 'AVG Steps/Hour'
+FROM
+	hourlyActivity
+GROUP BY
+	DATEPART(HOUR, ActivityHour)
+ORDER BY
+	'Hour of Day';
+
+
+/*
+Distribution of AVG calories burned per hour of the day
+*/
+
+SELECT
+	 DATEPART(HOUR, ActivityHour) AS 'Hour of Day'
+	,AVG(Calories) AS 'AVG Cals/Hour'
+FROM
+	hourlyActivity
+GROUP BY
+	DATEPART(HOUR, ActivityHour)
+ORDER BY
+	'Hour of Day';
+
+
+
+
+/*
+Steps to calorie comparison
+
+As could be expected, there appears to be a correlation between average daily steps and average calories burned.
+The higher the average steps taken corresponds with higher average calories burned.
+*/
+
+SELECT 
+	DATEPART(WEEKDAY, ActivityDate) AS 'Day of Week'
+	,DATENAME(WEEKDAY, ActivityDate) AS 'Name Day of Week'
+	,ROUND(AVG(CASE WHEN TotalSteps > 0 THEN Calories ELSE NULL END), 2) AS 'AVG Calories/Day'
+	,ROUND(AVG(CASE WHEN Calories > 0 THEN TotalSteps ELSE NULL END), 2) AS 'AVG Total Steps/Day'
+	
+FROM
+	daily_activity
+GROUP BY
+	DATEPART(WEEKDAY, ActivityDate)
+	,DATENAME(WEEKDAY, ActivityDate)
+ORDER BY
+	DATEPART(WEEKDAY, ActivityDate);
+
+
+
+
+/*
+Comparison of total minutes asleep and total time in bed using the sleepDay table
+*/
+
+SELECT
+	AVG(TotalMinutesAsleep) AS 'AVG Mins Asleep'
+	,ROUND((CAST((AVG(TotalMinutesAsleep)) AS FLOAT)/60), 2) AS 'AVG Hours Asleep'
+	,AVG(TotalTimeInBed) AS 'AVG Mins in Bed'
+	,ROUND((CAST((AVG(TotalTimeInBed)) AS FLOAT)/60), 2) AS 'AVG Hours in Bed'
+	,ROUND((((CAST(AVG(TotalMinutesAsleep) AS FLOAT) / CAST(AVG(TotalTimeInBed) AS FLOAT)) * 100)), 0) AS 'Sleep Time % in Bed'
+FROM
+	daily_sleep;
+
+
+
+/*
+Set up bins for different levels of step counts based on CDC recommendations
+
+https://www.cdc.gov/media/releases/2020/p0324-daily-step-count.html
+
+https://www.healthline.com/health/how-many-steps-a-day#How-many-steps-should-you-take-a-day?
+Inactive: less than 5,000 steps per day
+Average (somewhat active): ranges from 7,500 to 9,999 steps per day
+Very active: more than 12,500 steps per day
+*/
+
+SELECT
+	 Id
+	,ActivityDate
+	,TotalSteps
+	,CASE 
+		WHEN TotalSteps <= 4999 THEN 'Less Than 5000'
+		WHEN TotalSteps BETWEEN 5000 AND 7499 THEN '5000-7499'
+		WHEN TotalSteps BETWEEN 7500 AND 9999 THEN '7500-9999'
+		WHEN TotalSteps BETWEEN 10000 AND 12500 THEN '10000-12500'
+		ELSE '12500 +'
+	END AS activity_level
+FROM
+	daily_activity
+WHERE
+	TotalSteps IS NOT NULL
+	OR TotalSteps != 0;
+
+
+/*
+Taking a count of the different levels of step activity according to the CDC and Health.gov
+
+*NOTE*
+This is counting days and not Id's.  
+*/
+
+SELECT
+	COUNT(CASE WHEN TotalSteps <= 4999 THEN TotalSteps ELSE NULL END) AS 'Count Inactive'
+	,COUNT(CASE WHEN TotalSteps BETWEEN 5000 AND 7499 THEN TotalSteps ELSE NULL END) AS 'Count Slightly Active'
+	,COUNT(CASE WHEN TotalSteps BETWEEN 7500 AND 9999 THEN TotalSteps ELSE NULL END) AS 'Count Active'
+	,COUNT(CASE WHEN TotalSteps BETWEEN 10000 AND 12500 THEN TotalSteps ELSE NULL END) AS 'Count Very Active'
+	,COUNT(CASE WHEN TotalSteps > 12500 THEN TotalSteps ELSE NULL END) AS 'Count Highly Active'
+FROM
+	daily_activity
+WHERE
+	TotalSteps IS NOT NULL
+	OR TotalSteps != 0;
+
+
