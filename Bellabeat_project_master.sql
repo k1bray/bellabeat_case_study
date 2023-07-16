@@ -2205,6 +2205,39 @@ ORDER BY
 
 
 /*
+***********************************************
+
+
+I don't like this query.  The fact that it's being divided by 33 doesn't sit right.
+It doesn't actually show an "average".
+*/
+
+SELECT
+	DATEPART(WEEKDAY, date) AS '# Day of Week'
+	,DATENAME(WEEKDAY, date) AS 'Day of Week'
+	,(COUNT(CASE WHEN value = 1 THEN 'Asleep' ELSE NULL END))/33 AS 'AVG Mins Asleep'
+	,(COUNT(CASE WHEN value = 2 THEN 'Restless' ELSE NULL END))/33 AS 'AVG Mins Restless'
+	,(COUNT(CASE WHEN value = 3 THEN 'Awake' ELSE NULL END))/33 AS 'AVG Mins Awake'
+	,ROUND(AVG(TotalSteps), 0) AS avg_daily_steps
+	--,ROUND((CAST((AVG(TotalMinutesAsleep)) AS FLOAT)/60), 2) AS 'AVG Hours Asleep'
+	--,AVG(TotalTimeInBed) AS 'AVG Mins in Bed'
+	--,ROUND((CAST((AVG(TotalTimeInBed)) AS FLOAT)/60), 2) AS 'AVG Hours in Bed'
+	--,ROUND((((CAST(AVG(TotalMinutesAsleep) AS FLOAT) / CAST(AVG(TotalTimeInBed) AS FLOAT)) * 100)), 0) AS 'Sleep Time % in Bed'
+FROM
+	minute_sleep
+JOIN
+	daily_activity
+	ON minute_sleep.Id = daily_activity.Id
+WHERE
+	date IS NOT NULL
+GROUP BY
+	DATEPART(WEEKDAY, date)
+	,DATENAME(WEEKDAY, date)
+ORDER BY
+	DATEPART(WEEKDAY, date);
+
+
+/*
 Finding the percentage of time that people are sleeping vs the total time they spend in bed.
 */
 
