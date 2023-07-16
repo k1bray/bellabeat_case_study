@@ -2776,3 +2776,174 @@ ORDER BY
 
 
 
+/*
+AVG daily total dailyActivity by day of the week.
+*/
+
+SELECT
+	DATEPART(WEEKDAY, ActivityDate) AS 'day of week'
+	,DATENAME(WEEKDAY, ActivityDate) AS 'Name Day of Week'
+	,AVG(TotalSteps) AS 'AVG Tot Steps/Day'
+	,ROUND(AVG(TotalDistance), 1) AS 'AVG Tot Dist km/Day'
+	,ROUND(AVG(TrackerDistance), 1) AS 'AVG Tracked Dist km/Day'
+	,ROUND(AVG(VeryActiveDistance), 1) AS 'AVG Very Active Dist km/Day'
+	,ROUND(AVG(ModeratelyActiveDistance), 1) AS 'AVG Mod Active Dist km/Day'
+	,ROUND(AVG(LightActiveDistance), 1) AS 'AVG Lt Active Dist km/Day'
+	,ROUND(AVG(SedentaryActiveDistance), 3) AS 'AVG Sed Active Dist km/Day'
+	,AVG(VeryActiveMinutes) AS 'AVG Very Active Mins/Day'
+	,AVG(FairlyActiveMinutes) AS 'AVG Mod Active Mins/Day'
+	,AVG(LightlyActiveMinutes) AS 'AVG Lt Active Mins/Day'
+	,AVG(SedentaryMinutes) AS 'AVG Sed Active Mins/Day'
+	,AVG(Calories) AS 'AVG Cals/Day'
+FROM
+	daily_activity
+GROUP BY
+	DATEPART(WEEKDAY, ActivityDate)
+	,DATENAME(WEEKDAY, ActivityDate)
+ORDER BY
+	'day of week';
+
+
+/*
+AVG daily steps grouped by user activity type
+*/
+
+
+/*
+Set up bins for different levels of step counts based on CDC recommendations
+
+https://www.cdc.gov/media/releases/2020/p0324-daily-step-count.html
+
+https://www.healthline.com/health/how-many-steps-a-day#How-many-steps-should-you-take-a-day?
+Inactive: less than 5,000 steps per day
+Average (somewhat active): ranges from 7,500 to 9,999 steps per day
+Very active: more than 12,500 steps per day
+*/
+
+SELECT
+	 Id
+	,ActivityDate
+	,TotalSteps
+	,CASE 
+		WHEN TotalSteps <= 4999 THEN 'Less Than 5000'
+		WHEN TotalSteps BETWEEN 5000 AND 7499 THEN '5000-7499'
+		WHEN TotalSteps BETWEEN 7500 AND 9999 THEN '7500-9999'
+		WHEN TotalSteps BETWEEN 10000 AND 12500 THEN '10000-12500'
+		ELSE '12500 +'
+	END AS activity_level
+FROM
+	daily_activity
+WHERE
+	TotalSteps IS NOT NULL
+	OR TotalSteps != 0;
+
+
+
+
+/*
+Taking a count of the different levels of step activity according to the CDC and Health.gov
+
+*NOTE*
+This is counting days and not Id's.  
+*/
+
+SELECT
+	COUNT(CASE WHEN TotalSteps <= 4999 THEN TotalSteps ELSE NULL END) AS 'Count Inactive'
+	,COUNT(CASE WHEN TotalSteps BETWEEN 5000 AND 7499 THEN TotalSteps ELSE NULL END) AS 'Count Slightly Active'
+	,COUNT(CASE WHEN TotalSteps BETWEEN 7500 AND 9999 THEN TotalSteps ELSE NULL END) AS 'Count Active'
+	,COUNT(CASE WHEN TotalSteps BETWEEN 10000 AND 12500 THEN TotalSteps ELSE NULL END) AS 'Count Very Active'
+	,COUNT(CASE WHEN TotalSteps > 12500 THEN TotalSteps ELSE NULL END) AS 'Count Highly Active'
+FROM
+	daily_activity
+WHERE
+	TotalSteps IS NOT NULL
+	OR TotalSteps != 0;
+
+
+
+/*
+AVG daily active minutes grouped by user activity type for CDC recommended daily activity time
+*/
+
+SELECT
+	Id
+	,COUNT(CASE WHEN VeryActiveMinutes >= 20 THEN Id ELSE NULL END) AS 'Count Very Active'
+	,COUNT(CASE WHEN FairlyActiveMinutes >= 30 THEN Id ELSE NULL END) AS 'Count Fairly Active'
+	--,COUNT(CASE WHEN TotalSteps BETWEEN 7500 AND 9999 THEN TotalSteps ELSE NULL END) AS 'Count Active'
+	--,COUNT(CASE WHEN TotalSteps BETWEEN 10000 AND 12500 THEN TotalSteps ELSE NULL END) AS 'Count Very Active'
+	--,COUNT(CASE WHEN TotalSteps > 12500 THEN TotalSteps ELSE NULL END) AS 'Count Highly Active'
+FROM
+	daily_activity
+WHERE
+	TotalSteps IS NOT NULL
+	OR TotalSteps != 0
+GROUP BY
+	Id
+ORDER BY
+	'Count Fairly Active' DESC;
+
+/*
+Truncated AVG dailyActivity table without distances
+*/
+
+SELECT
+	DATEPART(WEEKDAY, ActivityDate) AS 'day of week'
+	,DATENAME(WEEKDAY, ActivityDate) AS 'Name Day of Week'
+	,AVG(TotalSteps) AS 'AVG Tot Steps/Day'
+	,AVG(VeryActiveMinutes) AS 'AVG Very Active Mins/Day'
+	,AVG(FairlyActiveMinutes) AS 'AVG Mod Active Mins/Day'
+	,AVG(LightlyActiveMinutes) AS 'AVG Lt Active Mins/Day'
+	,AVG(SedentaryMinutes) AS 'AVG Sed Active Mins/Day'
+	,AVG(Calories) AS 'AVG Cals/Day'
+FROM
+	daily_activity
+GROUP BY
+	DATEPART(WEEKDAY, ActivityDate)
+	,DATENAME(WEEKDAY, ActivityDate)
+ORDER BY
+	'day of week';
+
+/*
+Count of user's activity minutes
+*/
+
+SELECT TOP 100 
+	Id
+	,ActivityDate
+	,TotalSteps
+	,VeryActiveMinutes
+	,FairlyActiveMinutes
+	,LightlyActiveMinutes
+	,SedentaryMinutes
+FROM daily_activity;
+
+SELECT
+	COUNT(CASE WHEN TotalSteps <= 4999 THEN TotalSteps ELSE NULL END) AS 'Count Inactive'
+	,COUNT(CASE WHEN TotalSteps BETWEEN 5000 AND 7499 THEN TotalSteps ELSE NULL END) AS 'Count Slightly Active'
+	,COUNT(CASE WHEN TotalSteps BETWEEN 7500 AND 9999 THEN TotalSteps ELSE NULL END) AS 'Count Active'
+	,COUNT(CASE WHEN TotalSteps BETWEEN 10000 AND 12500 THEN TotalSteps ELSE NULL END) AS 'Count Very Active'
+	,COUNT(CASE WHEN TotalSteps > 12500 THEN TotalSteps ELSE NULL END) AS 'Count Highly Active'
+FROM
+	daily_activity
+WHERE
+	TotalSteps IS NOT NULL
+	OR TotalSteps != 0;
+
+/*
+AVG dailyActivity for steps, time and calories grouped by Id
+*/
+
+SELECT
+	Id
+	,AVG(TotalSteps) AS 'AVG Tot Steps/Day'
+	,AVG(VeryActiveMinutes) AS 'AVG Very Active Mins/Day'
+	,AVG(FairlyActiveMinutes) AS 'AVG Mod Active Mins/Day'
+	,AVG(LightlyActiveMinutes) AS 'AVG Lt Active Mins/Day'
+	,AVG(SedentaryMinutes) AS 'AVG Sed Active Mins/Day'
+	,AVG(Calories) AS 'AVG Cals/Day'
+FROM
+	daily_activity
+GROUP BY
+	Id
+ORDER BY
+	'AVG Tot Steps/Day' DESC;
