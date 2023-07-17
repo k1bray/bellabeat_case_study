@@ -1303,7 +1303,7 @@ Some tables that MAY offer some additional value are:
 SELECT TOP 10 * FROM daily_activity;
 
 /*
-This query shows a list of all of the participant Id's
+Getting a list of all of the participant Id's
 */
 
 SELECT
@@ -2169,6 +2169,10 @@ SELECT *	--0 records
 FROM minute_sleep
 WHERE
 	logId IS NULL
+
+
+SELECT
+
 
 
 /*
