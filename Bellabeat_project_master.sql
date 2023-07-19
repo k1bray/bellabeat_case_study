@@ -1287,7 +1287,7 @@ Those are:
     - Which tracked features are being most/least utilized by looking at user-pool participation rates
 
 An attempt will be made to determine if any relationships exists between these measures mostly using the daily timeframe
-information, but may be corroborated with other time frames of tighter granularity.
+data, but may be corroborated with other time frames of tighter granularity.
 
 The primary tables that I will be using are 
     daily_activity
@@ -1300,10 +1300,12 @@ Some tables that MAY offer some additional value are:
 	seconds_heartrate
 */
 
-SELECT TOP 10 * FROM daily_activity;
-
 /*
-Getting a list of all of the participant Id's
+Getting a list of all of the participant Id's.
+While profiling the data, it appears that the daily_activity table is the most comprehensive table in the dataset.
+This would make some sense when you consider that the data that is in the daily_activity table is comprised 
+with data that would be most likely to be automatically collected, as long as the users are wearing their
+tracking devices.
 */
 
 SELECT
