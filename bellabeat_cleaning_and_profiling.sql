@@ -5,7 +5,7 @@ USE [CaseStudy2-Bellabeat];
 
 -- Renaming tables to standardize table names and maintain schema consistency
 
-exec sp_rename 'dailyActivity_merged', 'daily_activity';
+exec sp_rename 'dailyActivity_merged', 'daily_activity';						--<><><><>
 GO
 exec sp_rename 'dailyCalories_merged', 'daily_calories';
 GO
@@ -13,33 +13,33 @@ exec sp_rename 'dailyIntensities_merged', 'daily_intensity';
 GO
 exec sp_rename 'dailySteps_merged', 'daily_steps';
 GO
-exec sp_rename 'secondsHeartrate_merged','seconds_heartrate';
+exec sp_rename 'secondsHeartrate_merged','seconds_heartrate';					--<><><><>
 GO
-exec sp_rename 'hourlyCalories_merged', 'hourly_calories';
+exec sp_rename 'hourlyCalories_merged', 'hourly_calories';						--<><><><>
 GO
-exec sp_rename 'hourlyIntensities_merged', 'hourly_intensity';
+exec sp_rename 'hourlyIntensities_merged', 'hourly_intensity';					--<><><><>
 GO
-exec sp_rename 'hourlySteps_merged', 'hourly_steps';
+exec sp_rename 'hourlySteps_merged', 'hourly_steps';							--<><><><>
 GO
 exec sp_rename 'minuteCaloriesNarrow_merged', 'minute_calories_narrow';
 GO
 exec sp_rename 'minuteCaloriesWide_merged', 'minute_calories_wide';
 GO
-exec sp_rename 'minuteIntensitiesNarrow_merged', 'minute_intensity_narrow';
+exec sp_rename 'minuteIntensitiesNarrow_merged', 'minute_intensity_narrow';		--<><><><>
 GO
 exec sp_rename 'minuteIntensitiesWide_merged', 'minute_intensity_wide';
 GO
-exec sp_rename 'minuteMETsNarrow_merged', 'minute_mets_narrow';
+exec sp_rename 'minuteMETsNarrow_merged', 'minute_mets_narrow';					--<><><><>
 GO
-exec sp_rename 'minuteSleep_merged', 'minute_sleep';
+exec sp_rename 'minuteSleep_merged', 'minute_sleep';							--<><><><>
 GO
 exec sp_rename 'minuteStepsNarrow_merged', 'minute_steps_narrow';
 GO
 exec sp_rename 'minuteStepsWide_merged', 'minute_steps_wide';
 GO
-exec sp_rename 'sleepDay_merged', 'daily_sleep';
+exec sp_rename 'sleepDay_merged', 'daily_sleep';								--<><><><>
 GO
-exec sp_rename 'weightLogInfo_merged', 'weight_log';
+exec sp_rename 'weightLogInfo_merged', 'weight_log';							--<><><><>
 
 
 -- Scratchpad area
@@ -65,6 +65,49 @@ ORDER BY Id DESC;   -- 940 rows
 SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='daily_activity';
+
+-- Checking the hourly_calories table schema
+
+SELECT *
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME='hourly_calories';
+
+-- Checking the hourly_intensity table schema
+
+SELECT *
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME='hourly_intensity';
+
+-- Checking the hourly_steps table schema
+
+SELECT *
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME='hourly_steps';
+
+-- Checking the minute_intensity_narrow table schema
+
+SELECT *
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME='minute_intensity_narrow';
+
+SELECT TOP 100 * FROM minute_intensity_narrow;
+
+-- Checking the minute_mets_narrow table schema
+
+SELECT *
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME='minute_mets_narrow';
+
+SELECT TOP 100 * FROM minute_mets_narrow;
+
+-- Checking the minute_sleep table schema
+
+SELECT *
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME='minute_sleep';
+
+SELECT TOP 100 * FROM minute_sleep;
+
 
 /*
 During importation, all columns were designated as varchar(50).
@@ -116,6 +159,8 @@ GO
 SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='minute_sleep';
+
+SELECT TOP 100 * From minute_sleep;
 
 -- Updating the daily_activity table
 
@@ -217,6 +262,32 @@ GO
 SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='weight_log';
+
+--Updating the minute_intensity_narrow table
+
+ALTER TABLE minute_intensity_narrow
+ALTER COLUMN ActivityMinute DATETIME;
+GO
+ALTER TABLE minite_intensity_narrow
+ALTER COLUMN Intensity NUMERIC;
+GO
+SELECT *
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME='minute_intensity_narrow';
+
+--Updating the minute_mets_narrow table
+
+ALTER TABLE minute_mets_narrow
+ALTER COLUMN ActivityMinute DATETIME;
+GO
+ALTER TABLE minute_mets_narrow
+ALTER COLUMN METs NUMERIC;
+GO
+SELECT *
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME='minute_mets_narrow';
+
+SELECT TOP 100 * FROM minute_mets_narrow;
 
 -- Finding the count of users in the daily_activity table, the earliest and latest days in the study, as well as the calendar math from start to finish
 
