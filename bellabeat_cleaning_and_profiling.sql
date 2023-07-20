@@ -303,6 +303,35 @@ JOIN hourly_steps AS s
 GO
 SELECT * FROM hourly_activity;
 
+/*
+Finding the count of users in the minute_activity table, the earliest and latest days 
+in the study, as well as the calendar math from start to finish
+*/
+
+SELECT TOP 100 * FROM minute_activity;
+
+SELECT
+    COUNT(DISTINCT Id) AS user_count -- 22 users
+    ,MIN(ActivityMinute) AS earliest_date  -- 2016-04-12 00:00:00.000
+    ,MAX(ActivityMinute) AS latest_date   -- 2016-05-12 09:56:00.000
+    ,DATEDIFF(D, MIN(ActivityMinute), MAX(ActivityMinute)) +1 AS Difference  -- 31 days
+FROM
+    minute_activity;
+
+/*
+Finding the count of users in the hourly_activity table, the earliest and latest days 
+in the study, as well as the calendar math from start to finish
+*/
+
+SELECT TOP 100 * FROM hourly_activity;
+
+SELECT
+    COUNT(DISTINCT Id) AS user_count -- 33 users
+    ,MIN(ActivityHour) AS earliest_date  -- 2016-04-12 00:00:00.000
+    ,MAX(ActivityHour) AS latest_date   -- 2016-05-12 15:00:00.000
+    ,DATEDIFF(D, MIN(ActivityHour), MAX(ActivityHour)) +1 AS Difference  -- 31 days
+FROM
+    hourly_activity;
 
 /*
 Finding the count of users in the daily_activity table, the earliest and latest days 
@@ -421,6 +450,60 @@ FROM
 	ON #calorie_count.Id = #sleep_count.Id
 ORDER BY
     sleep_records_per_id DESC;
+
+/*
+Check for duplicate rows in minute_activity table.
+
+The following query shows no results of duplicate rows.
+*/
+
+SELECT
+	Id
+	,ActivityMinute
+	,ActivityIntensity
+	,METs
+	,SleepState
+	,COUNT(*) AS num_records
+FROM
+	minute_activity
+GROUP BY
+	Id
+	,ActivityMinute
+	,ActivityIntensity
+	,METs
+	,SleepState
+HAVING
+	COUNT(*) > 1
+ORDER BY
+	num_records DESC;
+
+/*
+Check for duplicate rows in hourly_activity table.
+
+The following query shows no results of duplicate rows.
+*/
+
+SELECT
+	Id
+	,ActivityHour
+	,Calories
+	,TotalIntensity
+	,AverageIntensity
+	,StepTotal
+	,COUNT(*) AS num_records
+FROM
+	hourly_activity
+GROUP BY
+	Id
+	,ActivityHour
+	,Calories
+	,TotalIntensity
+	,AverageIntensity
+	,StepTotal
+HAVING
+	COUNT(*) > 1
+ORDER BY
+	num_records DESC;
 
 /*
 Check for duplicate rows in daily_activity table.
