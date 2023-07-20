@@ -42,24 +42,6 @@ GO
 exec sp_rename 'weightLogInfo_merged', 'weight_log';							--<><><><>
 
 
--- Scratchpad area
-
-SELECT *
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME='daily_intensity';
-
-
--- Exploring the minute_calories_narrow table
-
-SELECT * FROM minute_calories_narrow;
-
-
--- Exploring the daily_activity table
-
-SELECT * FROM daily_activity
-ORDER BY Id DESC;   -- 940 rows
-
-
 -- Checking the daily_activity table schema
 
 SELECT *
@@ -90,15 +72,11 @@ SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='minute_intensity_narrow';
 
-SELECT TOP 100 * FROM minute_intensity_narrow;
-
 -- Checking the minute_mets_narrow table schema
 
 SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='minute_mets_narrow';
-
-SELECT TOP 100 * FROM minute_mets_narrow;
 
 -- Checking the minute_sleep table schema
 
@@ -106,13 +84,9 @@ SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='minute_sleep';
 
-SELECT TOP 100 * FROM minute_sleep;
-
-
 /*
 During importation, all columns were designated as varchar(50).
-
-Decided to alter some of the column datatypes.
+Updating column datatypes.
 */
 
 -- Updating the hourly_intensity table
@@ -163,25 +137,6 @@ WHERE TABLE_NAME='minute_sleep';
 SELECT TOP 100 * From minute_sleep;
 
 -- Updating the daily_activity table
-
-SELECT *
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME='daily_activity';
-
--- ActivityDate
--- TotalSteps
--- TotalDistance
--- TrackerDistance
--- LoggedActivitiesDistance
--- VeryActiveDistance
--- ModeratelyActiveDistance
--- LightActiveDistance
--- SedentaryActiveDistance
--- VeryActiveMinutes
--- FairlyActiveMinutes
--- LightlyActiveMinutes
--- SedentaryMinutes
--- Calories
 
 ALTER TABLE daily_activity
 ALTER COLUMN ActivityDate DATE;
@@ -237,14 +192,6 @@ SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='seconds_heartrate';
 
-/*
-Inspecting the weight_log table schema
-*/
-
-SELECT *
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME='weight_log';
-
 -- Updating the weight_log table
 
 ALTER TABLE weight_log
@@ -275,6 +222,14 @@ SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='minute_intensity_narrow';
 
+USE [CaseStudy2-Bellabeat];
+GO
+exec sp_rename 'minute_intensity_narrow', 'minute_intensity';
+
+SELECT *
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME='minute_intensity';
+
 --Updating the minute_mets_narrow table
 
 ALTER TABLE minute_mets_narrow
@@ -287,9 +242,60 @@ SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='minute_mets_narrow';
 
-SELECT TOP 100 * FROM minute_mets_narrow;
+USE [CaseStudy2-Bellabeat];
+GO
+exec sp_rename 'minute_mets_narrow', 'minute_mets';
 
--- Finding the count of users in the daily_activity table, the earliest and latest days in the study, as well as the calendar math from start to finish
+SELECT *
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME='minute_mets';
+
+
+
+/*
+Creating a minute_activity table
+*/
+
+DROP TABLE IF EXISTS minute_activity
+GO
+SELECT
+	i.Id AS Id
+	,i.ActivityMinute AS ActivityMinute
+	,Intensity AS ActivityIntensity
+	,METs AS METs
+	,value AS SleepState
+
+INTO minute_activity
+
+FROM	
+	minute_intensity AS i
+JOIN minute_mets AS m
+	ON i.Id = m.Id AND
+	i.ActivityMinute = m.ActivityMinute
+JOIN minute_sleep AS s
+	ON i.Id = s.Id AND
+	i.ActivityMinute = s.date
+;
+
+/*
+Creating and hourly_activity table
+hourly_calories
+hourly_intensity
+hourly_steps
+*/
+
+DROP TABLE IF EXISTS hourly_activity
+GO
+SELECT
+	
+
+
+
+
+/*
+Finding the count of users in the daily_activity table, the earliest and latest days 
+in the study, as well as the calendar math from start to finish
+*/
 
 SELECT
     COUNT(DISTINCT Id) AS user_count -- 33 users
@@ -300,29 +306,10 @@ SELECT
 FROM
     daily_activity;
 
--- Bringing up a quick list to manually inspect the date range
-
-SELECT
-    ActivityDate
-FROM
-    daily_activity
-GROUP BY
-    ActivityDate
-ORDER BY
-    ActivityDate;
-
--- Exploring the daily_sleep table
-
-SELECT * FROM daily_sleep;   -- 413 rows
-
--- Checking the table schema
-
-SELECT *
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME='daily_sleep';
-
--- Finding the count of users in the daily_sleep table, the earliest and latest days in the study, 
--- as well as the calendar math from start to finish
+/*
+Finding the count of users in the daily_sleep table, the earliest and latest days in the study, 
+as well as the calendar math from start to finish
+*/
 
 SELECT
     COUNT(DISTINCT Id) AS user_count -- 24 users
@@ -333,18 +320,10 @@ SELECT
 FROM
     daily_sleep;
 
--- Exploring the hourly_intensity table
-
-SELECT * FROM hourly_intensity;   -- 22099 rows
-
--- Checking the table schema
-
-SELECT *
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME='hourly_intensity';
-
--- Finding the count of users in the hourly_intensity table, the earliest and latest days in the study, 
--- as well as the calendar math from start to finish
+/*
+Finding the count of users in the hourly_intensity table, the earliest and latest days in the study, 
+as well as the calendar math from start to finish
+*/
 
 SELECT
     COUNT(DISTINCT Id) AS user_count -- 33 users
@@ -356,19 +335,10 @@ SELECT
 FROM
     hourly_intensity;
 
-
--- Exploring the minute_sleep table
-
-SELECT * FROM minute_sleep;   -- 188521 rows
-
--- Checking the table schema
-
-SELECT *
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME='minute_sleep';
-
--- Finding the count of users in the minute_sleep table, the earliest and latest days in the study, 
--- as well as the calendar math from start to finish
+/*
+Finding the count of users in the minute_sleep table, the earliest and latest days in the study, 
+as well as the calendar math from start to finish
+*/
 
 SELECT
     COUNT(DISTINCT Id) AS user_count -- 24 users
@@ -380,8 +350,10 @@ SELECT
 FROM
     minute_sleep;
 
--- Finding the count of users in the weight_log table, the earliest and latest days in the study, 
--- as well as the calendar math from start to finish
+/*
+Finding the count of users in the weight_log table, the earliest and latest days in the study, 
+as well as the calendar math from start to finish
+*/
 
 SELECT
     COUNT(DISTINCT Id) AS user_count -- 8 users
@@ -440,7 +412,6 @@ ORDER BY
 
 /*
 Check for duplicate rows in daily_activity table.
-https://stackoverflow.com/questions/37868495/how-find-duplicates-in-a-table-with-no-primary-key-or-id-field
 
 The following query shows no results of duplicate rows.
 */
