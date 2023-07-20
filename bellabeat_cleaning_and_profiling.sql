@@ -264,9 +264,7 @@ SELECT
 	,Intensity AS ActivityIntensity
 	,METs AS METs
 	,value AS SleepState
-
 INTO minute_activity
-
 FROM	
 	minute_intensity AS i
 JOIN minute_mets AS m
@@ -276,20 +274,34 @@ JOIN minute_sleep AS s
 	ON i.Id = s.Id AND
 	i.ActivityMinute = s.date
 ;
+GO
+SELECT * FROM minute_activity;
 
 /*
 Creating and hourly_activity table
-hourly_calories
-hourly_intensity
-hourly_steps
 */
 
 DROP TABLE IF EXISTS hourly_activity
 GO
 SELECT
-	
-
-
+	c.Id AS Id 
+	,c.ActivityHour AS ActivityHour
+	,Calories AS Calories
+	,TotalIntensity AS TotalIntensity
+	,AverageIntensity AS AverageIntensity
+	,StepTotal AS StepTotal
+INTO hourly_activity
+FROM	
+	hourly_calories AS c
+JOIN hourly_intensity AS i 
+	ON c.Id = i.Id AND
+	c.ActivityHour = i.ActivityHour
+JOIN hourly_steps AS s 
+	ON c.Id = s.Id AND
+	c.ActivityHour = s.ActivityHour
+;
+GO
+SELECT * FROM hourly_activity;
 
 
 /*
