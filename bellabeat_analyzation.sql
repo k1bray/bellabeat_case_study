@@ -3,35 +3,11 @@ USE [CaseStudy2-Bellabeat];
 -------------------------------------Analyzing the Data--------------------------------------
 
 /*
-The questions being posed by the stakeholders are 
+The questions being posed by the stakeholders are:
 
 1. What are some trends in smart device usage?
-
 2. How could these trends be applied to Bellabeat customers?
-
 3. How could these trends help influence the Bellabeat marketing strategy?
-*/
-
-/*
-The focus for this study will be looking mainly at various ways in which participants use their fitness trackers.
-Those are:
-    - Daily activity vs device length of wear time
-	- Daily activity vs higher/lower feature use (weight logging, overnight sleep tracking)
-    - Automatic vs manually logged activiy
-    - Which tracked features are being most/least utilized by looking at user-pool participation rates
-
-An attempt will be made to determine if any relationships exists between these measures mostly using the daily timeframe
-data, but may be corroborated with other time frames of tighter granularity.
-
-The primary tables that I will be using are 
-    daily_activity
-    daily_sleep
-	weight_log
-
-Some tables that MAY offer some additional value are:
-    hourly_intensity - what time of day to users tend to excercise?
-    minute_sleep - There is a 'value' column that shows is a user was 1 = asleep, 2 = restless, 3 = awake
-	seconds_heartrate
 */
 
 /*
@@ -41,8 +17,6 @@ This would make some sense when you consider that the data that is in the daily_
 with data that would be most likely to be automatically collected, as long as the users are wearing their
 tracking devices.
 */
-
-
 
 SELECT
 	DISTINCT(Id)
@@ -83,9 +57,7 @@ FROM
 	daily_activity
 GROUP BY
 	Id;
-
 GO
-
 SELECT 
 	*
 FROM 
@@ -111,9 +83,7 @@ GROUP BY
 	Id
 ORDER BY
 	Id;
-
 GO
-
 SELECT
 	DISTINCT act.Id
 	,COUNT(CASE WHEN VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes = 1440 
@@ -184,22 +154,39 @@ SELECT TOP 100
 * 
 FROM daily_activity;
 
+SELECT TOP 100 * FROM hourly_activity;
 
-
-
-
-
-
-
-
-
---scratchpad
 SELECT
 	Id,
-	COUNT(ActivityDate) OVER (PARTITION BY Id) AS days_activity_recorded
+	COUNT(ActivityHour) AS hours_per_id
+FROM
+	hourly_activity
+GROUP BY
+	Id
+ORDER BY	
+	hours_per_id DESC;
+ 
+SELECT
+	Id,
+	COUNT(ActivityHour) / 24 AS avg_hours_per_day_per_id
+FROM
+	hourly_activity
+GROUP BY
+	Id
+ORDER BY	
+	avg_hours_per_day_per_id DESC;
 
+
+
+
+
+--How many days during the study was each user active?
+
+SELECT
+	Id,
+	COUNT(ActivityDate) AS days_activity_recorded
 FROM daily_activity
-
+GROUP BY Id
 ORDER BY
 	days_activity_recorded DESC
 
@@ -237,9 +224,7 @@ SELECT
 INTO #daily_active_hours
 FROM 
 	daily_activity;
-
 GO
-
 SELECT * 	-- Checking the contents of the temp table
 FROM #daily_active_hours
 ORDER BY 
@@ -261,7 +246,6 @@ ORDER BY
 
 /*
 Looking at a distribution of daily count of hourly wear times with a total count of records.
-
 This query does not take into account that not all users have the same number of daily records.
 */
 
@@ -350,6 +334,7 @@ What is the average number of calories burned per day of the week.
 SELECT 
 	DATEPART(WEEKDAY, ActivityDate) AS 'Day # of Week'
 	,DATENAME(WEEKDAY, ActivityDate) AS 'Day of Week'
+	,COUNT(*) AS 'Daily Records'
 	,ROUND(AVG(TotalSteps), 0) AS 'AVG Steps Per Day'
 	,ROUND(AVG(Calories), 1) AS 'AVG Calories Per Day'
 	,ROUND(AVG(TotalDistance), 1) AS 'AVG Total Distance Per Day'
@@ -369,6 +354,7 @@ Using the previous query and adding averages of the various activity levels of m
 SELECT 
 	DATEPART(WEEKDAY, ActivityDate) AS 'Day # of Week'
 	,DATENAME(WEEKDAY, ActivityDate) AS 'Day of Week'
+	,COUNT(*) AS 'Daily Records'
 	,ROUND(AVG(TotalSteps), 0) AS 'AVG Steps Per Day'
 	,ROUND(AVG(Calories), 1) AS 'AVG Calories Per Day'
 	,ROUND(AVG(TotalDistance), 1) AS 'AVG Total Distance Per Day'
@@ -397,6 +383,7 @@ I'm glad that I did because now I can be more sure that they are not going to be
 SELECT 
 	DATEPART(WEEKDAY, ActivityDate) AS 'Day # of Week'
 	,DATENAME(WEEKDAY, ActivityDate) AS 'Day of Week'
+	,COUNT(*) AS 'Daily Records'
 	,ROUND(AVG(TotalSteps), 0) AS 'AVG Steps Per Day'
 	,ROUND(AVG(Calories), 1) AS 'AVG Calories Per Day'
 	,ROUND(AVG(TotalDistance), 1) AS 'AVG Total Distance Per Day'
@@ -422,10 +409,6 @@ ORDER BY
 What hour of the day on average are users most active?
 */
 
---scratchpad
-SELECT TOP 100 * FROM hourly_steps;
-
-
 SELECT
 	DATEPART(HOUR, ActivityHour) AS 'Hour of Day'
 	,ROUND(AVG(StepTotal), 0) AS 'AVG Steps Per Hour'
@@ -443,11 +426,6 @@ Finding a count of sleep records per user Id.  To get a complete list of all Id'
 I JOINed the daily_sleep table with the daily_activity table.  This shows which Id's have no
 records in the daily_sleep table.
 */
-
---scratchpad
-SELECT *
-FROM daily_sleep;
-
 
 SELECT
 	daily_activity.Id
@@ -493,7 +471,7 @@ Wednesday has the highest number of records and Monday has the least.
 SELECT 
 	DATEPART(WEEKDAY, SleepDay) AS 'Day # of Week'
 	,DATENAME(WEEKDAY, SleepDay) AS 'Day of Week'
-	,COUNT(*) AS 'Daily Records'
+	,COUNT(*) AS 'Daily Sleep Records'
 FROM
 	daily_sleep
 GROUP BY
@@ -514,6 +492,7 @@ degree of acuracy.  Thursday also has the lowest value of the week for the AVG M
 SELECT 
 	DATEPART(WEEKDAY, SleepDay) AS 'Day # of Week'
 	,DATENAME(WEEKDAY, SleepDay) AS 'Day of Week'
+	,COUNT(*) AS 'Daily Sleep Records'
 	,ROUND((AVG(totalMinutesAsleep) / 60), 2) AS 'AVG Hours Asleep'
 	,ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 2) AS 'AVG Mins Awake In Bed'
 FROM
@@ -536,7 +515,6 @@ SELECT
 	,ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 2) AS 'AVG Mins Awake In Bed' -- 39.31 Mins
 FROM
 	daily_sleep
-
 
 /*
 Exploration of how users are logging their weight.
@@ -579,7 +557,7 @@ Users were least likely to log their weight on Friday and Saturday.
 SELECT 
 	DATEPART(WEEKDAY, Date) AS 'Day # of Week'
 	,DATENAME(WEEKDAY, DATE) AS 'Day of Week'
-	,COUNT(*) AS 'Daily Records'
+	,COUNT(*) AS 'Daily Weight Records'
 FROM
 	weight_log
 GROUP BY
@@ -673,16 +651,6 @@ WHERE
 	Id = '8877689391'
 ORDER BY
 	Date DESC;
-
-/*
-Exploration of USERS logging their weight automatically vs manually reporting.
-
-Exploration of weight logs automatically vs manually reported.
-*/
-
---scratchpad
-SELECT *
-FROM weight_log;
 
 /*
 This query shows a list of user Id's and a count of their weight_log records separated by
