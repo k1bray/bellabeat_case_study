@@ -689,27 +689,6 @@ FROM
 	weight_log
 
 /*
-What are the participation rates for the user pool for different trackable functions?
-
-	-weight logging
-	-sleep tracking
-	-step counting
-*/
-
--- scratchpad area
-SELECT TOP 1
-	*
-FROM daily_activity;
-
-SELECT TOP 1
-	*
-FROM daily_sleep;
-
-SELECT TOP 1
-	*
-FROM weight_log;
-
-/*
 The following query shows a table with distinct Id's and counts of records for daily steps, sleep, 
 and weight.
 */
@@ -725,8 +704,8 @@ FROM
 		ON daily_sleep.Id = daily_activity.Id 
 		AND daily_sleep.SleepDay = daily_activity.ActivityDate
 	LEFT JOIN weight_log
-		ON daily_sleep.Id = weight_log.Id
-		AND daily_sleep.SleepDay = weight_log.Date
+		ON daily_activity.Id = weight_log.Id
+		AND daily_activity.ActivityDate = weight_log.Date
 GROUP BY
 	daily_activity.Id
 ORDER BY
@@ -801,9 +780,7 @@ GROUP BY
 	Id
 ORDER BY
 	weight_records_per_id DESC;
-
 GO
-
 DROP TABLE IF EXISTS #avg_steps_daily
 SELECT
 	DISTINCT(Id),
@@ -815,9 +792,7 @@ GROUP BY
 	Id
 ORDER BY
 	Id;
-
 GO
-
 SELECT
 	DISTINCT act.Id
 	,COUNT(CASE WHEN VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes = 1440 
@@ -856,16 +831,12 @@ Select TOP 5
 	,Calories
 FROM 
 	daily_activity;
-
 GO
-
 Select TOP 5 
 	*
 FROM 
 	daily_sleep;
-
 GO
-
 SELECT TOP 20
 	*
 FROM
