@@ -25,11 +25,11 @@ exec sp_rename 'minuteCaloriesNarrow_merged', 'minute_calories_narrow';
 GO
 exec sp_rename 'minuteCaloriesWide_merged', 'minute_calories_wide';
 GO
-exec sp_rename 'minuteIntensitiesNarrow_merged', 'minute_intensity_narrow';		--<><><><>
+exec sp_rename 'minuteIntensitiesNarrow_merged', 'minute_intensity';		--<><><><>
 GO
 exec sp_rename 'minuteIntensitiesWide_merged', 'minute_intensity_wide';
 GO
-exec sp_rename 'minuteMETsNarrow_merged', 'minute_mets_narrow';					--<><><><>
+exec sp_rename 'minuteMETsNarrow_merged', 'minute_mets';					--<><><><>
 GO
 exec sp_rename 'minuteSleep_merged', 'minute_sleep';							--<><><><>
 GO
@@ -47,6 +47,13 @@ exec sp_rename 'weightLogInfo_merged', 'weight_log';							--<><><><>
 SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='daily_activity';
+
+
+-- Checking the seconds_heartrate table schema
+
+SELECT *
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME='seconds_heartrate';
 
 -- Checking the hourly_calories table schema
 
@@ -70,13 +77,13 @@ WHERE TABLE_NAME='hourly_steps';
 
 SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME='minute_intensity_narrow';
+WHERE TABLE_NAME='minute_intensity';
 
 -- Checking the minute_mets_narrow table schema
 
 SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME='minute_mets_narrow';
+WHERE TABLE_NAME='minute_mets';
 
 -- Checking the minute_sleep table schema
 
@@ -184,13 +191,6 @@ SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='daily_activity';
 
-/*
-Inspecting the seconds_heartrate table schema
-*/
-
-SELECT *
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME='seconds_heartrate';
 
 -- Updating the weight_log table
 
@@ -220,14 +220,6 @@ ALTER COLUMN Intensity NUMERIC;
 GO
 SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME='minute_intensity_narrow';
-
-USE [CaseStudy2-Bellabeat];
-GO
-exec sp_rename 'minute_intensity_narrow', 'minute_intensity';
-
-SELECT *
-FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='minute_intensity';
 
 --Updating the minute_mets_narrow table
@@ -240,21 +232,10 @@ ALTER COLUMN METs NUMERIC;
 GO
 SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME='minute_mets_narrow';
-
-USE [CaseStudy2-Bellabeat];
-GO
-exec sp_rename 'minute_mets_narrow', 'minute_mets';
-
-SELECT *
-FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='minute_mets';
 
 
-
-/*
-Creating a minute_activity table
-*/
+-- Creating a minute_activity table
 
 DROP TABLE IF EXISTS minute_activity
 GO
@@ -277,9 +258,9 @@ JOIN minute_sleep AS s
 GO
 SELECT * FROM minute_activity;
 
-/*
-Creating and hourly_activity table
-*/
+
+--Creating and hourly_activity table
+
 
 DROP TABLE IF EXISTS hourly_activity
 GO
@@ -591,24 +572,24 @@ HAVING
 ORDER BY
 	num_records DESC;
 
-/*
-Dropping old sleepDay table
-*/
+
+--Dropping old sleepDay table
+
 
 DROP TABLE	-- Executed
 	daily_sleep;
 
-/*
-Renaming sleepDay2 to sleepDay and completing the replacement of the table with no dupilicates.
-*/
+
+--Renaming sleepDay2 to sleepDay and completing the replacement of the table with no dupilicates.
+
 
 USE [CaseStudy2-Bellabeat];
 GO
 exec sp_rename 'sleepDay2', 'daily_sleep';
 
-/*
-Checking the table contents of the "new" daily_sleep table
-*/
+
+--Checking the table contents of the "new" daily_sleep table
+
 
 SELECT * FROM daily_sleep;
 
@@ -992,8 +973,10 @@ FROM
 ORDER BY
 	SedentaryMinutes DESC;
 
--- Looking at how many records show users wearing their devices for a 24 hour period, thus giving a 
--- complete daily usage record.
+/*
+Looking at how many records show users wearing their devices for a 24 hour period, thus giving a 
+complete daily usage record.
+*/
 
 SELECT	
 	COUNT(*)	-- 478 records
@@ -1028,7 +1011,7 @@ The following query shows 25 records where the TotalSteps > 0, but showing no di
 
 Again, this could be caused by the manual entry feature and may not be "bad data".
 
-Also, something to consider is that severall of the records have wicked low step counts.
+Also, something to consider is that several of the records have wicked low step counts.
 */
 
 SELECT
@@ -1310,8 +1293,6 @@ in the results/report. Also, there could be conditions that would explain having
 Therefore the determination was made to dismiss the possibility that they could become problematic.
 */
 
-select * from daily_sleep;
-
 SELECT *
 FROM daily_sleep
 ORDER BY TotalSleepRecords DESC;
@@ -1349,8 +1330,6 @@ by the device detected sleep state.
 All values fall within those parameters and no outliers appear to be present.
 */
 
-select * from minute_sleep;
-
 SELECT 
 TOP 1
 *
@@ -1364,9 +1343,6 @@ FROM minute_sleep
 ORDER BY value;
 
 -- Checking the weight_log table for outliers
-
-SELECT * FROM weight_log;
-
 
 SELECT
 	DISTINCT(IsManualReport)  -- The only results are 'True' and 'False'
@@ -1400,5 +1376,3 @@ Checked for any outliers that need to be accounted for
 Standardized the data for consistency by renaming tables
 Validated the data by rechecking all of the above points
 */
-
-
