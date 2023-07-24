@@ -13,8 +13,8 @@ The questions being posed by the stakeholders are:
 /*
 Getting a list of all of the participant Id's.
 While profiling the data, it appears that the daily_activity table is the most comprehensive table in the dataset.
-This would make some sense when you consider that the data that is in the daily_activity table is comprised 
-with data that would be most likely to be automatically collected, as long as the users are wearing their
+This would make some sense when you consider that the data in the daily_activity table is made up 
+of by data that would be the most likely to be automatically collected, as long as the users are wearing their
 tracking devices.
 */
 
@@ -24,7 +24,7 @@ FROM
 	daily_activity;
 
 /*
-This query shows a list of distinct user Id's and the total number of days that each user wore 
+List of distinct user Id's and the total number of days that each user wore 
 their device all day vs partial days.
 */
 
@@ -45,7 +45,7 @@ ORDER BY
 ;
 
 /*
-The following query shows a list of all the user Id's and their average daily steps.
+List of all the user Id's and their average daily steps.
 */
 
 DROP TABLE IF EXISTS #avg_steps_daily
@@ -65,11 +65,13 @@ FROM
 ORDER BY avg_daily_steps DESC;
 
 /*
-The following query JOIN's the two previous queries to show the list of Id's, # of full days, # of partial days,
+Joining the two previous queries to show the list of Id's, # of full days, # of partial days,
 and their average daily steps over the case study period.
 
-Looking over the distribution, there does not appear to be a direct correlation between high average daily step 
-counts and all day device wearing.
+Looking over the distribution, there does not appear to be a strong correlation between high average daily step 
+counts and all day device wearing.  However, viewing the results sorted by average daily steps in descending order,
+there id a cluster of records between index position 6 and 14 that all show moderately high average daily steps
+above the index median.
 */
 
 DROP TABLE IF EXISTS #avg_steps_daily
@@ -105,7 +107,7 @@ ORDER BY
 ;
 
 /*
-The following query uses a single Id record to double check the figures from the previous query.
+Using a single Id record to double check the figures from the previous query.
 */
 
 SELECT 
@@ -142,71 +144,11 @@ ORDER BY
 --SELECT * FROM #count_days_wearing;
 
 /*
-What does an average hourly user device wear-time distribution look like?
-
-I can use the daily_activity table to find the number of hours per day that users 
-were wearing their devices by adding all of the activity minutes and then dividing by 60.
-The users that self report their activity levels might not be included.  However, that simply shows that
-they are, in fact, not wearing their devices.
-*/
-
-SELECT TOP 100 
-* 
-FROM daily_activity;
-
-SELECT TOP 100 * FROM hourly_activity;
-
-SELECT
-	Id,
-	COUNT(ActivityHour) AS hours_per_id
-FROM
-	hourly_activity
-GROUP BY
-	Id
-ORDER BY	
-	hours_per_id DESC;
- 
-SELECT
-	Id,
-	COUNT(ActivityHour) / 24 AS avg_hours_per_day_per_id
-FROM
-	hourly_activity
-GROUP BY
-	Id
-ORDER BY	
-	avg_hours_per_day_per_id DESC;
-
-
-
-
-
---How many days during the study was each user active?
-
-SELECT
-	Id,
-	COUNT(ActivityDate) AS days_activity_recorded
-FROM daily_activity
-GROUP BY Id
-ORDER BY
-	days_activity_recorded DESC
-
-
-
-
-
-
-/*
 We are left to assume from the data dictionary that these 32 records are from activity that was 
 manually logged by the user
 */
 
 SELECT * FROM daily_activity WHERE LoggedActivitiesDistance > 0;
-
-
-
-
-
-
 
 -- Creating #daily_active_hours temp table
 
@@ -248,7 +190,6 @@ ORDER BY
 Looking at a distribution of daily count of hourly wear times with a total count of records.
 This query does not take into account that not all users have the same number of daily records.
 */
-
 
 SELECT
 	--Id
@@ -296,7 +237,6 @@ of records.
 21 out of the 33 total users show 31 days of activity (which is the full length of the study).
 */
 
-
 SELECT
 	Id
 	,COUNT(*) AS count_of_daily_records
@@ -308,72 +248,8 @@ ORDER BY
 	count_of_daily_records DESC;
 
 /*
-What day of the week do users wear their devices most based on total count of daily records sorted by 
-day of the week (Tuesday)?  Least (Monday)?
-*/
-
-SELECT 
-	DATEPART(WEEKDAY, ActivityDate) AS 'Day # of Week'
-	,DATENAME(WEEKDAY, ActivityDate) AS 'Day of Week'
-	,COUNT(*) AS 'Daily Records'
-FROM
-	daily_activity
-GROUP BY
-	DATEPART(WEEKDAY, ActivityDate)
-	,DATENAME(WEEKDAY, ActivityDate)
-ORDER BY
-	DATEPART(WEEKDAY, ActivityDate)
-	,DATENAME(WEEKDAY, ActivityDate);
-
-/*
-Using the previous query,
-What is the average number of steps per day of the week.
-What is the average number of calories burned per day of the week.
-*/
-
-SELECT 
-	DATEPART(WEEKDAY, ActivityDate) AS 'Day # of Week'
-	,DATENAME(WEEKDAY, ActivityDate) AS 'Day of Week'
-	,COUNT(*) AS 'Daily Records'
-	,ROUND(AVG(TotalSteps), 0) AS 'AVG Steps Per Day'
-	,ROUND(AVG(Calories), 1) AS 'AVG Calories Per Day'
-	,ROUND(AVG(TotalDistance), 1) AS 'AVG Total Distance Per Day'
-FROM
-	daily_activity
-GROUP BY
-	DATEPART(WEEKDAY, ActivityDate)
-	,DATENAME(WEEKDAY, ActivityDate)
-ORDER BY
-	DATEPART(WEEKDAY, ActivityDate)
-	,DATENAME(WEEKDAY, ActivityDate);
-
-/*
-Using the previous query and adding averages of the various activity levels of minutes per day of the week.
-*/
-
-SELECT 
-	DATEPART(WEEKDAY, ActivityDate) AS 'Day # of Week'
-	,DATENAME(WEEKDAY, ActivityDate) AS 'Day of Week'
-	,COUNT(*) AS 'Daily Records'
-	,ROUND(AVG(TotalSteps), 0) AS 'AVG Steps Per Day'
-	,ROUND(AVG(Calories), 1) AS 'AVG Calories Per Day'
-	,ROUND(AVG(TotalDistance), 1) AS 'AVG Total Distance Per Day'
-	,ROUND(AVG(VeryActiveMinutes), 0) AS 'AVG Very Active Minutes Per Day'
-	,ROUND(AVG(FairlyActiveMinutes), 0) AS 'AVG Fairly Active Minutes Per Day'
-	,ROUND(AVG(LightlyActiveMinutes), 0) AS 'AVG Lightly Active Minutes Per Day'
-	,ROUND(AVG(SedentaryMinutes), 0) AS 'AVG Sedentary Minutes Per Day'
-FROM
-	daily_activity
-GROUP BY
-	DATEPART(WEEKDAY, ActivityDate)
-	,DATENAME(WEEKDAY, ActivityDate)
-ORDER BY
-	DATEPART(WEEKDAY, ActivityDate)
-	,DATENAME(WEEKDAY, ActivityDate);
-
-
-/*
-Using the previous query and adding averages of the various activity levels of distance per day of the week.
+What day of the week do users wear their devices most? Least?
+Finding averages of the various activity levels of steps, calories, and distance per day of the week.
 
 Originally, I was not going to include these figures because I felt that the number of steps, calories burned, 
 and the activity time duration was more applicable.  However, I decided to run the numbers anyway just to double check.
@@ -406,7 +282,7 @@ ORDER BY
 
 
 /*
-What hour of the day on average are users most active?
+What hour of the day are users most active based on average steps per hour?
 */
 
 SELECT
@@ -441,7 +317,7 @@ ORDER BY
 	count_of_daily_sleep_records DESC;
 
 /*
-Finding the AVG hours asleep and time spent awake in bed per user Id.
+Finding the AVG hours asleep and time spent awake in bed per user Id for the users.
 
 By changing the JOIN type from FULL to INNER the query eliminates or excludes any users from the 
 daily_activity table that would contain a NULL in any of the sleep-related columns.
@@ -461,25 +337,7 @@ FROM
 GROUP BY
 	daily_activity.Id
 ORDER BY 
-	'AVG Daily Steps' DESC;
-
-/*
-Finding the number of records for each day of the week.
-Wednesday has the highest number of records and Monday has the least.
-*/
-
-SELECT 
-	DATEPART(WEEKDAY, SleepDay) AS 'Day # of Week'
-	,DATENAME(WEEKDAY, SleepDay) AS 'Day of Week'
-	,COUNT(*) AS 'Daily Sleep Records'
-FROM
-	daily_sleep
-GROUP BY
-	DATEPART(WEEKDAY, SleepDay)
-	,DATENAME(WEEKDAY, SleepDay)
-ORDER BY
-	DATEPART(WEEKDAY, SleepDay)
-	,DATENAME(WEEKDAY, SleepDay);
+	count_of_daily_sleep_records DESC;
 
 /*
 Finding the AVG hours asleep and AVG time spent awake in bed per day of the week.
@@ -494,6 +352,7 @@ SELECT
 	,DATENAME(WEEKDAY, SleepDay) AS 'Day of Week'
 	,COUNT(*) AS 'Daily Sleep Records'
 	,ROUND((AVG(totalMinutesAsleep) / 60), 2) AS 'AVG Hours Asleep'
+	,ROUND(((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep))/60), 2) AS 'AVG Hrs Awake In Bed'
 	,ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 2) AS 'AVG Mins Awake In Bed'
 FROM
 	daily_sleep
@@ -506,7 +365,6 @@ ORDER BY
 
 /*
 What is the overall AVG Hours Asleep for the user group (6.99 hours)?
-
 What is the overall AVG Mins Awake for the user group (39.31 mins)?
 */
 
@@ -517,17 +375,7 @@ FROM
 	daily_sleep
 
 /*
-Exploration of how users are logging their weight.
-*/
-
-SELECT *
-FROM weight_log
-ORDER BY
-	Date;
-
-/*
 Finding a count of records per user Id in the weight_log table.
-
 The density of records is quite sparse.
 */
 
@@ -546,10 +394,8 @@ ORDER BY
 
 /*
 Finding the number of records for each day of the week of the weight_log table.
-
 Given how sparse this table is, These results are mainly focused on the activity of a very
 small group of people.
-
 Observation:
 Users were least likely to log their weight on Friday and Saturday.
 */
@@ -574,7 +420,7 @@ Finding the AVG weight per user in kg and converted to pounds.
 SELECT
 	Id
 	,ROUND(AVG(WeightKg), 1) AS 'AVG Weight(kg) per User'
-	,ROUND((AVG(WeightKg) * 2.20462), 1) AS 'AVG Weight(lbs) per User'
+	,ROUND(AVG(WeightPounds), 1) AS 'AVG Weight(lbs) per User'
 	,MAX(WeightKg) AS max_wt
 	,MIN(WeightKg) AS min_weight
 FROM
