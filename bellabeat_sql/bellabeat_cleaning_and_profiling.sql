@@ -2,7 +2,6 @@ USE [CaseStudy2-Bellabeat];
 
 -------------------------Data Cleaning and Profiling-------------------------------
 
-
 -- Renaming tables to standardize table names and maintain schema consistency
 
 exec sp_rename 'dailyActivity_merged', 'daily_activity';						--<><><><>
@@ -41,13 +40,11 @@ exec sp_rename 'sleepDay_merged', 'daily_sleep';								--<><><><>
 GO
 exec sp_rename 'weightLogInfo_merged', 'weight_log';							--<><><><>
 
-
 -- Checking the daily_activity table schema
 
 SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='daily_activity';
-
 
 -- Checking the seconds_heartrate table schema
 
@@ -234,7 +231,6 @@ SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='minute_mets';
 
-
 -- Creating a minute_activity table
 
 DROP TABLE IF EXISTS minute_activity
@@ -258,9 +254,7 @@ JOIN minute_sleep AS s
 GO
 SELECT * FROM minute_activity;
 
-
 --Creating and hourly_activity table
-
 
 DROP TABLE IF EXISTS hourly_activity
 GO
@@ -579,17 +573,13 @@ ORDER BY
 DROP TABLE	-- Executed
 	daily_sleep;
 
-
 --Renaming sleepDay2 to sleepDay and completing the replacement of the table with no dupilicates.
-
 
 USE [CaseStudy2-Bellabeat];
 GO
 exec sp_rename 'sleepDay2', 'daily_sleep';
 
-
 --Checking the table contents of the "new" daily_sleep table
-
 
 SELECT * FROM daily_sleep;
 
@@ -624,7 +614,6 @@ Checking the hourly_intensity table for duplicate records.
 
 There appear to be none.
 */
-
 
 SELECT
 	Id
@@ -901,7 +890,7 @@ or manually entered by the user for the given period.  These records could be re
 in the dataset, or could be legitimate as manual entries.  Either way, there are so few of them that they may not 
 cause any anomaly in the analysis of any significance that would warrant their removal.
 
-The fact that they are there could be an opportunity to pose a question about the population of the user group that 
+The fact they are there could be an opportunity to pose a question about the population of the user group that 
 manually enters their step data instead of having it be automatically collected by their fitness tracker.  Unfortunately,
 The dataset does not provide information in the daily_activity table in regard to data collection method - i.e. manual
 vs. automatic.
