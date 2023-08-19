@@ -1419,8 +1419,6 @@ WHERE
 	TotalSteps IS NOT NULL
 	OR TotalSteps != 0;
 
-
-
 /*
 AVG daily active minutes grouped by user activity type for CDC recommended daily activity time
 */
