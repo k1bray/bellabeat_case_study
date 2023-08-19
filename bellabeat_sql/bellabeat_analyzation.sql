@@ -41,8 +41,7 @@ GROUP BY
 	Id
 --	,ActivityDate
 ORDER BY
-	'Full Day' DESC
-;
+	'Full Day' DESC;
 
 /*
 List of all the user Id's and their average daily steps.
@@ -103,8 +102,7 @@ GROUP BY
 	,avg_daily_steps
 --	,ActivityDate
 ORDER BY
-	avg_daily_steps DESC
-;
+	avg_daily_steps DESC;
 
 /*
 Using a single Id record to double check the figures from the previous query.
@@ -118,8 +116,7 @@ FROM
 WHERE 
 	Id = '8877689391' -- used '' because the datatype is set to varchar(50)
 GROUP BY
-	Id
-;
+	Id;
 
 /*
 Exploring which users are wearing their devices "all day"
@@ -171,8 +168,7 @@ SELECT * 	-- Checking the contents of the temp table
 FROM #daily_active_hours
 ORDER BY 
 --	TotalSteps DESC
-	total_active_hours DESC
-;
+	total_active_hours DESC;
 
 --Finding an average daily wear time per user Id based on #daily_active_hours.
 
@@ -226,7 +222,7 @@ FROM
 	#daily_active_hours
 --GROUP BY
 --	Id
-	;
+;
 
 /*
 Taking a count of records per Id in the daily_activity table
@@ -293,8 +289,7 @@ FROM
 GROUP BY
 	DATEPART(HOUR, ActivityHour)
 ORDER BY
-	DATEPART(HOUR, ActivityHour)
-;
+	DATEPART(HOUR, ActivityHour);
 
 /*
 Exploring how users are wearing their devices while they sleep.
@@ -372,7 +367,7 @@ SELECT
 	ROUND((AVG(totalMinutesAsleep) / 60), 2) AS 'AVG Hours Asleep' -- 6.99 Hours
 	,ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 2) AS 'AVG Mins Awake In Bed' -- 39.31 Mins
 FROM
-	daily_sleep
+	daily_sleep;
 
 /*
 Finding a count of records per user Id in the weight_log table.
@@ -532,7 +527,7 @@ SELECT
 	,COUNT(CASE WHEN IsManualReport = 'False' THEN IsManualReport ELSE NULL END) 
 		AS 'Automatic Record' -- 26 records
 FROM
-	weight_log
+	weight_log;
 
 /*
 The following query shows a table with distinct Id's and counts of records for daily steps, sleep, 
@@ -598,9 +593,7 @@ GROUP BY
 	Id
 ORDER BY
 	records_per_id DESC;
-
 GO
-
 SELECT * FROM #weight_records_count;
 
 /*
@@ -661,8 +654,7 @@ GROUP BY
 	,weight.weight_records_per_id
 ORDER BY
 	weight.weight_records_per_id DESC
-	,avg.avg_daily_steps DESC
-;
+	,avg.avg_daily_steps DESC;
 
 /*
 Is there a connection/correlation between daily activity and sleep quality/habits?
@@ -711,29 +703,24 @@ minute_sleep.value
 SELECT *	--0 records
 FROM minute_sleep
 WHERE
-	Id IS NULL
+	Id IS NULL;
 
 
 SELECT *	--0 records
 FROM minute_sleep
 WHERE
-	date IS NULL
+	date IS NULL;
 
 
 SELECT *	--0 records
 FROM minute_sleep
 WHERE
-	value IS NULL
+	value IS NULL;
 
 SELECT *	--0 records
 FROM minute_sleep
 WHERE
-	logId IS NULL
-
-
-SELECT
-
-
+	logId IS NULL;
 
 /*
 Trying to figure out if there is potential to use the minuteSleep table to gain insight on sleep patterns.
@@ -763,10 +750,6 @@ GROUP BY
 	,DATENAME(WEEKDAY, date)
 ORDER BY
 	DATEPART(WEEKDAY, date);
-
-
-
-
 
 /*
 ***********************************************
@@ -799,7 +782,6 @@ GROUP BY
 	,DATENAME(WEEKDAY, date)
 ORDER BY
 	DATEPART(WEEKDAY, date);
-
 
 /*
 Finding the percentage of time that people are sleeping vs the total time they spend in bed.
@@ -878,7 +860,7 @@ SELECT
 	,TotalSteps
 	,Calories
 FROM
-	daily_activity
+	daily_activity;
 
 
 SELECT 
@@ -930,9 +912,7 @@ GROUP BY
 	Id
 ORDER BY
 	Id;
-
 GO
-
 SELECT
 	DISTINCT act.Id
 	,COUNT(CASE WHEN VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes = 1440 
@@ -950,7 +930,7 @@ GROUP BY
 	,avg_daily_steps
 --	,ActivityDate
 ORDER BY
-	avg_daily_steps DESC
+	avg_daily_steps DESC;
 
 
 
@@ -982,7 +962,6 @@ GROUP BY
 ORDER BY
 	DATEPART(WEEKDAY, ActivityDate)
 	,DATENAME(WEEKDAY, ActivityDate);
-
 
 /*
 One thing to keep in mind is that in the wight_log table there is a column for 'Fat' which is mostly
@@ -1087,8 +1066,6 @@ GROUP BY
 ORDER BY
 	'AVG total Dist in km/Day' DESC;
 
-
-
 /*
 AVG daily total distance in km overall for the test pool per day.
 This query shows that the test pool daily average is 5.5km/day.
@@ -1099,9 +1076,6 @@ SELECT
 	ROUND(AVG(TotalDistance), 1) AS 'AVG total Dist in km/Day' -- 5.5
 FROM
 	daily_activity;	
-
-
-
 
 /*
 AVG Active minutes per day of the week when corresponding activity minutes are > 0.

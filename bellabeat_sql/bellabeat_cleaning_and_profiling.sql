@@ -1134,7 +1134,6 @@ FROM
 WHERE
 	TotalDistance != TrackerDistance;
 
-
 /*
 The results of the following queries both return zero rows.  Since the data dictionary is vague
 on their definitions, the information is, at best, of limited value.
@@ -1157,8 +1156,6 @@ WHERE
 	LoggedActivitiesDistance = TotalDistance
 	AND
 	LoggedActivitiesDistance != 0;
-
-
 
 /*
 The following query shows 32 records where the LoggedActivitiesDistance does NOT equal 0.
@@ -1239,7 +1236,6 @@ GROUP BY
 	LEN(Id)
 ORDER BY
 	char_length DESC;
-
 
 -- Checking for outliers
 
@@ -1350,7 +1346,6 @@ FROM
 	weight_log
 ORDER BY	
 	WeightKg;
-
 
 /*
 Data Validation
