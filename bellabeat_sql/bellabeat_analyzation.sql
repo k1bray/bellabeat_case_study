@@ -1200,7 +1200,6 @@ GROUP BY
 ORDER BY
 	'day of week';
 
-
 /*
 What time of day had the highest AVG step count?
 */
@@ -1209,7 +1208,7 @@ SELECT TOP 1
 	 DATEPART(HOUR, ActivityHour) AS 'Hour of Day'	-- 18:00
 	,AVG(StepTotal) AS 'AVG Steps/Hour'
 FROM
-	hourlyActivity
+	hourly_activity
 GROUP BY
 	DATEPART(HOUR, ActivityHour)
 ORDER BY
@@ -1223,7 +1222,7 @@ SELECT TOP 1
 	 DATEPART(HOUR, ActivityHour) AS 'Hour of Day'	-- 03:00
 	,AVG(StepTotal) AS 'AVG Steps/Hour'
 FROM
-	hourlyActivity
+	hourly_activity
 GROUP BY
 	DATEPART(HOUR, ActivityHour)
 ORDER BY
@@ -1237,12 +1236,11 @@ SELECT
 	 DATEPART(HOUR, ActivityHour) AS 'Hour of Day'
 	,AVG(StepTotal) AS 'AVG Steps/Hour'
 FROM
-	hourlyActivity
+	hourly_activity
 GROUP BY
 	DATEPART(HOUR, ActivityHour)
 ORDER BY
 	'Hour of Day';
-
 
 /*
 Distribution of AVG calories burned per hour of the day
@@ -1252,14 +1250,11 @@ SELECT
 	 DATEPART(HOUR, ActivityHour) AS 'Hour of Day'
 	,AVG(Calories) AS 'AVG Cals/Hour'
 FROM
-	hourlyActivity
+	hourly_activity
 GROUP BY
 	DATEPART(HOUR, ActivityHour)
 ORDER BY
 	'Hour of Day';
-
-
-
 
 /*
 Steps to calorie comparison
@@ -1282,9 +1277,6 @@ GROUP BY
 ORDER BY
 	DATEPART(WEEKDAY, ActivityDate);
 
-
-
-
 /*
 Comparison of total minutes asleep and total time in bed using the sleepDay table
 */
@@ -1297,8 +1289,6 @@ SELECT
 	,ROUND((((CAST(AVG(TotalMinutesAsleep) AS FLOAT) / CAST(AVG(TotalTimeInBed) AS FLOAT)) * 100)), 0) AS 'Sleep Time % in Bed'
 FROM
 	daily_sleep;
-
-
 
 /*
 Set up bins for different levels of step counts based on CDC recommendations
@@ -1327,7 +1317,6 @@ FROM
 WHERE
 	TotalSteps IS NOT NULL
 	OR TotalSteps != 0;
-
 
 /*
 Taking a count of the different levels of step activity according to the CDC and Health.gov
@@ -1374,7 +1363,6 @@ GROUP BY
 	,DATENAME(WEEKDAY, ActivityDate)
 ORDER BY
 	'day of week';
-
 
 /*
 AVG daily steps grouped by user activity type
