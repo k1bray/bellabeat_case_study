@@ -110,7 +110,7 @@ Using a single Id record to double check the figures from the previous query.
 
 SELECT 
 	Id
-	,AVG(TotalSteps)
+	,AVG(TotalSteps) AS avg_TotalSteps
 FROM 
 	daily_activity
 WHERE 
