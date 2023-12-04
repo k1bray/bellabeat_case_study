@@ -24,11 +24,11 @@ exec sp_rename 'minuteCaloriesNarrow_merged', 'minute_calories_narrow';
 GO
 exec sp_rename 'minuteCaloriesWide_merged', 'minute_calories_wide';
 GO
-exec sp_rename 'minuteIntensitiesNarrow_merged', 'minute_intensity';		--<><><><>
+exec sp_rename 'minuteIntensitiesNarrow_merged', 'minute_intensity';			--<><><><>
 GO
 exec sp_rename 'minuteIntensitiesWide_merged', 'minute_intensity_wide';
 GO
-exec sp_rename 'minuteMETsNarrow_merged', 'minute_mets';					--<><><><>
+exec sp_rename 'minuteMETsNarrow_merged', 'minute_mets';						--<><><><>
 GO
 exec sp_rename 'minuteSleep_merged', 'minute_sleep';							--<><><><>
 GO
