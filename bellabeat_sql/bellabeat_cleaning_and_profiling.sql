@@ -387,7 +387,7 @@ The following query shows that there was not full participation across the board
 Ordering by the sleep_records_per_id ascending shows that there are 9 users where calorie records were taken, but 
 not sleep records.
 
-It makes sense that features that use an automatic data collection process are going to have a higher 
+It makes sense that features using an automatic data collection process are going to have a higher 
 participation rate than features that require the user to manually interact with.
 */
 
