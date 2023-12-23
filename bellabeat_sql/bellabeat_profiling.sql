@@ -88,7 +88,7 @@ complete daily usage record.
 */
 
 SELECT	
-	COUNT(*)	-- 478 records
+	COUNT(*) AS 'Count of Users wearing their devices for 24 hours'	-- 478 records
 FROM	
 	daily_activity
 WHERE
