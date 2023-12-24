@@ -182,6 +182,19 @@ GROUP BY
 ORDER BY
 	avg_active_hours_per_Id DESC;
 
+--Finding an average daily wear time per user Id against average daily steps based on #daily_active_hours.
+
+SELECT
+	Id
+	,ROUND(AVG(total_active_hours), 1) AS avg_active_hours_per_Id
+	,ROUND(AVG(TotalSteps), 1) AS avg_saily_steps_per_Id
+FROM
+	#daily_active_hours
+GROUP BY
+	Id
+ORDER BY
+	avg_active_hours_per_Id DESC;
+
 /*
 Looking at a distribution of daily count of hourly wear times with a total count of records.
 This query does not take into account that not all users have the same number of daily records.
