@@ -187,7 +187,7 @@ ORDER BY
 SELECT
 	Id
 	,ROUND(AVG(total_active_hours), 1) AS avg_active_hours_per_Id
-	,ROUND(AVG(TotalSteps), 1) AS avg_saily_steps_per_Id
+	,ROUND(AVG(TotalSteps), 1) AS avg_daily_steps_per_Id
 FROM
 	#daily_active_hours
 GROUP BY
