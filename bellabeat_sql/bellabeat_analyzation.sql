@@ -14,7 +14,7 @@ The questions being posed by the stakeholders are:
 Getting a list of all of the participant Id's.
 While profiling the data, it appears that the daily_activity table is the most comprehensive table in the dataset.
 This would make some sense when you consider that the data in the daily_activity table is made up 
-of by data that would be the most likely to be automatically collected, as long as the users are wearing their
+of data that would be the most likely to be automatically collected, as long as the users are wearing their
 tracking devices.
 */
 
