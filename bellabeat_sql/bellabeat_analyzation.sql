@@ -49,8 +49,8 @@ List of all the user Id's and their average daily steps.
 
 DROP TABLE IF EXISTS #avg_steps_daily
 SELECT
-	DISTINCT(Id),
-	ROUND(AVG(TotalSteps), 0)  AS avg_daily_steps
+	DISTINCT(Id)
+	,CAST((ROUND(AVG(TotalSteps), 0)) AS FLOAT)  AS avg_daily_steps
 INTO #avg_steps_daily
 FROM	
 	daily_activity
@@ -75,8 +75,8 @@ above the index median.
 
 DROP TABLE IF EXISTS #avg_steps_daily
 SELECT
-	DISTINCT(Id),
-	ROUND(AVG(TotalSteps), 0) AS avg_daily_steps
+	DISTINCT(Id)
+	,CAST((ROUND(AVG(TotalSteps), 0)) AS FLOAT) AS avg_daily_steps
 INTO #avg_steps_daily
 FROM	
 	daily_activity
@@ -158,7 +158,7 @@ SELECT
 	,TotalDistance
 	,TrackerDistance
 	,Calories
-	,ROUND((VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes) / 60, 2) 
+	,CAST((ROUND((VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes) / 60, 2)) AS FLOAT) 
 		AS total_active_hours
 INTO #daily_active_hours
 FROM 
@@ -187,7 +187,7 @@ ORDER BY
 SELECT
 	Id
 	,ROUND(AVG(total_active_hours), 1) AS avg_active_hours_per_Id
-	,ROUND(AVG(TotalSteps), 1) AS avg_daily_steps_per_Id
+	,CAST((ROUND(AVG(TotalSteps), 1))AS FLOAT) AS avg_daily_steps_per_Id
 FROM
 	#daily_active_hours
 GROUP BY
@@ -269,17 +269,17 @@ SELECT
 	DATEPART(WEEKDAY, ActivityDate) AS 'Day # of Week'
 	,DATENAME(WEEKDAY, ActivityDate) AS 'Day of Week'
 	,COUNT(*) AS 'Daily Records'
-	,ROUND(AVG(TotalSteps), 0) AS 'AVG Steps Per Day'
-	,ROUND(AVG(Calories), 1) AS 'AVG Calories Per Day'
-	,ROUND(AVG(TotalDistance), 1) AS 'AVG Total Distance Per Day'
-	,ROUND(AVG(VeryActiveMinutes), 0) AS 'AVG Very Active Minutes Per Day'
-	,ROUND(AVG(FairlyActiveMinutes), 0) AS 'AVG Fairly Active Minutes Per Day'
-	,ROUND(AVG(LightlyActiveMinutes), 0) AS 'AVG Lightly Active Minutes Per Day'
-	,ROUND(AVG(SedentaryMinutes), 0) AS 'AVG Sedentary Distance Per Day'
-	,ROUND(AVG(VeryActiveDistance), 0) AS 'AVG Very Active Distance Per Day'
-	,ROUND(AVG(ModeratelyActiveDistance), 0) AS 'AVG Fairly Active Distance Per Day'
-	,ROUND(AVG(LightActiveDistance), 0) AS 'AVG Lightly Active Distance Per Day'
-	,ROUND(AVG(SedentaryActiveDistance), 0) AS 'AVG Sedentary Distance Per Day'
+	,CAST((ROUND(AVG(TotalSteps), 0)) AS FLOAT) AS 'AVG Steps Per Day'
+	,CAST((ROUND(AVG(Calories), 1)) AS FLOAT) AS 'AVG Calories Per Day'
+	,CAST((ROUND(AVG(TotalDistance), 1)) AS FLOAT) AS 'AVG Total Distance Per Day'
+	,CAST((ROUND(AVG(VeryActiveMinutes), 0)) AS FLOAT) AS 'AVG Very Active Minutes Per Day'
+	,CAST((ROUND(AVG(FairlyActiveMinutes), 0)) AS FLOAT) AS 'AVG Fairly Active Minutes Per Day'
+	,CAST((ROUND(AVG(LightlyActiveMinutes), 0)) AS FLOAT) AS 'AVG Lightly Active Minutes Per Day'
+	,CAST((ROUND(AVG(SedentaryMinutes), 0)) AS FLOAT) AS 'AVG Sedentary Distance Per Day'
+	,CAST((ROUND(AVG(VeryActiveDistance), 0)) AS FLOAT) AS 'AVG Very Active Distance Per Day'
+	,CAST((ROUND(AVG(ModeratelyActiveDistance), 0)) AS FLOAT) AS 'AVG Fairly Active Distance Per Day'
+	,CAST((ROUND(AVG(LightActiveDistance), 0)) AS FLOAT) AS 'AVG Lightly Active Distance Per Day'
+	,CAST((ROUND(AVG(SedentaryActiveDistance), 0)) AS FLOAT) AS 'AVG Sedentary Distance Per Day'
 FROM
 	daily_activity
 GROUP BY
@@ -296,7 +296,7 @@ What hour of the day are users most active based on average steps per hour?
 
 SELECT
 	DATEPART(HOUR, ActivityHour) AS 'Hour of Day'
-	,ROUND(AVG(StepTotal), 0) AS 'AVG Steps Per Hour'
+	,CAST((ROUND(AVG(StepTotal), 0)) AS FLOAT) AS 'AVG Steps Per Hour'
 FROM 
 	hourly_steps
 GROUP BY
@@ -334,9 +334,9 @@ daily_activity table that would contain a NULL in any of the sleep-related colum
 SELECT
 	daily_activity.Id
 	,COUNT(SleepDay) AS count_of_daily_sleep_records
-	,ROUND((AVG(totalMinutesAsleep) / 60), 1) AS 'AVG Hours Asleep'
-	,ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 1) AS 'AVG Mins Awake In Bed'
- 	,ROUND(AVG(daily_activity.TotalSteps),0) AS 'AVG Daily Steps'
+	,CAST((ROUND((AVG(totalMinutesAsleep) / 60), 1)) AS FLOAT) AS 'AVG Hours Asleep'
+	,CAST((ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 1)) AS FLOAT) AS 'AVG Mins Awake In Bed'
+ 	,CAST((ROUND(AVG(daily_activity.TotalSteps),0)) AS FLOAT) AS 'AVG Daily Steps'
 FROM	
 	daily_activity
 	INNER JOIN daily_sleep 
@@ -359,9 +359,9 @@ SELECT
 	DATEPART(WEEKDAY, SleepDay) AS 'Day # of Week'
 	,DATENAME(WEEKDAY, SleepDay) AS 'Day of Week'
 	,COUNT(*) AS 'Daily Sleep Records'
-	,ROUND((AVG(totalMinutesAsleep) / 60), 2) AS 'AVG Hours Asleep'
-	,ROUND(((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep))/60), 2) AS 'AVG Hrs Awake In Bed'
-	,ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 2) AS 'AVG Mins Awake In Bed'
+	,CAST((ROUND((AVG(totalMinutesAsleep) / 60), 2)) AS FLOAT) AS 'AVG Hours Asleep'
+	,CAST((ROUND(((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep))/60), 2)) AS FLOAT) AS 'AVG Hrs Awake In Bed'
+	,CAST((ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 2)) AS FLOAT) AS 'AVG Mins Awake In Bed'
 FROM
 	daily_sleep
 GROUP BY
@@ -377,8 +377,8 @@ What is the overall AVG Mins Awake for the user group (39.31 mins)?
 */
 
 SELECT 
-	ROUND((AVG(totalMinutesAsleep) / 60), 2) AS 'AVG Hours Asleep' -- 6.99 Hours
-	,ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 2) AS 'AVG Mins Awake In Bed' -- 39.31 Mins
+	CAST((ROUND((AVG(totalMinutesAsleep) / 60), 2)) AS FLOAT) AS 'AVG Hours Asleep' -- 6.99 Hours
+	,CAST((ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 2)) AS FLOAT) AS 'AVG Mins Awake In Bed' -- 39.31 Mins
 FROM
 	daily_sleep;
 
@@ -427,8 +427,8 @@ Finding the AVG weight per user in kg and converted to pounds.
 
 SELECT
 	Id
-	,ROUND(AVG(WeightKg), 1) AS 'AVG Weight(kg) per User'
-	,ROUND(AVG(WeightPounds), 1) AS 'AVG Weight(lbs) per User'
+	,CAST((ROUND(AVG(WeightKg), 1)) AS FLOAT) AS 'AVG Weight(kg) per User'
+	,CAST((ROUND(AVG(WeightPounds), 1)) AS FLOAT) AS 'AVG Weight(lbs) per User'
 	,MAX(WeightKg) AS max_wt
 	,MIN(WeightKg) AS min_weight
 FROM
@@ -444,8 +444,8 @@ Pulling out the records for the two users that most utilized the weight_log feat
 
 SELECT
 	Id
-	,ROUND(AVG(WeightKg), 1) AS 'AVG Weight(kg) per User'
-	,ROUND((AVG(WeightKg) * 2.20462), 1) AS 'AVG Weight(lbs) per User'
+	,CAST((ROUND(AVG(WeightKg), 1)) AS FLOAT) AS 'AVG Weight(kg) per User'
+	,CAST((ROUND((AVG(WeightKg) * 2.20462), 1)) AS FLOAT) AS 'AVG Weight(lbs) per User'
 	,MAX(WeightKg) AS max_wt
 	,MIN(WeightKg) AS min_weight
 FROM
