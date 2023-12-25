@@ -818,9 +818,9 @@ Comparison of AVG time spent sleeping vs AVG time spent in bed by day of the wee
 SELECT
 	DATEPART(WEEKDAY, SleepDay) AS 'Day of Week'
 	,DATENAME(WEEKDAY, SleepDay) AS 'Name Day of Week'
-	,ROUND(AVG(TotalMinutesAsleep), 1) AS 'AVG Mins Asleep'
+	,CAST((ROUND(AVG(TotalMinutesAsleep), 1)) AS FLOAT) AS 'AVG Mins Asleep'
 	,ROUND((CAST((AVG(TotalMinutesAsleep)) AS FLOAT)/60), 2) AS 'AVG Hours Asleep'
-	,ROUND(AVG(TotalTimeInBed), 1) AS 'AVG Mins in Bed'
+	,CAST((ROUND(AVG(TotalTimeInBed), 1)) AS FLOAT) AS 'AVG Mins in Bed'
 	,ROUND((CAST((AVG(TotalTimeInBed)) AS FLOAT)/60), 2) AS 'AVG Hours in Bed'
 	,ROUND((((CAST(AVG(TotalMinutesAsleep) AS FLOAT) / CAST(AVG(TotalTimeInBed) AS FLOAT)) * 100)), 0) 
 		AS 'Sleep Time % in Bed'
@@ -916,8 +916,8 @@ ORDER BY
 
 DROP TABLE IF EXISTS #avg_steps_daily
 SELECT
-	DISTINCT(Id),
-	ROUND(AVG(TotalSteps), 0) AS avg_daily_steps
+	DISTINCT(Id)
+	,CAST((ROUND(AVG(TotalSteps), 0)) AS FLOAT) AS avg_daily_steps
 INTO #avg_steps_daily
 FROM	
 	daily_activity
@@ -956,17 +956,17 @@ ORDER BY
 SELECT 
 	DATEPART(WEEKDAY, ActivityDate) AS 'Day # of Week'
 	,DATENAME(WEEKDAY, ActivityDate) AS 'Day of Week'
-	,ROUND(AVG(TotalSteps), 0) AS 'AVG Steps Per Day'
-	,ROUND(AVG(Calories), 1) AS 'AVG Calories Per Day'
-	,ROUND(AVG(TotalDistance), 1) AS 'AVG Total Distance Per Day'
-	,ROUND(AVG(VeryActiveMinutes), 0) AS 'AVG Very Active Minutes Per Day'
-	,ROUND(AVG(FairlyActiveMinutes), 0) AS 'AVG Fairly Active Minutes Per Day'
-	,ROUND(AVG(LightlyActiveMinutes), 0) AS 'AVG Lightly Active Minutes Per Day'
-	,ROUND(AVG(SedentaryMinutes), 0) AS 'AVG Sedentary Distance Per Day'
-	,ROUND(AVG(VeryActiveDistance), 0) AS 'AVG Very Active Distance Per Day'
-	,ROUND(AVG(ModeratelyActiveDistance), 0) AS 'AVG Fairly Active Distance Per Day'
-	,ROUND(AVG(LightActiveDistance), 0) AS 'AVG Lightly Active Distance Per Day'
-	,ROUND(AVG(SedentaryActiveDistance), 0) AS 'AVG Sedentary Distance Per Day'
+	,CAST((ROUND(AVG(TotalSteps), 0)) AS FLOAT) AS 'AVG Steps Per Day'
+	,CAST((ROUND(AVG(Calories), 1)) AS FLOAT) AS 'AVG Calories Per Day'
+	,CAST((ROUND(AVG(TotalDistance), 1)) AS FLOAT) AS 'AVG Total Distance Per Day'
+	,CAST((ROUND(AVG(VeryActiveMinutes), 0)) AS FLOAT) AS 'AVG Very Active Minutes Per Day'
+	,CAST((ROUND(AVG(FairlyActiveMinutes), 0)) AS FLOAT) AS 'AVG Fairly Active Minutes Per Day'
+	,CAST((ROUND(AVG(LightlyActiveMinutes), 0)) AS FLOAT) AS 'AVG Lightly Active Minutes Per Day'
+	,CAST((ROUND(AVG(SedentaryMinutes), 0)) AS FLOAT) AS 'AVG Sedentary Distance Per Day'
+	,CAST((ROUND(AVG(VeryActiveDistance), 0)) AS FLOAT) AS 'AVG Very Active Distance Per Day'
+	,CAST((ROUND(AVG(ModeratelyActiveDistance), 0)) AS FLOAT) AS 'AVG Fairly Active Distance Per Day'
+	,CAST((ROUND(AVG(LightActiveDistance), 0)) AS FLOAT) AS 'AVG Lightly Active Distance Per Day'
+	,CAST((ROUND(AVG(SedentaryActiveDistance), 0)) AS FLOAT) AS 'AVG Sedentary Distance Per Day'
 FROM
 	daily_activity
 GROUP BY
