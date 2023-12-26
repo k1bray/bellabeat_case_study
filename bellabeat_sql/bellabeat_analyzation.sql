@@ -1106,10 +1106,10 @@ calculated results.
 SELECT 
 	DATEPART(WEEKDAY, ActivityDate) AS 'Day of Week'
 	,DATENAME(WEEKDAY, ActivityDate) AS 'Name Day of Week'
-	,AVG(CASE WHEN VeryActiveMinutes > 0 THEN VeryActiveMinutes ELSE NULL END) AS 'AVG Very Active Mins/Day'
-	,AVG(CASE WHEN FairlyActiveMinutes > 0 THEN FairlyActiveMinutes ELSE NULL END) AS 'AVG Mod Active Mins/Day'
-	,AVG(CASE WHEN LightlyActiveMinutes > 0 THEN LightlyActiveMinutes ELSE NULL END) AS 'AVG Lt Active Mins/Day'
-	,AVG(CASE WHEN SedentaryMinutes > 0 THEN SedentaryMinutes ELSE NULL END) AS 'AVG Sed Active Mins/Day'
+	,CAST((AVG(CASE WHEN VeryActiveMinutes > 0 THEN VeryActiveMinutes ELSE NULL END)) AS FLOAT) AS 'AVG Very Active Mins/Day'
+	,CAST((AVG(CASE WHEN FairlyActiveMinutes > 0 THEN FairlyActiveMinutes ELSE NULL END)) AS FLOAT) AS 'AVG Mod Active Mins/Day'
+	,CAST((AVG(CASE WHEN LightlyActiveMinutes > 0 THEN LightlyActiveMinutes ELSE NULL END)) AS FLOAT) AS 'AVG Lt Active Mins/Day'
+	,CAST((AVG(CASE WHEN SedentaryMinutes > 0 THEN SedentaryMinutes ELSE NULL END)) AS FLOAT) AS 'AVG Sed Active Mins/Day'
 FROM
 	daily_activity
 GROUP BY
@@ -1121,10 +1121,10 @@ GO
 SELECT 
 	DATEPART(WEEKDAY, ActivityDate) AS 'Day of Week'
 	,DATENAME(WEEKDAY, ActivityDate) AS 'Name Day of Week'
-	,AVG(CASE WHEN VeryActiveMinutes >= 0 THEN VeryActiveMinutes ELSE NULL END) AS 'AVG Very Active Mins/Day'
-	,AVG(CASE WHEN FairlyActiveMinutes >= 0 THEN FairlyActiveMinutes ELSE NULL END) AS 'AVG Mod Active Mins/Day'
-	,AVG(CASE WHEN LightlyActiveMinutes >= 0 THEN LightlyActiveMinutes ELSE NULL END) AS 'AVG Lt Active Mins/Day'
-	,AVG(CASE WHEN SedentaryMinutes >= 0 THEN SedentaryMinutes ELSE NULL END) AS 'AVG Sed Active Mins/Day'
+	,CAST((AVG(CASE WHEN VeryActiveMinutes >= 0 THEN VeryActiveMinutes ELSE NULL END)) AS FLOAT) AS 'AVG Very Active Mins/Day'
+	,CAST((AVG(CASE WHEN FairlyActiveMinutes >= 0 THEN FairlyActiveMinutes ELSE NULL END)) AS FLOAT) AS 'AVG Mod Active Mins/Day'
+	,CAST((AVG(CASE WHEN LightlyActiveMinutes >= 0 THEN LightlyActiveMinutes ELSE NULL END)) AS FLOAT) AS 'AVG Lt Active Mins/Day'
+	,CAST((AVG(CASE WHEN SedentaryMinutes >= 0 THEN SedentaryMinutes ELSE NULL END)) AS FLOAT) AS 'AVG Sed Active Mins/Day'
 FROM
 	daily_activity
 GROUP BY
@@ -1144,10 +1144,10 @@ AVG active distance in km by (corresponding) active minutes per day of the week
 SELECT 
 	DATEPART(WEEKDAY, ActivityDate) AS 'Day of Week'
 	,DATENAME(WEEKDAY, ActivityDate) AS 'Name Day of Week'
-	,ROUND(AVG(CASE WHEN VeryActiveMinutes > 0 THEN VeryActiveDistance ELSE NULL END), 1) AS 'AVG Very Active Dist km/Day'
-	,ROUND(AVG(CASE WHEN FairlyActiveMinutes > 0 THEN ModeratelyActiveDistance ELSE NULL END), 1) AS 'AVG Mod Active Dist km/Day'
-	,ROUND(AVG(CASE WHEN LightlyActiveMinutes > 0 THEN LightActiveDistance ELSE NULL END), 1) AS 'AVG Lt Active Dist km/Day'
-	,ROUND(AVG(CASE WHEN SedentaryMinutes > 0 THEN SedentaryActiveDistance ELSE NULL END), 3) AS 'AVG Sed Active Dist km/Day'
+	,CAST((ROUND(AVG(CASE WHEN VeryActiveMinutes > 0 THEN VeryActiveDistance ELSE NULL END), 1)) AS FLOAT) AS 'AVG Very Active Dist km/Day'
+	,CAST((ROUND(AVG(CASE WHEN FairlyActiveMinutes > 0 THEN ModeratelyActiveDistance ELSE NULL END), 1)) AS FLOAT) AS 'AVG Mod Active Dist km/Day'
+	,CAST((ROUND(AVG(CASE WHEN LightlyActiveMinutes > 0 THEN LightActiveDistance ELSE NULL END), 1)) AS FLOAT) AS 'AVG Lt Active Dist km/Day'
+	,CAST((ROUND(AVG(CASE WHEN SedentaryMinutes > 0 THEN SedentaryActiveDistance ELSE NULL END), 3)) AS FLOAT) AS 'AVG Sed Active Dist km/Day'
 FROM
 	daily_activity
 GROUP BY
@@ -1169,10 +1169,10 @@ However, there are slight differences, especially in the AVG SedentaryActiveMinu
 SELECT 
 	DATEPART(WEEKDAY, ActivityDate) AS 'Day of Week'
 	,DATENAME(WEEKDAY, ActivityDate) AS 'Name Day of Week'
-	,ROUND(AVG(CASE WHEN VeryActiveDistance > 0 THEN VeryActiveDistance ELSE NULL END), 1) AS 'AVG Very Active Dist km/Day'
-	,ROUND(AVG(CASE WHEN ModeratelyActiveDistance > 0 THEN ModeratelyActiveDistance ELSE NULL END), 1) AS 'AVG Mod Active Dist km/Day'
-	,ROUND(AVG(CASE WHEN LightActiveDistance > 0 THEN LightActiveDistance ELSE NULL END), 1) AS 'AVG Lt Active Dist km/Day'
-	,ROUND(AVG(CASE WHEN SedentaryActiveDistance > 0 THEN SedentaryActiveDistance ELSE NULL END), 3) AS 'AVG Sed Active Dist km/Day'
+	,CAST((ROUND(AVG(CASE WHEN VeryActiveDistance > 0 THEN VeryActiveDistance ELSE NULL END), 1)) AS FLOAT) AS 'AVG Very Active Dist km/Day'
+	,CAST((ROUND(AVG(CASE WHEN ModeratelyActiveDistance > 0 THEN ModeratelyActiveDistance ELSE NULL END), 1)) AS FLOAT) AS 'AVG Mod Active Dist km/Day'
+	,CAST((ROUND(AVG(CASE WHEN LightActiveDistance > 0 THEN LightActiveDistance ELSE NULL END), 1)) AS FLOAT) AS 'AVG Lt Active Dist km/Day'
+	,CAST((ROUND(AVG(CASE WHEN SedentaryActiveDistance > 0 THEN SedentaryActiveDistance ELSE NULL END), 3)) AS FLOAT) AS 'AVG Sed Active Dist km/Day'
 FROM
 	daily_activity
 GROUP BY
@@ -1201,10 +1201,10 @@ for that ActivityHour divided by 60).
 SELECT
 	DATEPART(WEEKDAY, ActivityHour) AS 'day of week'
 	,DATENAME(WEEKDAY, ActivityHour) AS 'Name Day of Week'
-	,AVG(StepTotal) AS 'AVG Total Steps Per hour'
-	,AVG(TotalIntensity) AS 'AVG Total Intensity Per Hour'
-	,ROUND(AVG(AverageIntensity), 3) AS 'AVG Hourly Intensity Average Per Hour'
-	,AVG(Calories) AS 'AVG Calories Per Hour'
+	,CAST((AVG(StepTotal)) AS FLOAT) AS 'AVG Total Steps Per hour'
+	,CAST((AVG(TotalIntensity)) AS FLOAT) AS 'AVG Total Intensity Per Hour'
+	,CAST((ROUND(AVG(AverageIntensity), 3)) AS FLOAT) AS 'AVG Hourly Intensity Average Per Hour'
+	,CAST((AVG(Calories)) AS FLOAT) AS 'AVG Calories Per Hour'
 FROM
 	hourly_activity
 GROUP BY
@@ -1219,7 +1219,7 @@ What time of day had the highest AVG step count?
 
 SELECT TOP 1
 	 DATEPART(HOUR, ActivityHour) AS 'Hour of Day'	-- 18:00
-	,AVG(StepTotal) AS 'AVG Steps/Hour'
+	,CAST(ROUND((AVG(StepTotal)), 0) AS FLOAT) AS 'AVG Steps/Hour'
 FROM
 	hourly_activity
 GROUP BY
@@ -1233,7 +1233,7 @@ What time of day had the lowest AVG step count?
 
 SELECT TOP 1
 	 DATEPART(HOUR, ActivityHour) AS 'Hour of Day'	-- 03:00
-	,AVG(StepTotal) AS 'AVG Steps/Hour'
+	,CAST((AVG(StepTotal)) AS FLOAT) AS 'AVG Steps/Hour'
 FROM
 	hourly_activity
 GROUP BY
@@ -1247,7 +1247,7 @@ Showing a full day distribution of AVG step count per hour
 
 SELECT
 	 DATEPART(HOUR, ActivityHour) AS 'Hour of Day'
-	,AVG(StepTotal) AS 'AVG Steps/Hour'
+	,CAST(ROUND((AVG(StepTotal)), 0) AS FLOAT) AS 'AVG Steps/Hour'
 FROM
 	hourly_activity
 GROUP BY
