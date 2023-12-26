@@ -1039,18 +1039,18 @@ AVG daily total dailyActivity by day of the week.
 SELECT
 	DATEPART(WEEKDAY, ActivityDate) AS 'day of week'
 	,DATENAME(WEEKDAY, ActivityDate) AS 'Name Day of Week'
-	,AVG(TotalSteps) AS 'AVG Tot Steps/Day'
+	,CAST(((AVG(TotalSteps))) AS FLOAT) AS 'AVG Tot Steps/Day'
 	--,ROUND(AVG(TotalDistance), 1) AS 'AVG Tot Dist km/Day'
 	--,ROUND(AVG(TrackerDistance), 1) AS 'AVG Tracked Dist km/Day'
 	--,ROUND(AVG(VeryActiveDistance), 1) AS 'AVG Very Active Dist km/Day'
 	--,ROUND(AVG(ModeratelyActiveDistance), 1) AS 'AVG Mod Active Dist km/Day'
 	--,ROUND(AVG(LightActiveDistance), 1) AS 'AVG Lt Active Dist km/Day'
 	--,ROUND(AVG(SedentaryActiveDistance), 3) AS 'AVG Sed Active Dist km/Day'
-	,AVG(VeryActiveMinutes) AS 'AVG Very Active Mins/Day'
-	,AVG(FairlyActiveMinutes) AS 'AVG Mod Active Mins/Day'
-	,AVG(LightlyActiveMinutes) AS 'AVG Lt Active Mins/Day'
-	,AVG(SedentaryMinutes) AS 'AVG Sed Active Mins/Day'
-	,AVG(Calories) AS 'AVG Cals/Day'
+	,CAST((AVG(VeryActiveMinutes)) AS FLOAT) AS 'AVG Very Active Mins/Day'
+	,CAST((AVG(FairlyActiveMinutes)) AS FLOAT) AS 'AVG Mod Active Mins/Day'
+	,CAST((AVG(LightlyActiveMinutes)) AS FLOAT) AS 'AVG Lt Active Mins/Day'
+	,CAST((AVG(SedentaryMinutes)) AS FLOAT) AS 'AVG Sed Active Mins/Day'
+	,CAST((AVG(Calories)) AS FLOAT) AS 'AVG Cals/Day'
 FROM
 	daily_activity
 GROUP BY
@@ -1071,7 +1071,7 @@ This query is useful to show the variance in average daily distance between the 
 
 SELECT
 	 Id
-	,ROUND(AVG(TotalDistance), 1) AS 'AVG total Dist in km/Day'
+	,CAST((ROUND(AVG(TotalDistance), 1)) AS FLOAT) AS 'AVG total Dist in km/Day'
 FROM
 	daily_activity
 GROUP BY
@@ -1086,7 +1086,7 @@ However, that is total distance and does not group by activity intensity.
 */
 
 SELECT
-	ROUND(AVG(TotalDistance), 1) AS 'AVG total Dist in km/Day' -- 5.5
+	CAST(ROUND(AVG(TotalDistance), 1) AS FLOAT) AS 'AVG total Dist in km/Day' -- 5.5
 FROM
 	daily_activity;	
 
