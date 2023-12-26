@@ -1201,10 +1201,10 @@ for that ActivityHour divided by 60).
 SELECT
 	DATEPART(WEEKDAY, ActivityHour) AS 'day of week'
 	,DATENAME(WEEKDAY, ActivityHour) AS 'Name Day of Week'
-	,CAST((AVG(StepTotal)) AS FLOAT) AS 'AVG Total Steps Per hour'
-	,CAST((AVG(TotalIntensity)) AS FLOAT) AS 'AVG Total Intensity Per Hour'
+	,CAST((ROUND(AVG(StepTotal), 0)) AS FLOAT) AS 'AVG Total Steps Per hour'
+	,CAST((ROUND(AVG(TotalIntensity), 1)) AS FLOAT) AS 'AVG Total Intensity Per Hour'
 	,CAST((ROUND(AVG(AverageIntensity), 3)) AS FLOAT) AS 'AVG Hourly Intensity Average Per Hour'
-	,CAST((AVG(Calories)) AS FLOAT) AS 'AVG Calories Per Hour'
+	,CAST((ROUND(AVG(Calories), 1)) AS FLOAT) AS 'AVG Calories Per Hour'
 FROM
 	hourly_activity
 GROUP BY
@@ -1233,7 +1233,7 @@ What time of day had the lowest AVG step count?
 
 SELECT TOP 1
 	 DATEPART(HOUR, ActivityHour) AS 'Hour of Day'	-- 03:00
-	,CAST((AVG(StepTotal)) AS FLOAT) AS 'AVG Steps/Hour'
+	,CAST(ROUND((AVG(StepTotal)), 0) AS FLOAT) AS 'AVG Steps/Hour'
 FROM
 	hourly_activity
 GROUP BY
@@ -1261,7 +1261,7 @@ Distribution of AVG calories burned per hour of the day
 
 SELECT
 	 DATEPART(HOUR, ActivityHour) AS 'Hour of Day'
-	,AVG(Calories) AS 'AVG Cals/Hour'
+	,CAST(ROUND((AVG(Calories)), 0) AS FLOAT) AS 'AVG Cals/Hour'
 FROM
 	hourly_activity
 GROUP BY
@@ -1279,8 +1279,8 @@ The higher the average steps taken corresponds with higher average calories burn
 SELECT 
 	DATEPART(WEEKDAY, ActivityDate) AS 'Day of Week'
 	,DATENAME(WEEKDAY, ActivityDate) AS 'Name Day of Week'
-	,ROUND(AVG(CASE WHEN TotalSteps > 0 THEN Calories ELSE NULL END), 2) AS 'AVG Calories/Day'
-	,ROUND(AVG(CASE WHEN Calories > 0 THEN TotalSteps ELSE NULL END), 2) AS 'AVG Total Steps/Day'
+	,CAST((ROUND(AVG(CASE WHEN TotalSteps > 0 THEN Calories ELSE NULL END), 0)) AS FLOAT) AS 'AVG Calories/Day'
+	,CAST((ROUND(AVG(CASE WHEN Calories > 0 THEN TotalSteps ELSE NULL END), 0)) AS FLOAT) AS 'AVG Total Steps/Day'
 	
 FROM
 	daily_activity
@@ -1297,7 +1297,7 @@ Comparison of total minutes asleep and total time in bed using the sleepDay tabl
 SELECT
 	AVG(TotalMinutesAsleep) AS 'AVG Mins Asleep'
 	,ROUND((CAST((AVG(TotalMinutesAsleep)) AS FLOAT)/60), 2) AS 'AVG Hours Asleep'
-	,AVG(TotalTimeInBed) AS 'AVG Mins in Bed'
+	,CAST(ROUND((AVG(TotalTimeInBed)), 0) AS FLOAT) AS 'AVG Mins in Bed'
 	,ROUND((CAST((AVG(TotalTimeInBed)) AS FLOAT)/60), 2) AS 'AVG Hours in Bed'
 	,ROUND((((CAST(AVG(TotalMinutesAsleep) AS FLOAT) / CAST(AVG(TotalTimeInBed) AS FLOAT)) * 100)), 0) AS 'Sleep Time % in Bed'
 FROM
@@ -1357,18 +1357,18 @@ AVG daily total dailyActivity by day of the week.
 SELECT
 	DATEPART(WEEKDAY, ActivityDate) AS 'day of week'
 	,DATENAME(WEEKDAY, ActivityDate) AS 'Name Day of Week'
-	,AVG(TotalSteps) AS 'AVG Tot Steps/Day'
-	,ROUND(AVG(TotalDistance), 1) AS 'AVG Tot Dist km/Day'
-	,ROUND(AVG(TrackerDistance), 1) AS 'AVG Tracked Dist km/Day'
-	,ROUND(AVG(VeryActiveDistance), 1) AS 'AVG Very Active Dist km/Day'
-	,ROUND(AVG(ModeratelyActiveDistance), 1) AS 'AVG Mod Active Dist km/Day'
-	,ROUND(AVG(LightActiveDistance), 1) AS 'AVG Lt Active Dist km/Day'
-	,ROUND(AVG(SedentaryActiveDistance), 3) AS 'AVG Sed Active Dist km/Day'
-	,AVG(VeryActiveMinutes) AS 'AVG Very Active Mins/Day'
-	,AVG(FairlyActiveMinutes) AS 'AVG Mod Active Mins/Day'
-	,AVG(LightlyActiveMinutes) AS 'AVG Lt Active Mins/Day'
-	,AVG(SedentaryMinutes) AS 'AVG Sed Active Mins/Day'
-	,AVG(Calories) AS 'AVG Cals/Day'
+	,CAST(ROUND((AVG(TotalSteps)), 0) AS FLOAT) AS 'AVG Tot Steps/Day'
+	,CAST(ROUND(AVG(TotalDistance), 1) AS FLOAT) AS 'AVG Tot Dist km/Day'
+	,CAST(ROUND(AVG(TrackerDistance), 1) AS FLOAT) AS 'AVG Tracked Dist km/Day'
+	,CAST(ROUND(AVG(VeryActiveDistance), 1) AS FLOAT) AS 'AVG Very Active Dist km/Day'
+	,CAST(ROUND(AVG(ModeratelyActiveDistance), 1) AS FLOAT) AS 'AVG Mod Active Dist km/Day'
+	,CAST(ROUND(AVG(LightActiveDistance), 1) AS FLOAT) AS 'AVG Lt Active Dist km/Day'
+	,CAST(ROUND(AVG(SedentaryActiveDistance), 3) AS FLOAT) AS 'AVG Sed Active Dist km/Day'
+	,CAST(ROUND(AVG(VeryActiveMinutes), 0) AS FLOAT) AS 'AVG Very Active Mins/Day'
+	,CAST(ROUND(AVG(FairlyActiveMinutes), 0) AS FLOAT) AS 'AVG Mod Active Mins/Day'
+	,CAST(ROUND(AVG(LightlyActiveMinutes), 0) AS FLOAT) AS 'AVG Lt Active Mins/Day'
+	,CAST(ROUND(AVG(SedentaryMinutes), 0) AS FLOAT) AS 'AVG Sed Active Mins/Day'
+	,CAST(ROUND(AVG(Calories), 0) AS FLOAT) AS 'AVG Cals/Day'
 FROM
 	daily_activity
 GROUP BY
@@ -1460,12 +1460,12 @@ Truncated AVG dailyActivity table without distances
 SELECT
 	DATEPART(WEEKDAY, ActivityDate) AS 'day of week'
 	,DATENAME(WEEKDAY, ActivityDate) AS 'Name Day of Week'
-	,AVG(TotalSteps) AS 'AVG Tot Steps/Day'
-	,AVG(VeryActiveMinutes) AS 'AVG Very Active Mins/Day'
-	,AVG(FairlyActiveMinutes) AS 'AVG Mod Active Mins/Day'
-	,AVG(LightlyActiveMinutes) AS 'AVG Lt Active Mins/Day'
-	,AVG(SedentaryMinutes) AS 'AVG Sed Active Mins/Day'
-	,AVG(Calories) AS 'AVG Cals/Day'
+	,CAST(ROUND(AVG(TotalSteps), 0) AS FLOAT) AS 'AVG Tot Steps/Day'
+	,CAST(ROUND(AVG(VeryActiveMinutes), 0) AS FLOAT) AS 'AVG Very Active Mins/Day'
+	,CAST(ROUND(AVG(FairlyActiveMinutes), 0) AS FLOAT) AS 'AVG Mod Active Mins/Day'
+	,CAST(ROUND(AVG(LightlyActiveMinutes), 0) AS FLOAT) AS 'AVG Lt Active Mins/Day'
+	,CAST(ROUND(AVG(SedentaryMinutes), 0) AS FLOAT) AS 'AVG Sed Active Mins/Day'
+	,CAST(ROUND(AVG(Calories), 0) AS FLOAT) AS 'AVG Cals/Day'
 FROM
 	daily_activity
 GROUP BY
@@ -1506,12 +1506,12 @@ AVG dailyActivity for steps, time and calories grouped by Id
 
 SELECT
 	Id
-	,AVG(TotalSteps) AS 'AVG Tot Steps/Day'
-	,AVG(VeryActiveMinutes) AS 'AVG Very Active Mins/Day'
-	,AVG(FairlyActiveMinutes) AS 'AVG Mod Active Mins/Day'
-	,AVG(LightlyActiveMinutes) AS 'AVG Lt Active Mins/Day'
-	,AVG(SedentaryMinutes) AS 'AVG Sed Active Mins/Day'
-	,AVG(Calories) AS 'AVG Cals/Day'
+	,CAST(ROUND(AVG(TotalSteps), 0) AS FLOAT) AS 'AVG Tot Steps/Day'
+	,CAST(ROUND(AVG(VeryActiveMinutes), 0) AS FLOAT) AS 'AVG Very Active Mins/Day'
+	,CAST(ROUND(AVG(FairlyActiveMinutes), 0) AS FLOAT) AS 'AVG Mod Active Mins/Day'
+	,CAST(ROUND(AVG(LightlyActiveMinutes), 0) AS FLOAT) AS 'AVG Lt Active Mins/Day'
+	,CAST(ROUND(AVG(SedentaryMinutes), 0) AS FLOAT) AS 'AVG Sed Active Mins/Day'
+	,CAST(ROUND(AVG(Calories), 0) AS FLOAT) AS 'AVG Cals/Day'
 FROM
 	daily_activity
 GROUP BY
