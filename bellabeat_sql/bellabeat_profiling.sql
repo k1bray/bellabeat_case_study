@@ -27,7 +27,7 @@ WHERE
 ORDER BY
 	TotalSteps DESC;
 
--- Simply another way to write the query above and get the same results.
+-- Another way to write the query above and get the same results.
 
 SELECT
 	*
