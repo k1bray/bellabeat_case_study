@@ -104,6 +104,34 @@ GROUP BY
 ORDER BY
 	avg_daily_steps DESC;
 
+-- Here's another way to write the query above using a subquery instead of a temp table
+SELECT
+	DISTINCT act.Id
+	,COUNT(CASE WHEN VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes = 1440 
+		THEN 1 ELSE NULL END) as 'Full Day'
+	,COUNT(CASE WHEN VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes != 1440 
+		THEN 0 ELSE NULL END) as 'Partial Day'
+	,avg_daily_steps
+FROM	
+	daily_activity AS act
+LEFT JOIN
+(
+SELECT
+	DISTINCT(Id)
+	,CAST((ROUND(AVG(TotalSteps), 0)) AS FLOAT) AS avg_daily_steps
+FROM	
+	daily_activity
+GROUP BY
+	Id
+) AS avg
+		ON act.Id = avg.Id
+GROUP BY
+	act.Id
+	,avg_daily_steps
+--	,ActivityDate
+ORDER BY
+	'Full Day' DESC;
+
 /*
 Using a single Id record to double check the figures from the previous query.
 */
