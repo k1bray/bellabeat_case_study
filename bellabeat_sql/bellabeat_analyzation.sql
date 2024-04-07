@@ -215,7 +215,7 @@ ORDER BY
 SELECT
 	Id
 	,ROUND(AVG(total_active_hours), 1) AS avg_active_hours_per_Id
-	,CAST((ROUND(AVG(TotalSteps), 1))AS FLOAT) AS avg_daily_steps_per_Id
+	,ROUND(CAST((ROUND(AVG(TotalSteps), 1))AS FLOAT), 0) AS avg_daily_steps_per_Id		-- no partial steps as decimal
 FROM
 	#daily_active_hours
 GROUP BY
