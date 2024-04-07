@@ -298,7 +298,7 @@ SELECT
 	,DATENAME(WEEKDAY, ActivityDate) AS 'Day of Week'
 	,COUNT(*) AS 'Daily Records'
 	,CAST((ROUND(AVG(TotalSteps), 0)) AS FLOAT) AS 'AVG Steps Per Day'
-	,CAST((ROUND(AVG(Calories), 1)) AS FLOAT) AS 'AVG Calories Per Day'
+	,CAST((ROUND(AVG(Calories), 0)) AS FLOAT) AS 'AVG Calories Per Day'
 	,CAST((ROUND(AVG(TotalDistance), 1)) AS FLOAT) AS 'AVG Total Distance Per Day'
 	,CAST((ROUND(AVG(VeryActiveMinutes), 0)) AS FLOAT) AS 'AVG Very Active Minutes Per Day'
 	,CAST((ROUND(AVG(FairlyActiveMinutes), 0)) AS FLOAT) AS 'AVG Fairly Active Minutes Per Day'
