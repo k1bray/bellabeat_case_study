@@ -351,7 +351,8 @@ FROM
 GROUP BY
 	daily_activity.Id
 ORDER BY
-	count_of_daily_sleep_records DESC;
+	count_of_daily_sleep_records DESC
+	,count_of_daily_activity_records DESC;
 
 /*
 Finding the AVG hours asleep and time spent awake in bed per user Id for the users.
