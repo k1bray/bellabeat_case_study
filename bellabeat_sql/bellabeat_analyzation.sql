@@ -333,7 +333,7 @@ ORDER BY
 	DATEPART(HOUR, ActivityHour);
 
 /*
-Exploring how users are wearing their devices while they sleep.
+Exploring how users are wearing their devices while they sleep vs how they wear them during the day.
 Finding a count of sleep records per user Id.  To get a complete list of all Id's in the study
 I JOINed the daily_sleep table with the daily_activity table.  This shows which Id's have no
 records in the daily_sleep table.
@@ -341,6 +341,7 @@ records in the daily_sleep table.
 
 SELECT
 	daily_activity.Id
+	,COUNT(ActivityDate) AS count_of_daily_activity_records
 	,COUNT(SleepDay) AS count_of_daily_sleep_records
 FROM	
 	daily_activity
