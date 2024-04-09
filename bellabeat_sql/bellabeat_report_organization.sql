@@ -400,6 +400,7 @@ it correlates the actual weights with the beginning and end dates.  This elimina
 may have fluctuated during the study was accounted for.
 */
 -- Identifying users weight change over the study period
+
 SELECT
     Id,
     CASE 
@@ -422,7 +423,8 @@ FROM
     FROM
         weight_log start_wt
     LEFT JOIN 
-        weight_log end_wt ON start_wt.Id = end_wt.Id
+        weight_log end_wt 
+            ON start_wt.Id = end_wt.Id
     GROUP BY 
         start_wt.Id
 ) AS max_min_dates
