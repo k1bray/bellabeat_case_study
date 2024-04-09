@@ -341,14 +341,20 @@ ORDER BY
 
 /*
 Finding the AVG weight per user in kg and converted to pounds
-
-No one lost weight during the study.  They either stayed the same or gained weight.
 */
+
+SELECT * FROM weight_log;
+
+SELECT 
+    MIN(Date),          -- '2016-04-12'
+    MAX(Date)           -- '2016-05-12'
+FROM weight_log;
 
 SELECT
     Id,
     avg_kg_per_user AS 'AVG Weight(kg) per User',
     avg_lbs_per_user AS 'AVG Weight(lbs) per User',
+    avg_bmi_per_user AS 'AVG BMI per User',
     max_wt,
     min_wt,
     CASE
@@ -362,6 +368,7 @@ SELECT
 	Id
 	,CAST((ROUND(AVG(WeightKg), 1)) AS FLOAT) AS avg_kg_per_user
 	,CAST((ROUND(AVG(WeightPounds), 1)) AS FLOAT) AS avg_lbs_per_user
+    ,CAST((ROUND(AVG(BMI), 1)) AS FLOAT) AS avg_bmi_per_user
 	,MAX(WeightKg) AS max_wt
 	,MIN(WeightKg) AS min_wt
 FROM
@@ -373,6 +380,86 @@ GROUP BY
     Id,
     avg_kg_per_user,
     avg_lbs_per_user,
+    avg_bmi_per_user,
     max_wt,
     min_wt
+;
+
+SELECT
+    *
+	-- Id
+	-- ,CAST((ROUND(AVG(WeightKg), 1)) AS FLOAT) AS 'AVG Weight(kg) per User'
+	-- ,CAST((ROUND((AVG(WeightKg) * 2.20462), 1)) AS FLOAT) AS 'AVG Weight(lbs) per User'
+	-- ,MAX(WeightKg) AS max_wt
+	-- ,MIN(WeightKg) AS min_weight
+FROM
+	weight_log
+WHERE
+	Id = '6962181067'
+	OR
+	Id = '8877689391'
+    OR
+    Id = '4558609924'
+GROUP BY
+	Id
+ORDER BY
+	'AVG Weight(kg) per User' DESC;
+
+
+/*
+Did anyone lose/gain weight during the study period?
+*/
+
+-- Identifying users weight change over the study period
+SELECT
+    Id,
+    CASE 
+        WHEN begin_wt > end_wt THEN 'loser'
+        WHEN begin_wt = end_wt THEN 'stagnant'
+        ELSE 'gainer'
+    END AS wt_change
+FROM
+(
+SELECT
+    start_wt.Id AS Id,
+    MIN(start_wt.Date) AS begin_date,
+    start_wt.WeightKg AS begin_wt,
+    MAX(end_wt.Date) AS end_date,
+    end_wt.WeightKg AS end_wt
+FROM weight_log start_wt
+    JOIN weight_log end_wt
+        ON start_wt.Id = end_wt.Id
+GROUP BY 
+    start_wt.Id, 
+    start_wt.WeightKg,
+    end_wt.WeightKg
+) AS max_min_dates
+GROUP BY 
+    Id,
+    begin_wt,
+    end_wt
+ORDER BY wt_change
+;
+
+-- Counting groups of users in each weight change category
+SELECT
+    COUNT(CASE WHEN begin_wt > end_wt THEN 1 ELSE NULL END) AS 'loser',         -- 7 loser
+    COUNT(CASE WHEN begin_wt = end_wt THEN 1 ELSE NULL END) AS 'stagnant',      -- 13 stagnant
+    COUNT(CASE WHEN end_wt > begin_wt THEN 1 ELSE NULL END) AS 'gainer'         -- 7 gainer
+FROM
+(
+SELECT
+    start_wt.Id AS Id,
+    MIN(start_wt.Date) AS begin_date,
+    start_wt.WeightKg AS begin_wt,
+    MAX(end_wt.Date) AS end_date,
+    end_wt.WeightKg AS end_wt
+FROM weight_log start_wt
+    JOIN weight_log end_wt
+        ON start_wt.Id = end_wt.Id
+GROUP BY 
+    start_wt.Id, 
+    start_wt.WeightKg,
+    end_wt.WeightKg
+) AS max_min_dates
 ;
