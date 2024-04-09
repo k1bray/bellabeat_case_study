@@ -4,18 +4,18 @@ SELECT * FROM daily_calories;
 
 -- Finding the average calories burned by day of the week
 SELECT
-    wkday_num
-    ,weekday
-    ,CAST(AVG(Calories) AS DECIMAL (10,0)) AS avg_calories
+    wkday_num,
+    weekday,
+    CAST(AVG(Calories) AS DECIMAL (10,0)) AS avg_calories
 FROM
 (
-SELECT 
-    Id
-    ,ActivityDay
-    ,DATEPART(WEEKDAY, ActivityDay) AS wkday_num
-    ,DATENAME(WEEKDAY, ActivityDay) AS weekday
-    ,Calories
-FROM daily_calories
+    SELECT 
+        Id
+        ,ActivityDay
+        ,DATEPART(WEEKDAY, ActivityDay) AS wkday_num
+        ,DATENAME(WEEKDAY, ActivityDay) AS weekday
+        ,Calories
+    FROM daily_calories
 ) AS cal_w_weekday
 GROUP BY wkday_num
     ,weekday
@@ -37,20 +37,20 @@ ORDER BY
 
 -- Complete averages of the daily_activity table grouped by user Id
 SELECT 
-    id,
-    CAST(AVG(TotalSteps) AS DECIMAL(10,0)) AS avg_steps,
-    CAST(AVG(TotalDistance) AS DECIMAL(10,1)) AS avg_total_distance,
-    CAST(AVG(TrackerDistance) AS DECIMAL(10,1)) AS avg_tracker_distance,
-    CAST(AVG(LoggedActivitiesDistance) AS DECIMAL(10,1)) AS avg_log_act_dist,
-    CAST(AVG(VeryActiveDistance) AS DECIMAL(10,1)) AS avg_very_act_dist,
-    CAST(AVG(ModeratelyActiveDistance) AS DECIMAL(10,1)) AS avg_mod_act_dist,
-    CAST(AVG(LightActiveDistance) AS DECIMAL(10,1)) AS avg_lt_act_dist,
-    CAST(AVG(SedentaryActiveDistance) AS DECIMAL(10,1)) AS avg_sed_act_dist,
-    CAST(AVG(VeryActiveMinutes) AS DECIMAL(10,0)) AS avg_very_act_min,
-    CAST(AVG(FairlyActiveMinutes) AS DECIMAL(10,0)) AS avg_fairly_act_min,
-    CAST(AVG(LightlyActiveMinutes) AS DECIMAL(10,0)) AS avg_lt_act_min,
-    CAST(AVG(SedentaryMinutes) AS DECIMAL(10,0)) AS avg_sed_min,
-    CAST(AVG(Calories) AS DECIMAL(10,0)) AS avg_calories
+    id
+    ,CAST(AVG(TotalSteps) AS DECIMAL(10,0)) AS avg_steps
+    ,CAST(AVG(TotalDistance) AS DECIMAL(10,1)) AS avg_total_distance
+    ,CAST(AVG(TrackerDistance) AS DECIMAL(10,1)) AS avg_tracker_distance
+    ,CAST(AVG(LoggedActivitiesDistance) AS DECIMAL(10,1)) AS avg_log_act_dist
+    ,CAST(AVG(VeryActiveDistance) AS DECIMAL(10,1)) AS avg_very_act_dist
+    ,CAST(AVG(ModeratelyActiveDistance) AS DECIMAL(10,1)) AS avg_mod_act_dist
+    ,CAST(AVG(LightActiveDistance) AS DECIMAL(10,1)) AS avg_lt_act_dist
+    ,CAST(AVG(SedentaryActiveDistance) AS DECIMAL(10,1)) AS avg_sed_act_dist
+    ,CAST(AVG(VeryActiveMinutes) AS DECIMAL(10,0)) AS avg_very_act_min
+    ,CAST(AVG(FairlyActiveMinutes) AS DECIMAL(10,0)) AS avg_fairly_act_min
+    ,CAST(AVG(LightlyActiveMinutes) AS DECIMAL(10,0)) AS avg_lt_act_min
+    ,CAST(AVG(SedentaryMinutes) AS DECIMAL(10,0)) AS avg_sed_min
+    ,CAST(AVG(Calories) AS DECIMAL(10,0)) AS avg_calories
 FROM daily_activity
 GROUP BY Id 
 ;
@@ -74,13 +74,11 @@ The vast majority of users were active for most of the study.
 There were no users that were inactive for the entire length of the study.
 */
 
-SELECT * FROM daily_activity;
-
 SELECT COUNT(DISTINCT Id) FROM daily_activity;      -- 33 distinct users
 
 SELECT
-    Id,
-    COUNT(DISTINCT ActivityDate) AS days_active
+    Id
+    ,COUNT(DISTINCT ActivityDate) AS days_active
 FROM daily_activity
 GROUP BY ID 
 ORDER BY days_active DESC
@@ -103,21 +101,15 @@ of clothing, which some users may find more comfortable than wearing a smartwatc
 */
 
 SELECT  
-    COUNT(DISTINCT da.Id) AS daily_activity_users,      -- 33 users
-    COUNT(DISTINCT ds.Id) AS daily_sleep_users,         -- 24 users
-    COUNT(DISTINCT wl.id) AS weight_log_users           -- 8 users
+    COUNT(DISTINCT da.Id) AS daily_activity_users      -- 33 users
+    ,COUNT(DISTINCT ds.Id) AS daily_sleep_users         -- 24 users
+    ,COUNT(DISTINCT wl.id) AS weight_log_users           -- 8 users
 FROM daily_activity da
     FULL JOIN daily_sleep ds
         ON da.id = ds.id
     FULL JOIN weight_log wl 
         ON ds.id = wl.id
 ;
-
-SELECT  COUNT(DISTINCT id) AS users      -- 14 users
-FROM seconds_heartrate;
-
-SELECT  COUNT(DISTINCT id) AS users      -- 22 users
-FROM minute_activity;
 
 /*
 **Session Duration**: Measure the average duration of each session users spend interacting with their devices. This metric 
@@ -138,13 +130,13 @@ FROM
 	daily_activity AS act
 LEFT JOIN
 (
-SELECT
-	DISTINCT(Id)
-	,CAST((ROUND(AVG(TotalSteps), 0)) AS FLOAT) AS avg_daily_steps
-FROM	
-	daily_activity
-GROUP BY
-	Id
+    SELECT
+	    DISTINCT(Id)
+	    ,CAST((ROUND(AVG(TotalSteps), 0)) AS FLOAT) AS avg_daily_steps
+    FROM	
+	    daily_activity
+    GROUP BY
+	    Id
 ) AS avg
 		ON act.Id = avg.Id
 GROUP BY
@@ -155,8 +147,8 @@ ORDER BY
 	'Full Day' DESC;
 
 SELECT 
-     id,
-     COUNT(DISTINCT ActivityMinute) AS minutes
+    id
+    ,COUNT(DISTINCT ActivityMinute) AS minutes
 FROM minute_activity
 GROUP BY id
 ORDER BY minutes DESC
@@ -171,16 +163,10 @@ The weight_log table is the only one that would require use of a seperate device
 automatically, or the data is then entered manually by the user.  
 */
 
-SELECT * FROM weight_log;
-
-SELECT * FROM weight_log WHERE IsManualReport = 'True' ORDER BY Id;
-
-SELECT * FROM weight_log WHERE IsManualReport = 'False' ORDER BY Id;
-
 SELECT  
-    COUNT(DISTINCT logId) AS total_records                                                                  -- 56 total records
-    ,COUNT(DISTINCT CASE WHEN IsManualReport = 'True' THEN LogId ELSE NULL END) AS true_manual_report       -- 30 True records
-    ,COUNT(DISTINCT CASE WHEN IsManualReport = 'False' THEN LogId ELSE NULL END) AS false_manual_report     -- 26 false records
+    COUNT(logId) AS total_records                                                                  -- 67 total records
+    ,COUNT(CASE WHEN IsManualReport = 'True' THEN LogId ELSE NULL END) AS true_manual_report       -- 41 True records
+    ,COUNT(CASE WHEN IsManualReport = 'False' THEN LogId ELSE NULL END) AS false_manual_report     -- 26 false records
 FROM weight_log;
 
 SELECT  
@@ -188,6 +174,7 @@ SELECT
     ,COUNT(DISTINCT CASE WHEN IsManualReport = 'True' THEN Id ELSE NULL END) AS true_manual_report       -- 5 True records
     ,COUNT(DISTINCT CASE WHEN IsManualReport = 'False' THEN Id ELSE NULL END) AS false_manual_report     -- 3 false records
 FROM weight_log;
+
 /*
 There are no users that used both manual and automatic reporting of their weight.
 This means that each user was consistent in their reporting method and that no one
@@ -199,20 +186,16 @@ and the other used some sort of an integrated device.
 No insight can confidently be gained from this data other than the majority of the users that did utilize weight logging
 manually reported their records.  Also, that the vast majority of the sample user pool did not utilize the weight logging feature at all.
 */
+
 SELECT
-    Id,
-    COUNT(DISTINCT LogId) AS sessions,
-    COUNT(DISTINCT CASE WHEN IsManualReport = 'True' THEN LogId ELSE NULL END) AS true_report,
-    COUNT(DISTINCT CASE WHEN IsManualReport = 'False' THEN LogId ELSE NULL END) AS false_report
+    Id
+    ,COUNT(DISTINCT LogId) AS sessions
+    ,COUNT(CASE WHEN IsManualReport = 'True' THEN LogId ELSE NULL END) AS true_report
+    ,COUNT(CASE WHEN IsManualReport = 'False' THEN LogId ELSE NULL END) AS false_report
 FROM weight_log
 GROUP BY Id
 ORDER BY sessions DESC
 ;
-
-SELECT *
-FROM weight_log
-WHERE Id = 6962181067
-ORDER BY IsManualReport ASC;
 
 /*
 Calorie burn to intensity
@@ -348,8 +331,8 @@ Finding the AVG weight per user in kg and converted to pounds
 SELECT * FROM weight_log;
 
 SELECT 
-    MIN(Date),          -- '2016-04-12'
-    MAX(Date)           -- '2016-05-12'
+    MIN(Date)          -- '2016-04-12'
+    ,MAX(Date)           -- '2016-05-12'
 FROM weight_log;
 
 /*
@@ -370,17 +353,17 @@ SELECT
     END AS wt_change
 FROM
 (
-SELECT
-	Id
-	,CAST((ROUND(AVG(WeightKg), 1)) AS FLOAT) AS avg_kg_per_user
-	,CAST((ROUND(AVG(WeightPounds), 1)) AS FLOAT) AS avg_lbs_per_user
-    ,CAST((ROUND(AVG(BMI), 1)) AS FLOAT) AS avg_bmi_per_user
-	,MAX(WeightKg) AS max_wt
-	,MIN(WeightKg) AS min_wt
-FROM
-	weight_log
-GROUP BY
-	Id
+    SELECT
+	    Id
+	    ,CAST((ROUND(AVG(WeightKg), 1)) AS FLOAT) AS avg_kg_per_user
+	    ,CAST((ROUND(AVG(WeightPounds), 1)) AS FLOAT) AS avg_lbs_per_user
+     ,CAST((ROUND(AVG(BMI), 1)) AS FLOAT) AS avg_bmi_per_user
+	    ,MAX(WeightKg) AS max_wt
+	    ,MIN(WeightKg) AS min_wt
+    FROM
+	    weight_log
+    GROUP BY
+	    Id
 ) AS weights
 GROUP BY 
     Id,
