@@ -54,20 +54,6 @@ GROUP BY Id
 ;
 
 /*
-**Device Adoption Rate**: Track the number of users adopting wearable fitness tracking devices over time. This metric can 
-provide insights into the overall growth of the wearable market.
-
-Duration of study is too short
-*/
-
-/*
-**Retention Rate**: Measure the percentage of users who continue to use their devices over a specific period. This metric 
-indicates user satisfaction and engagement levels.
-
-Duration of study is too short
-*/
-
-/*
 **Daily Active Users (DAU)**: Determine the number of unique users who interact with their devices on a daily basis. 
 DAU reflects the frequency of device usage.
 
@@ -102,12 +88,13 @@ ORDER BY days_active DESC
 **Feature Usage**: Analyze which features of the wearable devices are most frequently used by users. This can include step 
 tracking, heart rate monitoring, sleep tracking, etc.
 
-We aren't furnished with information regarding the devices that each user has, or whether all users have access to the same suite
+We aren't furnished with information regarding the devices that each user has, or whether all users had access to the same suite
 of functionality.
-What is apparent from the data is that not all features available from their fitness trackers were utilized.  Most likely,
+Hypothetically, and for the sake of the study, if we assume that all users had access to the same suite of feature functionality, 
+what is apparent from the data is that not all features available from their fitness trackers were utilized.  Most likely, 
 much of the data was collected passively and required no intervention from the user.  Features such as weight logging would 
 require the user to (remember or be motivated to) mannualy enter the data and/or to purchase a separate device that was 
-compatible with their fitness trackers to collect the data.
+compatible with their fitness trackers to collect the data and report it to the app on their behalf.
 The discrepancy in feature usage levels between the daily_activity and daily_sleep tables could be explained by users that 
 decide not to wear their tracker while sleeping.  One advantage of the Bellabeat leaf is that it can clipped to an article 
 of clothing, which some users may find more comfortable than wearing a smartwatch while they sleep.
@@ -124,8 +111,11 @@ FROM daily_activity da
         ON ds.id = wl.id
 ;
 
-SELECT  COUNT(DISTINCT id)
+SELECT  COUNT(DISTINCT id) AS users      -- 14 users
 FROM seconds_heartrate;
+
+SELECT  COUNT(DISTINCT id) AS users      -- 22 users
+FROM minute_activity;
 
 /*
 **Session Duration**: Measure the average duration of each session users spend interacting with their devices. This metric 
@@ -170,21 +160,20 @@ GROUP BY id
 ORDER BY minutes DESC
 ;
 
-SELECT COUNT(DISTINCT id) FROM minute_activity;         -- 22 users
-
-/*
-**Geographical Distribution**: Explore the geographical distribution of wearable device users. This can help identify 
-regional trends and preferences.
-
-Geographic data was not included in the collection process
-*/
-
 /*
 **Device Interoperability**: Investigate whether users are integrating their wearable devices with other smart devices or 
 platforms (e.g., fitness apps, smart scales, smartwatches).
+
+The majority of the data is collected passively by the Fitbit wearable tracking device.
+The weight_log table is the only one that would require use of a seperate device whether it is linked and collects the data 
+automatically, or the data is then entered manually by the user.  
 */
 
 SELECT * FROM weight_log;
+
+SELECT * FROM weight_log WHERE IsManualReport = 'True' ORDER BY Id;
+
+SELECT * FROM weight_log WHERE IsManualReport = 'False' ORDER BY Id;
 
 SELECT  
     COUNT(DISTINCT logId) AS total_records                                                                  -- 56 total records
@@ -193,9 +182,9 @@ SELECT
 FROM weight_log;
 
 SELECT  
-    COUNT(DISTINCT logId) AS total_records                                                                  -- 56 total records
-    ,COUNT(DISTINCT CASE WHEN IsManualReport = 'True' THEN Id ELSE NULL END) AS true_manual_report       -- 30 True records
-    ,COUNT(DISTINCT CASE WHEN IsManualReport = 'False' THEN Id ELSE NULL END) AS false_manual_report     -- 26 false records
+    COUNT(DISTINCT Id) AS total_users                                                                    -- 8 total users
+    ,COUNT(DISTINCT CASE WHEN IsManualReport = 'True' THEN Id ELSE NULL END) AS true_manual_report       -- 5 True records
+    ,COUNT(DISTINCT CASE WHEN IsManualReport = 'False' THEN Id ELSE NULL END) AS false_manual_report     -- 3 false records
 FROM weight_log;
 /*
 There are no users that used both manual and automatic reporting of their weight.
@@ -224,52 +213,145 @@ WHERE Id = 6962181067
 ORDER BY IsManualReport ASC;
 
 /*
-**Upgrade Frequency**: Track how often users upgrade to newer models or versions of wearable devices. This indicates user 
-loyalty and interest in technological advancements.
-
-Data not collected during study period.
+Calorie burn to intensity
 */
 
 /*
-**User Demographics**: Analyze the demographic characteristics of wearable device users, such as age, gender, occupation, etc. 
-This can help identify target markets and tailor marketing strategies accordingly.
+Average calorie burn by day of the week
+*/
 
-Data not collected during study period.  As Bellabeat is a company that designs and markets their products specifically to women,
-It would have been useful to know the age and gender of the users.  That way it could be determined if any gender-specific trends
-exist in the dataset.
+SELECT 
+	DATEPART(WEEKDAY, ActivityDate) AS 'Day # of Week'
+	,DATENAME(WEEKDAY, ActivityDate) AS 'Day of Week'
+	,COUNT(*) AS 'Daily Records'
+	,CAST((ROUND(AVG(TotalSteps), 0)) AS FLOAT) AS 'AVG Steps Per Day'
+	,CAST((ROUND(AVG(Calories), 0)) AS FLOAT) AS 'AVG Calories Per Day'
+	,CAST((ROUND(AVG(TotalDistance), 1)) AS FLOAT) AS 'AVG Total Distance Per Day'
+	,CAST((ROUND(AVG(VeryActiveMinutes), 0)) AS FLOAT) AS 'AVG Very Active Minutes Per Day'
+	,CAST((ROUND(AVG(FairlyActiveMinutes), 0)) AS FLOAT) AS 'AVG Fairly Active Minutes Per Day'
+	,CAST((ROUND(AVG(LightlyActiveMinutes), 0)) AS FLOAT) AS 'AVG Lightly Active Minutes Per Day'
+	,CAST((ROUND(AVG(SedentaryMinutes), 0)) AS FLOAT) AS 'AVG Sedentary Distance Per Day'
+	,CAST((ROUND(AVG(VeryActiveDistance), 0)) AS FLOAT) AS 'AVG Very Active Distance Per Day'
+	,CAST((ROUND(AVG(ModeratelyActiveDistance), 0)) AS FLOAT) AS 'AVG Fairly Active Distance Per Day'
+	,CAST((ROUND(AVG(LightActiveDistance), 0)) AS FLOAT) AS 'AVG Lightly Active Distance Per Day'
+	,CAST((ROUND(AVG(SedentaryActiveDistance), 0)) AS FLOAT) AS 'AVG Sedentary Distance Per Day'
+FROM
+	daily_activity
+GROUP BY
+	DATEPART(WEEKDAY, ActivityDate)
+	,DATENAME(WEEKDAY, ActivityDate)
+ORDER BY
+	DATEPART(WEEKDAY, ActivityDate)
+	,DATENAME(WEEKDAY, ActivityDate);
+
+/*
+Day of the week users are most active
 */
 
 /*
-**Social Sharing and Engagement**: Look into whether users are sharing their fitness data or achievements on social media 
-platforms and the level of engagement generated from such sharing.
-
-Data not collected during study period.
+Hour of the day that users are most active
 */
+
+SELECT
+	DATEPART(HOUR, ActivityHour) AS 'Hour of Day'
+	,CAST((ROUND(AVG(StepTotal), 0)) AS FLOAT) AS 'AVG Steps Per Hour'
+FROM 
+	hourly_steps
+GROUP BY
+	DATEPART(HOUR, ActivityHour)
+ORDER BY
+	DATEPART(HOUR, ActivityHour);
 
 /*
-**Churn Rate**: Measure the rate at which users stop using their devices. High churn rates may indicate dissatisfaction or 
-issues with the device.
-
-All users were active in some form every day of the study.  There is not enough data from the study to determine satisfaction rates.
+Finding the AVG hours asleep and time spent awake in bed per user Id for the users
 */
+
+SELECT
+	daily_activity.Id
+	,COUNT(SleepDay) AS count_of_daily_sleep_records
+	,CAST((ROUND((AVG(totalMinutesAsleep) / 60), 1)) AS FLOAT) AS 'AVG Hours Asleep'
+	,CAST((ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 1)) AS FLOAT) AS 'AVG Mins Awake In Bed'
+ 	,CAST((ROUND(AVG(daily_activity.TotalSteps),0)) AS FLOAT) AS 'AVG Daily Steps'
+FROM	
+	daily_activity
+	INNER JOIN daily_sleep 
+		ON daily_sleep.Id = daily_activity.Id 
+		AND daily_sleep.SleepDay = daily_activity.ActivityDate
+GROUP BY
+	daily_activity.Id
+ORDER BY 
+	count_of_daily_sleep_records DESC;
 
 /*
-**App Usage Metrics**: If there's a companion app associated with the wearable device, analyze metrics such as app downloads, 
-active users, and in-app engagement.
-
-Data not collected during study period.
+Finding the AVG hours asleep and AVG time spent awake in bed per day of the week.
+Sunday has both the highest value for AVG Hours Asleep and the highest value for AVG Mins Awake In Bed.
+Thursday inches in behind for the least AVG Hours Asleep for the week.  Except for Sunday and Wednesday
+The AVG values are all so close that I had to expand the ROUND() out to 2 deciaml places for a higher
+degree of acuracy.  Thursday also has the lowest value of the week for the AVG Mins Awake In Bed
 */
+
+SELECT 
+	DATEPART(WEEKDAY, SleepDay) AS 'Day # of Week'
+	,DATENAME(WEEKDAY, SleepDay) AS 'Day of Week'
+	,COUNT(*) AS 'Daily Sleep Records'
+	,CAST((ROUND((AVG(totalMinutesAsleep) / 60), 2)) AS FLOAT) AS 'AVG Hours Asleep'
+	,CAST((ROUND(((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep))/60), 2)) AS FLOAT) AS 'AVG Hrs Awake In Bed'
+	,CAST((ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 2)) AS FLOAT) AS 'AVG Mins Awake In Bed'
+FROM
+	daily_sleep
+GROUP BY
+	DATEPART(WEEKDAY, SleepDay)
+	,DATENAME(WEEKDAY, SleepDay)
+ORDER BY
+	DATEPART(WEEKDAY, SleepDay)
+	,DATENAME(WEEKDAY, SleepDay);
 
 /*
-**Battery Life**: Investigate how battery life affects user engagement and satisfaction. Longer battery life may correlate with 
-higher usage rates.
-
-Data not collected during study period.
+What is the overall AVG Hours Asleep for the user group (6.99 hours)?
+What is the overall AVG Mins Awake for the user group (39.31 mins)?
 */
+
+SELECT 
+	CAST((ROUND((AVG(totalMinutesAsleep) / 60), 2)) AS FLOAT) AS 'AVG Hours Asleep' -- 6.99 Hours
+	,CAST((ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 2)) AS FLOAT) AS 'AVG Mins Awake In Bed' -- 39.31 Mins
+FROM
+	daily_sleep
+;
 
 /*
-**Customer Reviews and Feedback**: Analyze customer reviews and feedback to identify common issues, feature requests, and 
-overall sentiment towards wearable devices.
-
-Data not collected during study period.
+Finding the number of records for each day of the week of the weight_log table.
+Given how sparse this table is, These results are mainly focused on the activity of a very
+small group of people.
+Observation:
+Users were least likely to log their weight on Friday and Saturday.
 */
+
+SELECT 
+	DATEPART(WEEKDAY, Date) AS 'Day # of Week'
+	,DATENAME(WEEKDAY, DATE) AS 'Day of Week'
+	,COUNT(*) AS 'Daily Weight Records'
+FROM
+	weight_log
+GROUP BY
+	DATEPART(WEEKDAY, Date)
+	,DATENAME(WEEKDAY, Date)
+ORDER BY
+	DATEPART(WEEKDAY, Date)
+	,DATENAME(WEEKDAY, Date);
+
+/*
+Finding the AVG weight per user in kg and converted to pounds.
+*/
+
+SELECT
+	Id
+	,CAST((ROUND(AVG(WeightKg), 1)) AS FLOAT) AS 'AVG Weight(kg) per User'
+	,CAST((ROUND(AVG(WeightPounds), 1)) AS FLOAT) AS 'AVG Weight(lbs) per User'
+	,MAX(WeightKg) AS max_wt
+	,MIN(WeightKg) AS min_weight
+FROM
+	weight_log
+GROUP BY
+	Id
+ORDER BY
+	'AVG Weight(kg) per User' DESC;
