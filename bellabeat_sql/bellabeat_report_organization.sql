@@ -350,6 +350,10 @@ SELECT
     MAX(Date)           -- '2016-05-12'
 FROM weight_log;
 
+/*
+The following query coincidentally correctly answers which users gained/lost/stagnated in their weight over the study period.
+A later query confirms the results more accurately.
+*/
 SELECT
     Id,
     avg_kg_per_user AS 'AVG Weight(kg) per User',
@@ -383,24 +387,25 @@ GROUP BY
     avg_bmi_per_user,
     max_wt,
     min_wt
+ORDER BY wt_change
 ;
 
 /*
 Did anyone lose/gain weight during the study period?
 
-Users either gained or stayed the same weight during the study period.  However, it should be reiterated that the study period was only about a month long.
+Users either gained or stayed the same weight during the study period.  However, it should be reiterated that the study 
+period was only about a month long.
+Also of note, a previous query reached similar results but did so rather by accident. This query is more accurate because 
+it correlates the actual weights with the beginning and end dates.  This eliminates the possibility that a users weight that
+may have fluctuated during the study was accounted for.
 */
-
 -- Identifying users weight change over the study period
-
-SELECT * FROM weight_log
-
 SELECT
     Id,
     CASE 
-        WHEN begin_wt > end_wt THEN 'loser'
-        WHEN begin_wt = end_wt THEN 'stagnant'
-        ELSE 'gainer'
+        WHEN begin_wt > end_wt THEN 'down'
+        WHEN begin_wt = end_wt THEN 'no_change'
+        ELSE 'up'
     END AS wt_change,
     begin_wt,
     end_wt,
