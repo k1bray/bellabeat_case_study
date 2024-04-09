@@ -2,10 +2,11 @@ USE [CaseStudy2-Bellabeat];
 
 SELECT * FROM daily_calories;
 
+-- Finding the average calories burned by day of the week
 SELECT
     wkday_num
     ,weekday
-    ,ROUND(AVG(Calories), 0) AS avg_calories
+    ,CAST(AVG(Calories) AS DECIMAL (10,0)) AS avg_calories
 FROM
 (
 SELECT 
@@ -21,11 +22,12 @@ GROUP BY wkday_num
 ORDER BY wkday_num
 ;
 
-
+-- Finding the average calories burned by day of the week
+-- Cleaner way of achieving the same results as the previous query
 SELECT
     DATEPART(WEEKDAY, ActivityDay) AS wkday_num
     ,DATENAME(WEEKDAY, ActivityDay) AS weekday
-    ,ROUND(AVG(Calories), 0)
+    ,CAST(AVG(Calories) AS DECIMAL (10,0)) AS avg_calories
 FROM daily_calories
 GROUP BY DATEPART(WEEKDAY, ActivityDay)
     ,DATENAME(WEEKDAY, ActivityDay)
@@ -400,7 +402,6 @@ it correlates the actual weights with the beginning and end dates.  This elimina
 may have fluctuated during the study was accounted for.
 */
 -- Identifying users weight change over the study period
-
 SELECT
     Id,
     CASE 
