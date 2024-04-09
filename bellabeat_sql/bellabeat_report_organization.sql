@@ -421,13 +421,13 @@ SELECT
 FROM
 (
 SELECT
-    start_wt.Id AS Id,
+    DISTINCT start_wt.Id AS Id,
     MIN(start_wt.Date) AS begin_date,
     start_wt.WeightKg AS begin_wt,
     MAX(end_wt.Date) AS end_date,
     end_wt.WeightKg AS end_wt
 FROM weight_log start_wt
-    JOIN weight_log end_wt
+    INNER JOIN weight_log end_wt
         ON start_wt.Id = end_wt.Id
 GROUP BY 
     start_wt.Id, 
@@ -440,6 +440,59 @@ GROUP BY
     end_wt
 ORDER BY wt_change
 ;
+
+DROP TABLE IF EXISTS #begin_wt
+SELECT
+    DISTINCT Id AS Id,
+    MIN(Date) AS begin_date
+INTO #begin_wt
+FROM weight_log
+GROUP BY 
+    Id
+;
+
+SELECT
+    DISTINCT Id AS Id,
+    MIN(Date) AS begin_date,
+    WeightKg
+FROM weight_log
+GROUP BY 
+    Id,
+    WeightKg
+;
+
+SELECT * FROM #begin_wt;
+
+SELECT * FROM weight_log ORDER BY Id;
+
+SELECT
+    #begin_wt.Id,
+    begin_date,
+    weight_log.WeightKg
+FROM #begin_wt
+    LEFT JOIN weight_log
+        ON #begin_wt.Id = weight_log.Id
+GROUP BY
+    #begin_wt.Id,
+    begin_date,
+    weight_log.WeightKg
+;
+
+DROP TABLE IF EXISTS #end_wt
+SELECT
+    DISTINCT Id AS Id,
+    MAX(Date) AS end_date
+INTO #end_wt
+FROM weight_log
+GROUP BY 
+    Id
+;
+
+SELECT
+    *
+FROM #begin_wt
+    JOIN #end_wt
+        ON #begin_wt.Id = #end_wt.Id
 
 -- Counting groups of users in each weight change category
 SELECT
