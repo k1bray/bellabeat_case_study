@@ -340,18 +340,39 @@ ORDER BY
 	,DATENAME(WEEKDAY, Date);
 
 /*
-Finding the AVG weight per user in kg and converted to pounds.
+Finding the AVG weight per user in kg and converted to pounds
+
+No one lost weight during the study.  They either stayed the same or gained weight.
 */
 
 SELECT
+    Id,
+    avg_kg_per_user AS 'AVG Weight(kg) per User',
+    avg_lbs_per_user AS 'AVG Weight(lbs) per User',
+    max_wt,
+    min_wt,
+    CASE
+        WHEN max_wt > min_wt THEN 'up'
+        WHEN min_wt = max_wt THEN 'no_change'
+        ELSE 'down'
+    END AS wt_change
+FROM
+(
+SELECT
 	Id
-	,CAST((ROUND(AVG(WeightKg), 1)) AS FLOAT) AS 'AVG Weight(kg) per User'
-	,CAST((ROUND(AVG(WeightPounds), 1)) AS FLOAT) AS 'AVG Weight(lbs) per User'
+	,CAST((ROUND(AVG(WeightKg), 1)) AS FLOAT) AS avg_kg_per_user
+	,CAST((ROUND(AVG(WeightPounds), 1)) AS FLOAT) AS avg_lbs_per_user
 	,MAX(WeightKg) AS max_wt
-	,MIN(WeightKg) AS min_weight
+	,MIN(WeightKg) AS min_wt
 FROM
 	weight_log
 GROUP BY
 	Id
-ORDER BY
-	'AVG Weight(kg) per User' DESC;
+) AS weights
+GROUP BY 
+    Id,
+    avg_kg_per_user,
+    avg_lbs_per_user,
+    max_wt,
+    min_wt
+;
