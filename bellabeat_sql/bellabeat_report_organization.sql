@@ -198,7 +198,7 @@ ORDER BY sessions DESC
 ;
 
 /*
-Calorie burn to intensity
+Calorie burn to intensity comparison
 */
 
 SELECT * FROM daily_activity;
