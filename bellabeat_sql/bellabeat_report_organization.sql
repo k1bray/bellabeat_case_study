@@ -201,6 +201,24 @@ ORDER BY sessions DESC
 Calorie burn to intensity
 */
 
+SELECT * FROM daily_activity;
+
+SELECT * FROM daily_intensity;
+
+SELECT 
+    di.*
+    ,da.Calories
+FROM daily_intensity di
+    LEFT JOIN daily_activity da 
+        ON di.Id = da.Id
+        AND di.ActivityDay = da.ActivityDate;
+
+
+
+
+
+
+
 /*
 Average calorie burn by day of the week
 */
