@@ -1233,7 +1233,7 @@ What time of day had the highest AVG step count?
 
 SELECT TOP 1
 	DATEPART(HOUR, ActivityHour) AS 'Hour of Day'						-- 18:00
-	,CAST((AVG(StepTotal)) AS DECIMAL (10,0)) AS 'AVG Steps/Hour'		-- 599
+	,CAST((AVG(StepTotal)) AS DECIMAL (10,0)) AS 'AVG Steps/Hour'		-- 599 Steps/hr
 FROM
 	hourly_activity
 GROUP BY
@@ -1246,8 +1246,8 @@ What time of day had the lowest AVG step count?
 */
 
 SELECT TOP 1
-	 DATEPART(HOUR, ActivityHour) AS 'Hour of Day'	-- 03:00
-	,CAST(ROUND((AVG(StepTotal)), 0) AS FLOAT) AS 'AVG Steps/Hour'
+	 DATEPART(HOUR, ActivityHour) AS 'Hour of Day'						-- 03:00
+	,CAST((AVG(StepTotal)) AS DECIMAL (10,0)) AS 'AVG Steps/Hour'		-- 6 Steps/hr
 FROM
 	hourly_activity
 GROUP BY
@@ -1261,7 +1261,7 @@ Showing a full day distribution of AVG step count per hour
 
 SELECT
 	 DATEPART(HOUR, ActivityHour) AS 'Hour of Day'
-	,CAST(ROUND((AVG(StepTotal)), 0) AS FLOAT) AS 'AVG Steps/Hour'
+	,CAST((AVG(StepTotal)) AS DECIMAL (10,0)) AS 'AVG Steps/Hour'
 FROM
 	hourly_activity
 GROUP BY
