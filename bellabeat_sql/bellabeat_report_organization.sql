@@ -54,7 +54,7 @@ GROUP BY Id
 ;
 
 /*
-**Daily Active Users (DAU)**: Determine the number of unique users who interact with their devices on a daily basis. 
+Daily Active Users (DAU) = Trying to determine the number of unique users who interact with their devices on a daily basis. 
 DAU reflects the frequency of device usage.
 
 21 out of 33 distinct users were active with their devices all 31 days of the study
@@ -83,7 +83,7 @@ ORDER BY days_active DESC
 ;
 
 /*
-**Feature Usage**: Analyze which features of the wearable devices are most frequently used by users. This can include step 
+Feature Usage - which features of the wearable devices are most frequently used by users. This can include step 
 tracking, heart rate monitoring, sleep tracking, etc.
 
 We aren't furnished with information regarding the devices that each user has, or whether all users had access to the same suite
@@ -111,7 +111,7 @@ FROM daily_activity da
 ;
 
 /*
-**Session Duration**: Measure the average duration of each session users spend interacting with their devices. This metric 
+Session Duration - What's the average duration of each session users spend interacting with their devices. This metric 
 provides insights into user engagement levels.
 
 Although most of the user group wore their devices each day of the study period, many of them wore their trackers
@@ -145,6 +145,7 @@ GROUP BY
 ORDER BY
 	'Full Day' DESC;
 
+-- Total activity minutes per user during the study
 SELECT 
     id
     ,COUNT(ActivityMinute) AS minutes
@@ -154,7 +155,7 @@ ORDER BY minutes DESC
 ;
 
 /*
-**Device Interoperability**: Investigate whether users are integrating their wearable devices with other smart devices or 
+Device Interoperability - Are users integrating their wearable devices with other smart devices or 
 platforms (e.g., fitness apps, smart scales, smartwatches).
 
 The majority of the data is collected passively by the Fitbit wearable tracking device.
@@ -162,12 +163,14 @@ The weight_log table is the only one that would require use of a seperate device
 automatically, or the data is then entered manually by the user.  
 */
 
+-- Comparing total number of records with frequency of automatic vs manual reporting of weight
 SELECT  
     COUNT(logId) AS total_records                                                                  -- 67 total records
     ,COUNT(CASE WHEN IsManualReport = 'True' THEN LogId ELSE NULL END) AS true_manual_report       -- 41 True records
     ,COUNT(CASE WHEN IsManualReport = 'False' THEN LogId ELSE NULL END) AS false_manual_report     -- 26 false records
 FROM weight_log;
 
+-- Comparing the total number of users in the table and how many users used manual and automatic reporting of weight
 SELECT  
     COUNT(DISTINCT Id) AS total_users                                                                    -- 8 total users
     ,COUNT(DISTINCT CASE WHEN IsManualReport = 'True' THEN Id ELSE NULL END) AS true_manual_report       -- 5 True records
@@ -195,34 +198,6 @@ FROM weight_log
 GROUP BY Id
 ORDER BY sessions DESC
 ;
-
-/*
-Average calorie burn by day of the week
-*/
-
-SELECT 
-	DATEPART(WEEKDAY, ActivityDate) AS 'Day # of Week'
-	,DATENAME(WEEKDAY, ActivityDate) AS 'Day of Week'
-	,COUNT(*) AS 'Daily Records'
-	,CAST((ROUND(AVG(TotalSteps), 0)) AS FLOAT) AS 'AVG Steps Per Day'
-	,CAST((ROUND(AVG(Calories), 0)) AS FLOAT) AS 'AVG Calories Per Day'
-	,CAST((ROUND(AVG(TotalDistance), 1)) AS FLOAT) AS 'AVG Total Distance Per Day'
-	,CAST((ROUND(AVG(VeryActiveMinutes), 0)) AS FLOAT) AS 'AVG Very Active Minutes Per Day'
-	,CAST((ROUND(AVG(FairlyActiveMinutes), 0)) AS FLOAT) AS 'AVG Fairly Active Minutes Per Day'
-	,CAST((ROUND(AVG(LightlyActiveMinutes), 0)) AS FLOAT) AS 'AVG Lightly Active Minutes Per Day'
-	,CAST((ROUND(AVG(SedentaryMinutes), 0)) AS FLOAT) AS 'AVG Sedentary Distance Per Day'
-	,CAST((ROUND(AVG(VeryActiveDistance), 0)) AS FLOAT) AS 'AVG Very Active Distance Per Day'
-	,CAST((ROUND(AVG(ModeratelyActiveDistance), 0)) AS FLOAT) AS 'AVG Fairly Active Distance Per Day'
-	,CAST((ROUND(AVG(LightActiveDistance), 0)) AS FLOAT) AS 'AVG Lightly Active Distance Per Day'
-	,CAST((ROUND(AVG(SedentaryActiveDistance), 0)) AS FLOAT) AS 'AVG Sedentary Distance Per Day'
-FROM
-	daily_activity
-GROUP BY
-	DATEPART(WEEKDAY, ActivityDate)
-	,DATENAME(WEEKDAY, ActivityDate)
-ORDER BY
-	DATEPART(WEEKDAY, ActivityDate)
-	,DATENAME(WEEKDAY, ActivityDate);
 
 /*
 What day of the week do users wear their devices most? Least?
@@ -254,7 +229,7 @@ ORDER BY
 	,DATENAME(WEEKDAY, ActivityDate);
 
 /*
-Hour of the day that users are most active
+Hour of the day that users are most active based on average steps per hour and grouped by the hour of the day
 */
 
 SELECT
@@ -291,8 +266,8 @@ ORDER BY
 Finding the AVG hours asleep and AVG time spent awake in bed per day of the week.
 Sunday has both the highest value for AVG Hours Asleep and the highest value for AVG Mins Awake In Bed.
 Thursday inches in behind for the least AVG Hours Asleep for the week.  Except for Sunday and Wednesday
-The AVG values are all so close that I had to expand the ROUND() out to 2 deciaml places for a higher
-degree of acuracy.  Thursday also has the lowest value of the week for the AVG Mins Awake In Bed
+the AVG Hours Asleep values are all so close that I had to expand the ROUND() out to 2 decimal places for a higher
+degree of accuracy.  Thursday also has the lowest value of the week for the AVG Mins Awake In Bed
 */
 
 SELECT 
@@ -301,7 +276,7 @@ SELECT
 	,COUNT(*) AS 'Daily Sleep Records'
 	,CAST((AVG(totalMinutesAsleep) / 60) AS DECIMAL (10,2)) AS 'AVG Hours Asleep'
 	,CAST(((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep))/60) AS DECIMAL (10,2)) AS 'AVG Hrs Awake In Bed'
-	,CAST((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)) AS DECIMAL (10,2)) AS 'AVG Mins Awake In Bed'
+	,CAST((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)) AS DECIMAL (10,0)) AS 'AVG Mins Awake In Bed'
 FROM
 	daily_sleep
 GROUP BY
@@ -318,7 +293,7 @@ What is the overall AVG Mins Awake for the user group (39.31 mins)?
 
 SELECT 
 	CAST((AVG(totalMinutesAsleep) / 60) AS DECIMAL (10,2)) AS 'AVG Hours Asleep' -- 6.99 Hours
-	,CAST((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)) AS DECIMAL (10,2)) AS 'AVG Mins Awake In Bed' -- 39.31 Mins
+	,CAST((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)) AS DECIMAL (10,0)) AS 'AVG Mins Awake In Bed' -- 39.31 Mins
 FROM
 	daily_sleep
 ;
@@ -346,16 +321,7 @@ ORDER BY
 
 /*
 Finding the AVG weight per user in kg and converted to pounds
-*/
 
-SELECT * FROM weight_log;
-
-SELECT 
-    MIN(Date)          -- '2016-04-12'
-    ,MAX(Date)           -- '2016-05-12'
-FROM weight_log;
-
-/*
 The following query coincidentally correctly answers which users gained/lost/stagnated in their weight over the study period.
 A later query confirms the results more accurately.
 */
