@@ -364,9 +364,9 @@ daily_activity table that would contain a NULL in any of the sleep-related colum
 SELECT
 	daily_activity.Id
 	,COUNT(SleepDay) AS count_of_daily_sleep_records
-	,CAST((ROUND((AVG(totalMinutesAsleep) / 60), 1)) AS FLOAT) AS 'AVG Hours Asleep'
-	,CAST((ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 1)) AS FLOAT) AS 'AVG Mins Awake In Bed'
- 	,CAST((ROUND(AVG(daily_activity.TotalSteps),0)) AS FLOAT) AS 'AVG Daily Steps'
+	,CAST((AVG(totalMinutesAsleep) / 60) AS DECIMAL (10,1)) AS 'AVG Hours Asleep'
+	,CAST((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)) AS DECIMAL (10,1)) AS 'AVG Mins Awake In Bed'
+ 	,CAST(AVG(daily_activity.TotalSteps) AS DECIMAL (10,0)) AS 'AVG Daily Steps'
 FROM	
 	daily_activity
 	INNER JOIN daily_sleep 
@@ -389,9 +389,9 @@ SELECT
 	DATEPART(WEEKDAY, SleepDay) AS 'Day # of Week'
 	,DATENAME(WEEKDAY, SleepDay) AS 'Day of Week'
 	,COUNT(*) AS 'Daily Sleep Records'
-	,CAST((ROUND((AVG(totalMinutesAsleep) / 60), 2)) AS FLOAT) AS 'AVG Hours Asleep'
-	,CAST((ROUND(((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep))/60), 2)) AS FLOAT) AS 'AVG Hrs Awake In Bed'
-	,CAST((ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 2)) AS FLOAT) AS 'AVG Mins Awake In Bed'
+	,CAST((AVG(totalMinutesAsleep) / 60) AS DECIMAL (10,2)) AS 'AVG Hours Asleep'
+	,CAST(((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep))/60) AS DECIMAL (10,1)) AS 'AVG Hrs Awake In Bed'
+	,CAST((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)) AS DECIMAL (10,0)) AS 'AVG Mins Awake In Bed'
 FROM
 	daily_sleep
 GROUP BY
