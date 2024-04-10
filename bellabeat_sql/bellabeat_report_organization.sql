@@ -250,8 +250,33 @@ ORDER BY
 	,DATENAME(WEEKDAY, ActivityDate);
 
 /*
-Day of the week users are most active
+What day of the week do users wear their devices most? Least?
+Finding averages of the various activity levels of steps, calories, and distance per day of the week.
 */
+
+SELECT 
+	DATEPART(WEEKDAY, ActivityDate) AS 'Day # of Week'
+	,DATENAME(WEEKDAY, ActivityDate) AS 'Day of Week'
+	,COUNT(*) AS 'Daily Records'
+	,CAST(AVG(TotalSteps) AS DECIMAL (10,0)) AS 'AVG Steps Per Day'
+	,CAST(AVG(Calories) AS DECIMAL (10,0)) AS 'AVG Calories Per Day'
+	,CAST(AVG(TotalDistance) AS DECIMAL (10,1)) AS 'AVG Total Distance Per Day'
+	,CAST(AVG(VeryActiveMinutes) AS DECIMAL (10,0)) AS 'AVG Very Active Minutes Per Day'
+	,CAST(AVG(FairlyActiveMinutes) AS DECIMAL (10,0)) AS 'AVG Fairly Active Minutes Per Day'
+	,CAST(AVG(LightlyActiveMinutes) AS DECIMAL (10,0)) AS 'AVG Lightly Active Minutes Per Day'
+	,CAST(AVG(SedentaryMinutes) AS DECIMAL (10,0)) AS 'AVG Sedentary Distance Per Day'
+	,CAST(AVG(VeryActiveDistance) AS DECIMAL (10,1)) AS 'AVG Very Active Distance Per Day'
+	,CAST(AVG(ModeratelyActiveDistance) AS DECIMAL (10,1)) AS 'AVG Fairly Active Distance Per Day'
+	,CAST(AVG(LightActiveDistance) AS DECIMAL (10,1)) AS 'AVG Lightly Active Distance Per Day'
+	,CAST(AVG(SedentaryActiveDistance) AS DECIMAL (10,1)) AS 'AVG Sedentary Distance Per Day'
+FROM
+	daily_activity
+GROUP BY
+	DATEPART(WEEKDAY, ActivityDate)
+	,DATENAME(WEEKDAY, ActivityDate)
+ORDER BY
+	DATEPART(WEEKDAY, ActivityDate)
+	,DATENAME(WEEKDAY, ActivityDate);
 
 /*
 Hour of the day that users are most active
