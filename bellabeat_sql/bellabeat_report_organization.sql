@@ -1,7 +1,5 @@
 USE [CaseStudy2-Bellabeat];
 
-SELECT * FROM daily_calories;
-
 -- Finding the average calories burned by day of the week
 SELECT
     wkday_num,
@@ -35,7 +33,7 @@ ORDER BY
     wkday_num
 ;
 
--- Complete averages of the daily_activity table grouped by user Id
+-- Complete averages of the daily_activity table over the length of the study grouped by user Id
 SELECT 
     id
     ,CAST(AVG(TotalSteps) AS DECIMAL(10,0)) AS avg_steps
@@ -97,7 +95,8 @@ require the user to (remember or be motivated to) mannualy enter the data and/or
 compatible with their fitness trackers to collect the data and report it to the app on their behalf.
 The discrepancy in feature usage levels between the daily_activity and daily_sleep tables could be explained by users that 
 decide not to wear their tracker while sleeping.  One advantage of the Bellabeat leaf is that it can clipped to an article 
-of clothing, which some users may find more comfortable than wearing a smartwatch while they sleep.
+of clothing, which some users may find more comfortable than wearing a smartwatch while they sleep.  Also, the Leaf weable 
+has a significantly longer battery life than a smartwatch and doesn't require frequent intermittent recharging.
 */
 
 SELECT  
@@ -148,7 +147,7 @@ ORDER BY
 
 SELECT 
     id
-    ,COUNT(DISTINCT ActivityMinute) AS minutes
+    ,COUNT(ActivityMinute) AS minutes
 FROM minute_activity
 GROUP BY id
 ORDER BY minutes DESC
