@@ -376,7 +376,7 @@ FROM
 (
     SELECT
 	    Id
-	    ,CAST((AVG(WeightKg) AS DECIMAL (10,1)) AS avg_kg_per_user
+	    ,CAST((AVG(WeightKg)) AS DECIMAL (10,1)) AS avg_kg_per_user
 	    ,CAST((ROUND(AVG(WeightPounds), 1)) AS FLOAT) AS avg_lbs_per_user
      ,CAST((ROUND(AVG(BMI), 1)) AS FLOAT) AS avg_bmi_per_user
 	    ,MAX(WeightKg) AS max_wt
