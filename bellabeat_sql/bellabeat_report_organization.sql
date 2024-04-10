@@ -284,7 +284,7 @@ Hour of the day that users are most active
 
 SELECT
 	DATEPART(HOUR, ActivityHour) AS 'Hour of Day'
-	,CAST((ROUND(AVG(StepTotal), 0)) AS FLOAT) AS 'AVG Steps Per Hour'
+	,CAST(AVG(StepTotal) AS DECIMAL (10,0)) AS 'AVG Steps Per Hour'
 FROM 
 	hourly_steps
 GROUP BY
@@ -299,9 +299,9 @@ Finding the AVG hours asleep and time spent awake in bed per user Id for the use
 SELECT
 	daily_activity.Id
 	,COUNT(SleepDay) AS count_of_daily_sleep_records
-	,CAST((ROUND((AVG(totalMinutesAsleep) / 60), 1)) AS FLOAT) AS 'AVG Hours Asleep'
-	,CAST((ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 1)) AS FLOAT) AS 'AVG Mins Awake In Bed'
- 	,CAST((ROUND(AVG(daily_activity.TotalSteps),0)) AS FLOAT) AS 'AVG Daily Steps'
+	,CAST((AVG(totalMinutesAsleep) / 60) AS DECIMAL (10,2)) AS 'AVG Hours Asleep'
+	,CAST((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)) AS DECIMAL (10,0)) AS 'AVG Mins Awake In Bed'
+ 	,CAST(AVG(daily_activity.TotalSteps) AS DECIMAL (10,0)) AS 'AVG Daily Steps'
 FROM	
 	daily_activity
 	INNER JOIN daily_sleep 
@@ -324,9 +324,9 @@ SELECT
 	DATEPART(WEEKDAY, SleepDay) AS 'Day # of Week'
 	,DATENAME(WEEKDAY, SleepDay) AS 'Day of Week'
 	,COUNT(*) AS 'Daily Sleep Records'
-	,CAST((ROUND((AVG(totalMinutesAsleep) / 60), 2)) AS FLOAT) AS 'AVG Hours Asleep'
-	,CAST((ROUND(((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep))/60), 2)) AS FLOAT) AS 'AVG Hrs Awake In Bed'
-	,CAST((ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 2)) AS FLOAT) AS 'AVG Mins Awake In Bed'
+	,CAST((AVG(totalMinutesAsleep) / 60) AS DECIMAL (10,2)) AS 'AVG Hours Asleep'
+	,CAST(((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep))/60) AS DECIMAL (10,2)) AS 'AVG Hrs Awake In Bed'
+	,CAST((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)) AS DECIMAL (10,2)) AS 'AVG Mins Awake In Bed'
 FROM
 	daily_sleep
 GROUP BY
@@ -342,8 +342,8 @@ What is the overall AVG Mins Awake for the user group (39.31 mins)?
 */
 
 SELECT 
-	CAST((ROUND((AVG(totalMinutesAsleep) / 60), 2)) AS FLOAT) AS 'AVG Hours Asleep' -- 6.99 Hours
-	,CAST((ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 2)) AS FLOAT) AS 'AVG Mins Awake In Bed' -- 39.31 Mins
+	CAST((AVG(totalMinutesAsleep) / 60) AS DECIMAL (10,2)) AS 'AVG Hours Asleep' -- 6.99 Hours
+	,CAST((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)) AS DECIMAL (10,2)) AS 'AVG Mins Awake In Bed' -- 39.31 Mins
 FROM
 	daily_sleep
 ;
