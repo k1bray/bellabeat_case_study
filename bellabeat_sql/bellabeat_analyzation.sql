@@ -407,8 +407,8 @@ What is the overall AVG Mins Awake for the user group (39.31 mins)?
 */
 
 SELECT 
-	CAST((ROUND((AVG(totalMinutesAsleep) / 60), 2)) AS FLOAT) AS 'AVG Hours Asleep' -- 6.99 Hours
-	,CAST((ROUND((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)), 2)) AS FLOAT) AS 'AVG Mins Awake In Bed' -- 39.31 Mins
+	CAST((AVG(totalMinutesAsleep) / 60) AS DECIMAL (10,2)) AS 'AVG Hours Asleep' -- 6.99 Hours
+	,CAST((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)) AS DECIMAL (10,0)) AS 'AVG Mins Awake In Bed' -- 39.31 Mins
 FROM
 	daily_sleep;
 
@@ -556,7 +556,8 @@ SELECT
 FROM
 	weight_log
 GROUP BY
-	Id;
+	Id
+ORDER BY 1 DESC;
 
 /*
 The following query returns a table with the total number of records for each category of 
