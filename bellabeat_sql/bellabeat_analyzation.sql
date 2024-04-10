@@ -677,12 +677,12 @@ ORDER BY
 	Id;
 GO
 SELECT
-	DISTINCT act.Id
+	act.Id
 	,COUNT(CASE WHEN VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes = 1440 
 		THEN 1 ELSE NULL END) as 'Full Day'
 	,COUNT(CASE WHEN VeryActiveMinutes + FairlyActiveMinutes + LightlyActiveMinutes + SedentaryMinutes != 1440 
 		THEN 0 ELSE NULL END) as 'Partial Day'
-	,avg.avg_daily_steps
+	,CAST((avg.avg_daily_steps) AS DECIMAL (10,0))
 	,weight.weight_records_per_id
 FROM	
 	daily_activity AS act
