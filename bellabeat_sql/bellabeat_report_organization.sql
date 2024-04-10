@@ -198,30 +198,6 @@ ORDER BY sessions DESC
 ;
 
 /*
-Calorie burn to intensity comparison
-*/
-
-SELECT * FROM daily_activity;
-
-SELECT * FROM daily_intensity;
-
-SELECT 
-    di.*
-    ,da.Calories
-FROM daily_intensity di
-    LEFT JOIN daily_activity da 
-        ON di.Id = da.Id
-        AND di.ActivityDay = da.ActivityDate
-ORDER BY SedentaryMinutes
-;
-
-
-
-
-
-
-
-/*
 Average calorie burn by day of the week
 */
 
@@ -400,7 +376,7 @@ FROM
 (
     SELECT
 	    Id
-	    ,CAST((ROUND(AVG(WeightKg), 1)) AS FLOAT) AS avg_kg_per_user
+	    ,CAST((AVG(WeightKg) AS DECIMAL (10,1)) AS avg_kg_per_user
 	    ,CAST((ROUND(AVG(WeightPounds), 1)) AS FLOAT) AS avg_lbs_per_user
      ,CAST((ROUND(AVG(BMI), 1)) AS FLOAT) AS avg_bmi_per_user
 	    ,MAX(WeightKg) AS max_wt
