@@ -54,7 +54,7 @@ GROUP BY Id
 ;
 
 /*
-Daily Active Users (DAU) = Trying to determine the number of unique users who interact with their devices on a daily basis. 
+Daily Active Users (DAU) - Trying to determine the number of unique users who interact with their devices on a daily basis. 
 DAU reflects the frequency of device usage.
 
 21 out of 33 distinct users were active with their devices all 31 days of the study
