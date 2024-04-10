@@ -211,7 +211,9 @@ SELECT
 FROM daily_intensity di
     LEFT JOIN daily_activity da 
         ON di.Id = da.Id
-        AND di.ActivityDay = da.ActivityDate;
+        AND di.ActivityDay = da.ActivityDate
+ORDER BY SedentaryMinutes
+;
 
 
 
