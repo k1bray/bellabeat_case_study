@@ -1275,7 +1275,7 @@ Distribution of AVG calories burned per hour of the day
 
 SELECT
 	 DATEPART(HOUR, ActivityHour) AS 'Hour of Day'
-	,CAST(ROUND((AVG(Calories)), 0) AS FLOAT) AS 'AVG Cals/Hour'
+	,CAST((AVG(Calories)) AS DECIMAL (10,0)) AS 'AVG Cals/Hour'
 FROM
 	hourly_activity
 GROUP BY
@@ -1293,8 +1293,8 @@ The higher the average steps taken corresponds with higher average calories burn
 SELECT 
 	DATEPART(WEEKDAY, ActivityDate) AS 'Day of Week'
 	,DATENAME(WEEKDAY, ActivityDate) AS 'Name Day of Week'
-	,CAST((ROUND(AVG(CASE WHEN TotalSteps > 0 THEN Calories ELSE NULL END), 0)) AS FLOAT) AS 'AVG Calories/Day'
-	,CAST((ROUND(AVG(CASE WHEN Calories > 0 THEN TotalSteps ELSE NULL END), 0)) AS FLOAT) AS 'AVG Total Steps/Day'
+	,CAST((AVG(CASE WHEN TotalSteps > 0 THEN Calories ELSE NULL END)) AS DECIMAL (10,0)) AS 'AVG Calories/Day'
+	,CAST((AVG(CASE WHEN Calories > 0 THEN TotalSteps ELSE NULL END)) AS DECIMAL (10,0)) AS 'AVG Total Steps/Day'
 	
 FROM
 	daily_activity
