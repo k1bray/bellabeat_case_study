@@ -156,6 +156,86 @@ GROUP BY id
 ORDER BY minutes DESC
 ;
 
+
+SELECT TOP 1000 * FROM hourly_activity;
+
+SELECT COUNT(*) FROM hourly_activity;
+
+SELECT
+    Id
+    ,COUNT(ActivityHour)
+    -- ,DATEPART(MONTH, ActivityHour) AS month
+    ,DATEPART(DAY, ActivityHour) AS day
+FROM hourly_activity
+GROUP BY 
+    Id
+    ,DATEPART(DAY, ActivityHour)
+ORDER BY 
+    DATEPART(MONTH, ActivityHour)
+    ,DATEPART(DAY, ActivityHour)
+;
+
+-- Finding how many hours each user wore their device during the study period
+SELECT 
+    Id
+    ,COUNT(*) AS total_sessions_per_user 
+FROM hourly_activity
+GROUP BY Id
+ORDER BY total_sessions_per_user DESC;
+
+
+
+WITH HourlyDiff AS (
+    SELECT 
+        Id,
+        CAST([ActivityHour] AS DATE) AS date,
+        DATEDIFF(HOUR, LAG([ActivityHour]) OVER (PARTITION BY Id, CAST([ActivityHour] AS DATE) ORDER BY [ActivityHour]), [ActivityHour]) AS hour_diff
+    FROM 
+        hourly_activity
+)
+SELECT 
+    Id,
+    date,
+    AVG(CAST(hour_diff AS FLOAT)) AS avg_hours_worn
+FROM 
+    HourlyDiff
+GROUP BY 
+    Id,
+    date
+ORDER BY 
+    Id,
+    date;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
 Device Interoperability - Are users integrating their wearable devices with other smart devices or 
 platforms (e.g., fitness apps, smart scales, smartwatches)?
