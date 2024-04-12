@@ -82,8 +82,10 @@ GROUP BY ID
 ORDER BY days_active DESC
 ;
 
+SELECT * FROM daily_activity WHERE Id = 4057192912;
+
 /*
-Feature Usage - which features of the wearable devices are most frequently used by users. This can include step 
+Feature Usage - Which features of the wearable devices are most frequently used by users? This can include step 
 tracking, heart rate monitoring, sleep tracking, etc.
 
 We aren't furnished with information regarding the devices that each user has, or whether all users had access to the same suite
@@ -111,7 +113,7 @@ FROM daily_activity da
 ;
 
 /*
-Session Duration - What's the average duration of each session users spend interacting with their devices. This metric 
+Session Duration - What's the average duration of each session users spend interacting with their devices? This metric 
 provides insights into user engagement levels.
 
 Although most of the user group wore their devices each day of the study period, many of them wore their trackers
@@ -156,7 +158,7 @@ ORDER BY minutes DESC
 
 /*
 Device Interoperability - Are users integrating their wearable devices with other smart devices or 
-platforms (e.g., fitness apps, smart scales, smartwatches).
+platforms (e.g., fitness apps, smart scales, smartwatches)?
 
 The majority of the data is collected passively by the Fitbit wearable tracking device.
 The weight_log table is the only one that would require use of a seperate device whether it is linked and collects the data 
@@ -185,7 +187,13 @@ during the study period.
 
 Of the two users (out of a total of eight) with the highest number of records for weight logging, one reported their weight manually
 and the other used some sort of an integrated device.
-No insight can confidently be gained from this data other than the majority of the users that did utilize weight logging
+The insight with the most value that can be gained from this dataset regarding weight logging comes more from the data that isn't available.  
+Even though the overall dataset is lacking in terms of userpool size and time duration, the participation rates shown here are 
+very low.  A relatively safe assumption is that the majority of users didn't find the idea of weight logging to be valuable.  
+Whether the sampling in this userpool is a good overall representation of people who wear fitness tracking devices si still unclear.
+
+
+No insight of value can confidently be gained from this data other than the majority of the users that did utilize weight logging
 manually reported their records.  Also, that the vast majority of the sample user pool did not utilize the weight logging feature at all.
 */
 
