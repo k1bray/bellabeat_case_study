@@ -202,6 +202,7 @@ SELECT
     ,COUNT(DISTINCT LogId) AS sessions
     ,COUNT(CASE WHEN IsManualReport = 'True' THEN LogId ELSE NULL END) AS true_report
     ,COUNT(CASE WHEN IsManualReport = 'False' THEN LogId ELSE NULL END) AS false_report
+    ,COUNT(DISTINCT Date) AS distinct_date_count
 FROM weight_log
 GROUP BY Id
 ORDER BY sessions DESC
@@ -316,7 +317,7 @@ Users were least likely to log their weight on Friday and Saturday.
 
 SELECT 
 	DATEPART(WEEKDAY, Date) AS 'Day # of Week'
-	,DATENAME(WEEKDAY, DATE) AS 'Day of Week'
+	,DATENAME(WEEKDAY, Date) AS 'Day of Week'
 	,COUNT(*) AS 'Daily Weight Records'
 FROM
 	weight_log
