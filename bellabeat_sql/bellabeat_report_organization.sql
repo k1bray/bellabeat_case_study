@@ -162,17 +162,18 @@ SELECT TOP 1000 * FROM hourly_activity;
 SELECT COUNT(*) FROM hourly_activity;
 
 SELECT
-    Id
-    ,COUNT(ActivityHour)
-    -- ,DATEPART(MONTH, ActivityHour) AS month
-    ,DATEPART(DAY, ActivityHour) AS day
+    Id,
+    COUNT(ActivityHour) AS ActivityCount,
+    DATEPART(MONTH, ActivityHour) AS month,
+    DATEPART(DAY, ActivityHour) AS day
 FROM hourly_activity
 GROUP BY 
-    Id
-    ,DATEPART(DAY, ActivityHour)
+    Id,
+    DATEPART(MONTH, ActivityHour),
+    DATEPART(DAY, ActivityHour)
 ORDER BY 
-    DATEPART(MONTH, ActivityHour)
-    ,DATEPART(DAY, ActivityHour)
+    DATEPART(MONTH, ActivityHour),
+    DATEPART(DAY, ActivityHour)
 ;
 
 -- Finding how many hours each user wore their device during the study period
@@ -180,8 +181,10 @@ SELECT
     Id
     ,COUNT(*) AS total_sessions_per_user 
 FROM hourly_activity
-GROUP BY Id
-ORDER BY total_sessions_per_user DESC;
+GROUP BY 
+    Id
+ORDER BY 
+    total_sessions_per_user DESC;
 
 /*
 Device Interoperability - Are users integrating their wearable devices with other smart devices or 
