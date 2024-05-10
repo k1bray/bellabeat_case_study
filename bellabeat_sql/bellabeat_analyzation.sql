@@ -216,12 +216,13 @@ SELECT
 	Id
 	,ROUND(AVG(total_active_hours), 1) AS avg_active_hours_per_Id
 	,ROUND(CAST((ROUND(AVG(TotalSteps), 1))AS FLOAT), 0) AS avg_daily_steps_per_Id		-- no partial steps as decimal
+	,COUNT(ActivityDate) AS record_count
 FROM
 	#daily_active_hours
 GROUP BY
 	Id
 ORDER BY
-	avg_active_hours_per_Id DESC;
+	record_count DESC;
 
 /*
 Looking at a distribution of daily count of hourly wear times with a total count of records.
@@ -244,21 +245,21 @@ SELECT
 	,COUNT(CASE WHEN total_active_hours between 20 AND 21.99 THEN total_active_hours ELSE NULL END) AS '20-22 hr'
 	,COUNT(CASE WHEN total_active_hours between 22 AND 23.9 THEN total_active_hours ELSE NULL END) AS '22-24 hr'
 	,COUNT(CASE WHEN total_active_hours = 24 THEN total_active_hours ELSE NULL END) AS '24 hr'
-	
-	,(COUNT(CASE WHEN total_active_hours BETWEEN 0 AND 0.99 THEN total_active_hours ELSE NULL END) +
-	COUNT(CASE WHEN total_active_hours between 1 AND 1.99 THEN total_active_hours ELSE NULL END) +
-	COUNT(CASE WHEN total_active_hours between 2 AND 3.99 THEN total_active_hours ELSE NULL END) +
-	COUNT(CASE WHEN total_active_hours between 4 AND 5.99 THEN total_active_hours ELSE NULL END) +
-	COUNT(CASE WHEN total_active_hours between 6 AND 7.99 THEN total_active_hours ELSE NULL END) +
-	COUNT(CASE WHEN total_active_hours between 8 AND 9.99 THEN total_active_hours ELSE NULL END) +
-	COUNT(CASE WHEN total_active_hours between 10 AND 11.99 THEN total_active_hours ELSE NULL END) +
-	COUNT(CASE WHEN total_active_hours between 12 AND 13.99 THEN total_active_hours ELSE NULL END) +
-	COUNT(CASE WHEN total_active_hours between 14 AND 15.99 THEN total_active_hours ELSE NULL END) +
-	COUNT(CASE WHEN total_active_hours between 16 AND 17.99 THEN total_active_hours ELSE NULL END) +
-	COUNT(CASE WHEN total_active_hours between 18 AND 19.99 THEN total_active_hours ELSE NULL END) +
-	COUNT(CASE WHEN total_active_hours between 20 AND 21.99 THEN total_active_hours ELSE NULL END) +
-	COUNT(CASE WHEN total_active_hours between 22 AND 24 THEN total_active_hours ELSE NULL END)) 
-		AS total_count_records
+	,(
+		COUNT(CASE WHEN total_active_hours BETWEEN 0 AND 0.99 THEN total_active_hours ELSE NULL END) +
+		COUNT(CASE WHEN total_active_hours between 1 AND 1.99 THEN total_active_hours ELSE NULL END) +
+		COUNT(CASE WHEN total_active_hours between 2 AND 3.99 THEN total_active_hours ELSE NULL END) +
+		COUNT(CASE WHEN total_active_hours between 4 AND 5.99 THEN total_active_hours ELSE NULL END) +
+		COUNT(CASE WHEN total_active_hours between 6 AND 7.99 THEN total_active_hours ELSE NULL END) +
+		COUNT(CASE WHEN total_active_hours between 8 AND 9.99 THEN total_active_hours ELSE NULL END) +
+		COUNT(CASE WHEN total_active_hours between 10 AND 11.99 THEN total_active_hours ELSE NULL END) +
+		COUNT(CASE WHEN total_active_hours between 12 AND 13.99 THEN total_active_hours ELSE NULL END) +
+		COUNT(CASE WHEN total_active_hours between 14 AND 15.99 THEN total_active_hours ELSE NULL END) +
+		COUNT(CASE WHEN total_active_hours between 16 AND 17.99 THEN total_active_hours ELSE NULL END) +
+		COUNT(CASE WHEN total_active_hours between 18 AND 19.99 THEN total_active_hours ELSE NULL END) +
+		COUNT(CASE WHEN total_active_hours between 20 AND 21.99 THEN total_active_hours ELSE NULL END) +
+		COUNT(CASE WHEN total_active_hours between 22 AND 24 THEN total_active_hours ELSE NULL END)
+	)	AS total_count_records
 FROM 
 	#daily_active_hours
 --GROUP BY
