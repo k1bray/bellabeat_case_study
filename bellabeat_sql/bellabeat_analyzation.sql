@@ -404,7 +404,8 @@ GROUP BY
 	,DATENAME(WEEKDAY, SleepDay)
 ORDER BY
 	DATEPART(WEEKDAY, SleepDay)
-	,DATENAME(WEEKDAY, SleepDay);
+	,DATENAME(WEEKDAY, SleepDay)
+;
 
 /*
 What is the overall AVG Hours Asleep for the user group (6.99 hours)?
