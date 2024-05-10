@@ -323,11 +323,15 @@ ORDER BY
 What hour of the day are users most active based on average steps per hour?
 */
 
+SELECT * FROM hourly_activity;
+SELECT * FROM hourly_steps;
+
 SELECT
 	DATEPART(HOUR, ActivityHour) AS 'Hour of Day'
 	,CAST((ROUND(AVG(StepTotal), 0)) AS FLOAT) AS 'AVG Steps Per Hour'
+	,CAST((ROUND(AVG(Calories), 0)) AS FLOAT) AS 'AVG Calories Per Hour'
 FROM 
-	hourly_steps
+	hourly_activity
 GROUP BY
 	DATEPART(HOUR, ActivityHour)
 ORDER BY
