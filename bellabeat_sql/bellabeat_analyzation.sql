@@ -1014,7 +1014,7 @@ ORDER BY
 	,DATENAME(WEEKDAY, ActivityDate);
 
 /*
-One thing to keep in mind is that in the wight_log table there is a column for 'Fat' which is mostly
+One thing to keep in mind is that in the weight_log table there is a column for 'Fat' which is mostly
 comprised of NULL values.  This is another underutilized feature of the Fitbit tracker.
 */
 
