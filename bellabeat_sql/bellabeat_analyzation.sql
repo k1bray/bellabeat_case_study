@@ -1425,13 +1425,7 @@ SELECT
 		ELSE '12500 +'
 	END AS activity_level
 FROM
-	daily_activity
-WHERE
-	TotalSteps IS NOT NULL
-	OR TotalSteps != 0;
-
-
-
+	daily_activity;
 
 /*
 Taking a count of the different levels of step activity according to the CDC and Health.gov
@@ -1447,10 +1441,7 @@ SELECT
 	,COUNT(CASE WHEN TotalSteps BETWEEN 10000 AND 12500 THEN TotalSteps ELSE NULL END) AS 'Count Very Active'
 	,COUNT(CASE WHEN TotalSteps > 12500 THEN TotalSteps ELSE NULL END) AS 'Count Highly Active'
 FROM
-	daily_activity
-WHERE
-	TotalSteps IS NOT NULL
-	OR TotalSteps != 0;
+	daily_activity;
 
 /*
 AVG daily active minutes grouped by user activity type for CDC recommended daily activity time
@@ -1460,14 +1451,14 @@ SELECT
 	Id
 	,COUNT(CASE WHEN VeryActiveMinutes >= 20 THEN Id ELSE NULL END) AS 'Count Very Active'
 	,COUNT(CASE WHEN FairlyActiveMinutes >= 30 THEN Id ELSE NULL END) AS 'Count Fairly Active'
-	--,COUNT(CASE WHEN TotalSteps BETWEEN 7500 AND 9999 THEN TotalSteps ELSE NULL END) AS 'Count Active'
-	--,COUNT(CASE WHEN TotalSteps BETWEEN 10000 AND 12500 THEN TotalSteps ELSE NULL END) AS 'Count Very Active'
-	--,COUNT(CASE WHEN TotalSteps > 12500 THEN TotalSteps ELSE NULL END) AS 'Count Highly Active'
+	-- ,COUNT(CASE WHEN TotalSteps BETWEEN 7500 AND 9999 THEN TotalSteps ELSE NULL END) AS 'Count Active'
+	-- ,COUNT(CASE WHEN TotalSteps BETWEEN 10000 AND 12500 THEN TotalSteps ELSE NULL END) AS 'Count Very Active'
+	-- ,COUNT(CASE WHEN TotalSteps > 12500 THEN TotalSteps ELSE NULL END) AS 'Count Highly Active'
 FROM
 	daily_activity
-WHERE
-	TotalSteps IS NOT NULL
-	OR TotalSteps != 0
+-- WHERE
+-- 	TotalSteps IS NOT NULL
+-- 	OR TotalSteps != 0
 GROUP BY
 	Id
 ORDER BY
