@@ -1440,8 +1440,41 @@ SELECT
 	,COUNT(CASE WHEN TotalSteps BETWEEN 7500 AND 9999 THEN TotalSteps ELSE NULL END) AS 'Count Active'
 	,COUNT(CASE WHEN TotalSteps BETWEEN 10000 AND 12500 THEN TotalSteps ELSE NULL END) AS 'Count Very Active'
 	,COUNT(CASE WHEN TotalSteps > 12500 THEN TotalSteps ELSE NULL END) AS 'Count Highly Active'
+	,(
+		COUNT(CASE WHEN TotalSteps <= 4999 THEN TotalSteps ELSE NULL END) + 
+		COUNT(CASE WHEN TotalSteps BETWEEN 5000 AND 7499 THEN TotalSteps ELSE NULL END) +
+		COUNT(CASE WHEN TotalSteps BETWEEN 7500 AND 9999 THEN TotalSteps ELSE NULL END) +
+		COUNT(CASE WHEN TotalSteps BETWEEN 10000 AND 12500 THEN TotalSteps ELSE NULL END) +
+		COUNT(CASE WHEN TotalSteps > 12500 THEN TotalSteps ELSE NULL END)
+	)	AS 'Count Total Records Check'
 FROM
 	daily_activity;
+
+
+
+
+
+SELECT
+	Id
+	,COUNT(CASE WHEN TotalSteps <= 4999 THEN TotalSteps ELSE NULL END) AS 'Count Inactive'
+	,COUNT(CASE WHEN TotalSteps BETWEEN 5000 AND 7499 THEN TotalSteps ELSE NULL END) AS 'Count Slightly Active'
+	,COUNT(CASE WHEN TotalSteps BETWEEN 7500 AND 9999 THEN TotalSteps ELSE NULL END) AS 'Count Active'
+	,COUNT(CASE WHEN TotalSteps BETWEEN 10000 AND 12500 THEN TotalSteps ELSE NULL END) AS 'Count Very Active'
+	,COUNT(CASE WHEN TotalSteps > 12500 THEN TotalSteps ELSE NULL END) AS 'Count Highly Active'
+	,(
+		COUNT(CASE WHEN TotalSteps <= 4999 THEN TotalSteps ELSE NULL END) + 
+		COUNT(CASE WHEN TotalSteps BETWEEN 5000 AND 7499 THEN TotalSteps ELSE NULL END) +
+		COUNT(CASE WHEN TotalSteps BETWEEN 7500 AND 9999 THEN TotalSteps ELSE NULL END) +
+		COUNT(CASE WHEN TotalSteps BETWEEN 10000 AND 12500 THEN TotalSteps ELSE NULL END) +
+		COUNT(CASE WHEN TotalSteps > 12500 THEN TotalSteps ELSE NULL END)
+	)	AS 'Count Total Records Check'
+FROM
+	daily_activity
+GROUP BY 
+	Id
+ORDER BY 
+	2 DESC
+;
 
 /*
 AVG daily active minutes grouped by user activity type for CDC recommended daily activity time
