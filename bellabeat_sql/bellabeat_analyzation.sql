@@ -170,7 +170,8 @@ ORDER BY
 
 /*
 We are left to assume from the data dictionary that these 32 records are from activity that was 
-manually logged by the user
+manually logged by the participants, or that the 4 participants included in the results of this query are
+potentially using a tracking device with a different recording/reporting protocol than the rest.
 */
 
 SELECT * FROM daily_activity WHERE LoggedActivitiesDistance > 0;
