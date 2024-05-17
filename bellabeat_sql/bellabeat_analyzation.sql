@@ -203,13 +203,17 @@ ORDER BY
 
 WITH RankedResults AS (
     SELECT 
-        ROW_NUMBER() OVER (ORDER BY avg_active_hours_per_Id DESC) AS IndexColumn
+        ROW_NUMBER() OVER (ORDER BY record_count DESC) AS IndexColumn
         ,Id
         ,avg_active_hours_per_Id
+		,avg_daily_steps_per_Id
+		,record_count
     FROM (
         SELECT 
             Id
             ,ROUND(AVG(total_active_hours), 1) AS avg_active_hours_per_Id
+			,ROUND(CAST((ROUND(AVG(TotalSteps), 1))AS FLOAT), 0) AS avg_daily_steps_per_Id		-- no partial steps as decimal
+			,COUNT(ActivityDate) AS record_count
         FROM 
             #daily_active_hours
         GROUP BY 
@@ -218,12 +222,14 @@ WITH RankedResults AS (
 )
 SELECT 
     IndexColumn
-    ,Id
+    -- ,Id
     ,avg_active_hours_per_Id
+	,avg_daily_steps_per_Id
+	,record_count
 FROM 
     RankedResults
 ORDER BY 
-    avg_active_hours_per_Id DESC;
+    record_count DESC;
 
 
 --Finding an average daily wear time per user Id against average daily steps based on #daily_active_hours.
