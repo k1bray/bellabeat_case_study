@@ -326,11 +326,11 @@ SELECT
 	,CAST((ROUND(AVG(VeryActiveMinutes), 0)) AS FLOAT) AS 'AVG Very Active Minutes Per Day'
 	,CAST((ROUND(AVG(FairlyActiveMinutes), 0)) AS FLOAT) AS 'AVG Fairly Active Minutes Per Day'
 	,CAST((ROUND(AVG(LightlyActiveMinutes), 0)) AS FLOAT) AS 'AVG Lightly Active Minutes Per Day'
-	,CAST((ROUND(AVG(SedentaryMinutes), 0)) AS FLOAT) AS 'AVG Sedentary Distance Per Day (km)'
-	,CAST((ROUND(AVG(VeryActiveDistance), 0)) AS FLOAT) AS 'AVG Very Active Distance Per Day (km)'
-	,CAST((ROUND(AVG(ModeratelyActiveDistance), 0)) AS FLOAT) AS 'AVG Fairly Active Distance Per Day (km)'
-	,CAST((ROUND(AVG(LightActiveDistance), 0)) AS FLOAT) AS 'AVG Lightly Active Distance Per Day (km)'
-	,CAST((ROUND(AVG(SedentaryActiveDistance), 0)) AS FLOAT) AS 'AVG Sedentary Distance Per Day (km)'
+	,CAST((ROUND(AVG(SedentaryMinutes), 0)) AS FLOAT) AS 'AVG Sedentary Minutes Per Day'
+	,CAST((ROUND(AVG(VeryActiveDistance), 1)) AS FLOAT) AS 'AVG Very Active Distance Per Day (km)'
+	,CAST((ROUND(AVG(ModeratelyActiveDistance), 1)) AS FLOAT) AS 'AVG Fairly Active Distance Per Day (km)'
+	,CAST((ROUND(AVG(LightActiveDistance), 1)) AS FLOAT) AS 'AVG Lightly Active Distance Per Day (km)'
+	,CAST((ROUND(AVG(SedentaryActiveDistance), 1)) AS FLOAT) AS 'AVG Sedentary Distance Per Day (km)'
 FROM
 	daily_activity
 GROUP BY
