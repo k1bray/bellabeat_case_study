@@ -116,7 +116,7 @@ FROM daily_activity da
 Session Duration - What's the average duration of each session users spend interacting with their devices? This metric 
 provides insights into user engagement levels.
 
-Although most of the user group wore their devices each day of the study period, many of them wore their trackers
+Although most in the group wore their devices each day of the study period, many of them wore their trackers
 for partial days.
 */
 
