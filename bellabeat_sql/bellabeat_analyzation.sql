@@ -404,21 +404,41 @@ By changing the JOIN type from FULL to INNER the query eliminates or excludes an
 daily_activity table that would contain a NULL in any of the sleep-related columns.
 */
 
+WITH SleepRankedResults AS (
+	SELECT 
+		ROW_NUMBER() OVER (Order BY count_of_daily_sleep_records DESC) AS IndexColumn
+		,Id
+		,count_of_daily_sleep_records
+		,avg_hours_asleep
+		,avg_mins_awake_in_bed
+		,avg_daily_steps
+	FROM (
+		SELECT
+			daily_activity.Id AS Id
+			,COUNT(SleepDay) AS count_of_daily_sleep_records
+			,CAST((AVG(totalMinutesAsleep) / 60) AS DECIMAL (10,1)) AS avg_hours_asleep
+			,CAST((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)) AS DECIMAL (10,1)) AS avg_mins_awake_in_bed
+ 			,CAST(AVG(daily_activity.TotalSteps) AS DECIMAL (10,0)) AS avg_daily_steps
+		FROM	
+			daily_activity
+			INNER JOIN daily_sleep 
+				ON daily_sleep.Id = daily_activity.Id 
+				AND daily_sleep.SleepDay = daily_activity.ActivityDate
+		GROUP BY
+			daily_activity.Id
+	) AS Subquery 
+)
 SELECT
-	daily_activity.Id
-	,COUNT(SleepDay) AS count_of_daily_sleep_records
-	,CAST((AVG(totalMinutesAsleep) / 60) AS DECIMAL (10,1)) AS 'AVG Hours Asleep'
-	,CAST((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)) AS DECIMAL (10,1)) AS 'AVG Mins Awake In Bed'
- 	,CAST(AVG(daily_activity.TotalSteps) AS DECIMAL (10,0)) AS 'AVG Daily Steps'
-FROM	
-	daily_activity
-	INNER JOIN daily_sleep 
-		ON daily_sleep.Id = daily_activity.Id 
-		AND daily_sleep.SleepDay = daily_activity.ActivityDate
-GROUP BY
-	daily_activity.Id
+	IndexColumn
+	-- ,Id
+	,count_of_daily_sleep_records
+	,avg_hours_asleep
+	,avg_mins_awake_in_bed
+	,avg_daily_steps
+FROM
+	SleepRankedResults
 ORDER BY 
-	count_of_daily_sleep_records DESC;
+	count_of_daily_sleep_records DESC
 
 /*
 Finding the AVG hours asleep and AVG time spent awake in bed per day of the week.
@@ -451,7 +471,8 @@ What is the overall AVG Mins Awake for the user group (39.31 mins)?
 */
 
 SELECT 
-	CAST((AVG(totalMinutesAsleep) / 60) AS DECIMAL (10,2)) AS 'AVG Hours Asleep' -- 6.99 Hours
+	CAST(AVG(totalMinutesAsleep) AS DECIMAL (10,0)) AS 'AVG Mins Asleep' -- 419 Mins
+	,CAST((AVG(totalMinutesAsleep) / 60) AS DECIMAL (10,0)) AS 'AVG Hours Asleep' -- 6.99 Hours
 	,CAST((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)) AS DECIMAL (10,0)) AS 'AVG Mins Awake In Bed' -- 39.31 Mins
 FROM
 	daily_sleep;
