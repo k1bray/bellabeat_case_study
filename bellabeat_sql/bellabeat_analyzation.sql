@@ -366,20 +366,36 @@ I JOINed the daily_sleep table with the daily_activity table.  This shows which 
 records in the daily_sleep table.
 */
 
+WITH SleepRankedResults AS (
+	SELECT 
+		ROW_NUMBER() OVER (Order BY count_of_daily_sleep_records DESC) AS IndexColumn
+		,Id
+		,count_of_daily_activity_records
+		,count_of_daily_sleep_records
+	FROM (
+		SELECT
+			daily_activity.Id AS Id
+			,COUNT(ActivityDate) AS count_of_daily_activity_records
+			,COUNT(SleepDay) AS count_of_daily_sleep_records
+		FROM	
+			daily_activity
+			LEFT JOIN daily_sleep 
+				ON daily_sleep.Id = daily_activity.Id 
+				AND daily_sleep.SleepDay = daily_activity.ActivityDate
+		GROUP BY
+			daily_activity.Id
+	) AS Subquery 
+)
 SELECT
-	daily_activity.Id
-	,COUNT(ActivityDate) AS count_of_daily_activity_records
-	,COUNT(SleepDay) AS count_of_daily_sleep_records
-FROM	
-	daily_activity
-	LEFT JOIN daily_sleep 
-		ON daily_sleep.Id = daily_activity.Id 
-		AND daily_sleep.SleepDay = daily_activity.ActivityDate
-GROUP BY
-	daily_activity.Id
-ORDER BY
+	IndexColumn
+	-- ,Id
+	,count_of_daily_activity_records
+	,count_of_daily_sleep_records
+FROM
+	SleepRankedResults
+ORDER BY 
 	count_of_daily_sleep_records DESC
-	,count_of_daily_activity_records DESC;
+;
 
 /*
 Finding the AVG hours asleep and time spent awake in bed per user Id for the users.
