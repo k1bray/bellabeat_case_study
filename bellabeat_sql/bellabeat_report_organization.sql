@@ -313,7 +313,7 @@ SELECT
 	DATEPART(WEEKDAY, SleepDay) AS 'Day # of Week'
 	,DATENAME(WEEKDAY, SleepDay) AS 'Day of Week'
 	,COUNT(*) AS 'Daily Sleep Records'
-	,CAST((AVG(totalMinutesAsleep) / 60) AS DECIMAL (10,2)) AS 'AVG Hours Asleep'
+	,CAST((AVG(totalMinutesAsleep) / 60) AS DECIMAL (10,1)) AS 'AVG Hours Asleep'
 	,CAST(((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep))/60) AS DECIMAL (10,2)) AS 'AVG Hrs Awake In Bed'
 	,CAST((AVG(TotalTimeInBed) - AVG(totalMinutesAsleep)) AS DECIMAL (10,0)) AS 'AVG Mins Awake In Bed'
 FROM
@@ -324,6 +324,8 @@ GROUP BY
 ORDER BY
 	DATEPART(WEEKDAY, SleepDay)
 	,DATENAME(WEEKDAY, SleepDay);
+
+SELECT * FROM daily_sleep;
 
 /*
 What is the overall AVG Hours Asleep for the user group (6.99 hours)?
