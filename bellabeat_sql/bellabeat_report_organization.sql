@@ -340,6 +340,237 @@ FROM
 ;
 
 /*
+What is the average bedtime for participants?
+What is the average wake up time for participants?
+
+**NOTE**
+There are some instances of participants having more than one sleep session in a day
+
+Step 1: create temp table with Id, date, value, and LogId using MIN(date)/MAX(date) GROUP BY Id
+Step 2: create temp table and use DATEPART(HOUR())(?) to pull the hour of the day
+Step 3: find the average
+*/
+
+SELECT * FROM daily_sleep;
+
+SELECT
+    LogId
+    ,MIN(date) AS bedtime
+    ,MAX(date) AS waketime
+FROM 
+    minute_sleep 
+GROUP BY 
+    LogId;
+
+SELECT
+    b.Id
+    ,a.LogId
+    ,MIN(a.date) AS bedtime
+    ,MAX(a.date) AS waketime
+FROM 
+    minute_sleep AS a
+    LEFT JOIN minute_sleep AS b
+        ON a.Id = b.Id
+GROUP BY 
+    a.LogId;
+
+SELECT
+    DISTINCT a.Id,
+    a.LogId,
+    bedtime,
+    waketime
+FROM 
+    minute_sleep AS a
+JOIN 
+    (
+        SELECT 
+            LogId,
+            MIN(date) AS bedtime,
+            MAX(date) AS waketime
+        FROM 
+            minute_sleep
+        GROUP BY 
+            LogId
+    ) AS b
+    ON a.LogId = b.LogId
+    AND (a.date = b.bedtime OR a.date = b.waketime)
+ORDER BY Id
+;
+
+
+WITH BedtimeWaketime AS (
+    SELECT 
+        LogId,
+        MIN(date) AS bedtime,
+        MAX(date) AS waketime
+    FROM 
+        minute_sleep
+    GROUP BY 
+        LogId
+)
+SELECT
+    DISTINCT a.Id,
+    b.LogId,
+    b.bedtime,
+    b.waketime
+FROM 
+    BedtimeWaketime AS b
+JOIN 
+    minute_sleep AS a
+    ON a.LogId = b.LogId
+    AND (a.date = b.bedtime OR a.date = b.waketime)
+ORDER BY Id
+;
+
+
+/*
+Step 1 - Calculate both the bedtime and waketime for each LogId.
+Step 2 - Extract the hour and minute components from both bedtime and waketime.
+Step 3 - Calculate the average bedtime and waketime overall.
+Step 4 - Calculate the average bedtime and waketime for each day of the week.
+
+Explanation:
+CTE SleepTimes: Calculates both the minimum date (i.e., bedtime) and maximum date (i.e., waketime) for each LogId.
+
+CTE SleepDetails: Extracts the hour and minute components from both bedtime and waketime to calculate the total 
+minutes past midnight for each. It also extracts the day of the week.
+
+CTE AverageSleepTimesOverall: Calculates the overall average bedtime and waketime.
+
+CTE AverageSleepTimesByDay: Calculates the average bedtime and waketime for each day of the week.
+Final SELECT with UNION ALL: Combines the overall averages with the daily averages, adding a SortOrder column to 
+ensure correct ordering.
+
+Outer SELECT with ORDER BY: Orders the combined results by SortOrder, ensuring 'Overall' comes first, followed by 
+days of the week in the correct order. The final result set includes the Category, AverageBedtime, and AverageWaketime columns.
+*/
+
+
+WITH SleepTimes AS (
+    SELECT 
+        LogId,
+        MIN(date) AS bedtime,
+        MAX(date) AS waketime
+    FROM 
+        minute_sleep
+    GROUP BY 
+        LogId
+),
+SleepDetails AS (
+    SELECT
+        bedtime,
+        waketime,
+        DATEPART(HOUR, bedtime) * 60 + DATEPART(MINUTE, bedtime) AS bedtime_minutes,
+        DATEPART(HOUR, waketime) * 60 + DATEPART(MINUTE, waketime) AS waketime_minutes,
+        DATEPART(WEEKDAY, bedtime) AS weekday
+    FROM 
+        SleepTimes
+),
+AverageSleepTimesOverall AS (
+    -- Calculate average bedtime and waketime overall
+    SELECT 
+        'Overall' AS Category,
+        CONVERT(TIME, DATEADD(MINUTE, AVG(bedtime_minutes), 0)) AS AverageBedtime,
+        CONVERT(TIME, DATEADD(MINUTE, AVG(waketime_minutes), 0)) AS AverageWaketime,
+        NULL AS weekday
+    FROM 
+        SleepDetails
+),
+AverageSleepTimesByDay AS (
+    -- Calculate average bedtime and waketime for each day of the week
+    SELECT 
+        CASE 
+            WHEN weekday = 1 THEN 'Sunday'
+            WHEN weekday = 2 THEN 'Monday'
+            WHEN weekday = 3 THEN 'Tuesday'
+            WHEN weekday = 4 THEN 'Wednesday'
+            WHEN weekday = 5 THEN 'Thursday'
+            WHEN weekday = 6 THEN 'Friday'
+            WHEN weekday = 7 THEN 'Saturday'
+        END AS Category,
+        CONVERT(TIME, DATEADD(MINUTE, AVG(bedtime_minutes), 0)) AS AverageBedtime,
+        CONVERT(TIME, DATEADD(MINUTE, AVG(waketime_minutes), 0)) AS AverageWaketime,
+        weekday
+    FROM 
+        SleepDetails
+    GROUP BY 
+        weekday
+)
+-- Combine the results and order them
+SELECT 
+    Category,
+    AverageBedtime,
+    AverageWaketime
+FROM (
+    SELECT 
+        Category,
+        AverageBedtime,
+        AverageWaketime,
+        0 AS SortOrder
+    FROM 
+        AverageSleepTimesOverall
+
+    UNION ALL
+
+    SELECT 
+        Category,
+        AverageBedtime,
+        AverageWaketime,
+        CASE 
+            WHEN Category = 'Sunday' THEN 1
+            WHEN Category = 'Monday' THEN 2
+            WHEN Category = 'Tuesday' THEN 3
+            WHEN Category = 'Wednesday' THEN 4
+            WHEN Category = 'Thursday' THEN 5
+            WHEN Category = 'Friday' THEN 6
+            WHEN Category = 'Saturday' THEN 7
+        END AS SortOrder
+    FROM 
+        AverageSleepTimesByDay
+) AS CombinedResults
+ORDER BY 
+    SortOrder;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 Finding the number of records for each day of the week of the weight_log table.
 Given how sparse this table is, These results are mainly focused on the activity of a very
 small group of people.
