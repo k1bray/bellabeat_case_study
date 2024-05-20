@@ -345,108 +345,22 @@ What is the average wake up time for participants?
 
 **NOTE**
 There are some instances of participants having more than one sleep session in a day
+Also, there is no indication that all participants are located within the same timezone.
+This could have a dramatic affect on trying to compare bedtimes and waketimes, which would
+make finding an average potentially problematic.
 
-Step 1: create temp table with Id, date, value, and LogId using MIN(date)/MAX(date) GROUP BY Id
-Step 2: create temp table and use DATEPART(HOUR())(?) to pull the hour of the day
-Step 3: find the average
-*/
-
-SELECT * FROM daily_sleep;
-
-SELECT
-    LogId
-    ,MIN(date) AS bedtime
-    ,MAX(date) AS waketime
-FROM 
-    minute_sleep 
-GROUP BY 
-    LogId;
-
-SELECT
-    b.Id
-    ,a.LogId
-    ,MIN(a.date) AS bedtime
-    ,MAX(a.date) AS waketime
-FROM 
-    minute_sleep AS a
-    LEFT JOIN minute_sleep AS b
-        ON a.Id = b.Id
-GROUP BY 
-    a.LogId;
-
-SELECT
-    DISTINCT a.Id,
-    a.LogId,
-    bedtime,
-    waketime
-FROM 
-    minute_sleep AS a
-JOIN 
-    (
-        SELECT 
-            LogId,
-            MIN(date) AS bedtime,
-            MAX(date) AS waketime
-        FROM 
-            minute_sleep
-        GROUP BY 
-            LogId
-    ) AS b
-    ON a.LogId = b.LogId
-    AND (a.date = b.bedtime OR a.date = b.waketime)
-ORDER BY Id
-;
-
-
-WITH BedtimeWaketime AS (
-    SELECT 
-        LogId,
-        MIN(date) AS bedtime,
-        MAX(date) AS waketime
-    FROM 
-        minute_sleep
-    GROUP BY 
-        LogId
-)
-SELECT
-    DISTINCT a.Id,
-    b.LogId,
-    b.bedtime,
-    b.waketime
-FROM 
-    BedtimeWaketime AS b
-JOIN 
-    minute_sleep AS a
-    ON a.LogId = b.LogId
-    AND (a.date = b.bedtime OR a.date = b.waketime)
-ORDER BY Id
-;
-
-
-/*
 Step 1 - Calculate both the bedtime and waketime for each LogId.
 Step 2 - Extract the hour and minute components from both bedtime and waketime.
 Step 3 - Calculate the average bedtime and waketime overall.
 Step 4 - Calculate the average bedtime and waketime for each day of the week.
 
-Explanation:
-CTE SleepTimes: Calculates both the minimum date (i.e., bedtime) and maximum date (i.e., waketime) for each LogId.
-
-CTE SleepDetails: Extracts the hour and minute components from both bedtime and waketime to calculate the total 
-minutes past midnight for each. It also extracts the day of the week.
-
-CTE AverageSleepTimesOverall: Calculates the overall average bedtime and waketime.
-
-CTE AverageSleepTimesByDay: Calculates the average bedtime and waketime for each day of the week.
-Final SELECT with UNION ALL: Combines the overall averages with the daily averages, adding a SortOrder column to 
-ensure correct ordering.
-
-Outer SELECT with ORDER BY: Orders the combined results by SortOrder, ensuring 'Overall' comes first, followed by 
-days of the week in the correct order. The final result set includes the Category, AverageBedtime, and AverageWaketime columns.
+The results of this query show what *could* be considered as plausible aveage waketimes.
+HOWEVER, the results for average bedtimes seems WAY off.
 */
 
 
 WITH SleepTimes AS (
+--Calculates both the minimum date (i.e., bedtime) and maximum date (i.e., waketime) for each LogId
     SELECT 
         LogId,
         MIN(date) AS bedtime,
@@ -457,6 +371,8 @@ WITH SleepTimes AS (
         LogId
 ),
 SleepDetails AS (
+-- Extracts the hour and minute components from both bedtime and waketime to calculate the total 
+-- minutes past midnight for each. It also extracts the day of the week
     SELECT
         bedtime,
         waketime,
@@ -467,7 +383,7 @@ SleepDetails AS (
         SleepTimes
 ),
 AverageSleepTimesOverall AS (
-    -- Calculate average bedtime and waketime overall
+-- Calculate average bedtime and waketime overall
     SELECT 
         'Overall' AS Category,
         CONVERT(TIME, DATEADD(MINUTE, AVG(bedtime_minutes), 0)) AS AverageBedtime,
@@ -496,7 +412,7 @@ AverageSleepTimesByDay AS (
     GROUP BY 
         weekday
 )
--- Combine the results and order them
+-- Combines the overall averages with the daily averages, adding a SortOrder column to ensure correct ordering
 SELECT 
     Category,
     AverageBedtime,
@@ -530,44 +446,6 @@ FROM (
 ) AS CombinedResults
 ORDER BY 
     SortOrder;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /*
@@ -672,3 +550,40 @@ FROM
 ) AS max_min_dates
 ORDER BY 
     wt_change;
+
+/*
+This query shows a list of user Id's and a count of their weight_log records separated by
+manual and automatic recording of entries.
+
+No one used both methods.  They either used one or the other.
+
+The two users with the highest and most consistent weight log records each used different 
+methods of data recording.
+*/
+
+SELECT
+	COUNT(*) AS 'Total Record Count Per User'
+	,Id
+	,COUNT(CASE WHEN IsManualReport = 'True' THEN IsManualReport ELSE NULL END) 
+		AS 'Manual Record'
+	,COUNT(CASE WHEN IsManualReport = 'False' THEN IsManualReport ELSE NULL END) 
+		AS 'Automatic Record'
+FROM
+	weight_log
+GROUP BY
+	Id
+ORDER BY 1 DESC;
+
+/*
+The following query returns a table with the total number of records for each category of 
+manual or automatic recording of weight info.
+*/
+
+SELECT
+	COUNT(*) AS 'Total Record Count' -- 67 records
+	,COUNT(CASE WHEN IsManualReport = 'True' THEN IsManualReport ELSE NULL END) 
+		AS 'Manual Record' -- 41 records
+	,COUNT(CASE WHEN IsManualReport = 'False' THEN IsManualReport ELSE NULL END) 
+		AS 'Automatic Record' -- 26 records
+FROM
+	weight_log;
