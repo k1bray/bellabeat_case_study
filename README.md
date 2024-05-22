@@ -228,7 +228,7 @@ Unfortunately, since we aren’t furnished with the dates that participants firs
 
 ### Feature Usage and Device Interoperability
 
-[count-of-participants-utilizing-each-feature]
+![count-of-participants-utilizing-each-feature](https://github.com/k1bray/bellabeat_case_study/blob/main/Images/count-of-participants-utilizing-each-feature.png)
 
 By and large, most of the data that was collected was done so in a passive manner for the participants, meaning all they had to do was to wear their fitness tracker and the data was collected automatically for them and then synced with the accompanying app.  Since we don’t have data pertaining to participant feedback, we can make some assumptions through analyzation as to which features the participants appear to prioritize.
 
