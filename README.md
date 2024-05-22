@@ -74,7 +74,7 @@ The tools used during the cleaning process and data manipulation for analysis wa
 
 •	Checked each table schema
 
-o	Updated and converted column datatypes from default import as varchar(50)
+  o	Updated and converted column datatypes from default import as varchar(50)
 
 •	Created minute_activity table from joining all minute-timeframe tables
 
@@ -82,63 +82,63 @@ o	Updated and converted column datatypes from default import as varchar(50)
 
 •	Established metadata info
 
-o	Count of users for each table
+  o	Count of users for each table
 
-o	Earliest/latest date in each table
+  o	Earliest/latest date in each table
 
-o	Utilized date math to calculate and verify difference in start/end dates
+  o	Utilized date math to calculate and verify difference in start/end dates
 
-o	Counted each distinct date record for comparison with date math
+  o	Counted each distinct date record for comparison with date math
 
 •	Checked for record completion/saturation using two tables to determine level of user participation across device functionality
 
 •	Checked for duplicate records in each table being used for the study
 
-o	No duplicates found in minute_activity table
+  o	No duplicates found in minute_activity table
 
-o	No duplicates found in hourly_activity table
+  o	No duplicates found in hourly_activity table
 
-o	No duplicates found in daily_activity table
+  o	No duplicates found in daily_activity table
 
-o	3 duplicates found in daily_sleep table
+  o	3 duplicates found in daily_sleep table
 
-	Created new table with DISTINCT info from daily_sleep
+    	Created new table with DISTINCT info from daily_sleep
 
-	Deleted original daily_sleep table
+    	Deleted original daily_sleep table
 
-	Renamed new table to replace daily_sleep after deletion
+    	Renamed new table to replace daily_sleep after deletion
 
-o	No duplicates found in hourly_intensity table
+  o	No duplicates found in hourly_intensity table
 
-o	543 duplicates found in minute_sleep table
+  o	543 duplicates found in minute_sleep table
 
-	Created new table with DISTINCT info from minute_sleep table
+    	Created new table with DISTINCT info from minute_sleep table
 
-	Deleted original minute_sleep table
+    	Deleted original minute_sleep table
 
-	Renamed new table to replace minute_sleep after deletion
+    	Renamed new table to replace minute_sleep after deletion
 
-o	No duplicates found in weight_log table
+  o	No duplicates found in weight_log table
 
 •	Checked for NULL values in all tables
 
 •	Checked the daily_activity table for various issues/inconsistencies
 
-o	There were no NULL values found in the daily_activity table
+  o	There were no NULL values found in the daily_activity table
 
 •	Checked the character length of the Id column in all tables to be used
 
-o	Id column in all tables matched with 10 characters
+  o	Id column in all tables matched with 10 characters
 
 •	Checked for outliers in all tables
 
-o	Both the MIN and the MAX for all tables appear to be legitimate or explainable
+  o	Both the MIN and the MAX for all tables appear to be legitimate or explainable
 
 •	Validated the dataset 
 
-o	Double checked for accuracy due to any changes made
+  o	Double checked for accuracy due to any changes made
 
-o	Double checked that all data was formatted correctly
+  o	Double checked that all data was formatted correctly
 
 ## Analysis and Discussion
 ### Overview of the Analysis Process
