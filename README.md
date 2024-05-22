@@ -43,8 +43,7 @@ The table that is the most readily usable in its raw form for the purposes of th
 ### Limitations of The Dataset
 One of the features of the Bellabeat Leaf (an activity tracking device) and its accompanying app is that it has guided breathing exercises to control stress levels.  After examining the provided dataset there is nothing in the data that can be used to analyze user stress.
 
-At the time of this study’s publication, the LEAF doesn’t currently appear to make weight tracking a priority for the user experience.  With that in mind, as well as viewing how sparse the data in the table is, analyzation of the weight_log table for the sake of its fitness activity is of limited value, unless Bellabeat plans on adding a weight-focused feature at a later date.  
-However, given the sparsity of the provided weight_log table it would be wise to collect or acquire a more comprehensive dataset that provides a higher level of data value on that topic.
+At the time of this study’s publication, the LEAF doesn’t currently appear to make weight tracking a priority for the user experience.  With that in mind, as well as viewing how sparse the data in the table is, analyzation of the weight_log table for the sake of its fitness activity is of limited value, unless Bellabeat plans on adding a weight-focused feature at a later date.  However, given the sparsity of the provided weight_log table it would be wise to collect or acquire a more comprehensive dataset that provides a higher level of data value on that topic.
 
 Another point to note is that in the weight_log table there is a column for 'Fat' which is mostly comprised of NULL values.  This appears to be an underutilized feature of the Fitbit tracker.  It’s unclear how this metric would be measured, and it is possible that it might require additional hardware beyond the Fitbit device to collect.  If this were to be true it could provide some insight into why the data in that column is so sparse, as well as to bolster a potential suspicion of why the weight_log table had such a low overall participation rate.  This would encourage the idea that perhaps a better perspective on the lack of utilization of the weight_log data by the participants is just that.  This is a blunt way to put it, but why do the participants by-and-large seem to find little-to-no value in that feature?  Why might it be so underutilized?  Unfortunately, there is insufficient data from which to gain insight on this matter utilizing this dataset alone.  However, one could surmise after viewing the uniformity of the automatically collected data in the daily_activity table that the requirement of the participants to take an additional step by either weighing themselves and/or manually entering the data creates a barrier to the task that is too great to overcome without the motivation to make it a priority.
 
@@ -264,7 +263,7 @@ The total count of daily records per Id ranged from a high of 31 (the full lengt
 On average during the study period, Tuesday was the day of the week that the participants were most likely to wear their fitness trackers.  This can be seen by looking at a count of records grouped by the day of the week.  Monday was the day that participants were least likely to wear their fitness trackers.
 
 ### Device Usage During Sleep
- 
+
 ![daily-activity-records-count-per-id](https://github.com/k1bray/bellabeat_case_study/blob/main/Images/daily-activity-records-count-per-id.png)
 
 The chart above has been repeated from a previous section but is included again to show the contrast in participation rate between the daily_activity records per Id and the daily_sleep records per Id, which can be seen below.
