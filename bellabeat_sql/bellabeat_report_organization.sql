@@ -222,7 +222,6 @@ Even though the overall dataset is lacking in terms of userpool size and time du
 very low.  A relatively safe assumption is that the majority of users didn't find the idea of weight logging to be valuable.  
 Whether the sampling in this userpool is a good overall representation of people who wear fitness tracking devices si still unclear.
 
-
 No insight of value can confidently be gained from this data other than the majority of the users that did utilize weight logging
 manually reported their records.  Also, that the vast majority of the sample user pool did not utilize the weight logging feature at all.
 */
@@ -358,13 +357,12 @@ The results of this query show what *could* be considered as plausible aveage wa
 HOWEVER, the results for average bedtimes seems WAY off.
 */
 
-
 WITH SleepTimes AS (
 --Calculates both the minimum date (i.e., bedtime) and maximum date (i.e., waketime) for each LogId
     SELECT 
-        LogId,
-        MIN(date) AS bedtime,
-        MAX(date) AS waketime
+        LogId
+        ,MIN(date) AS bedtime
+        ,MAX(date) AS waketime
     FROM 
         minute_sleep
     GROUP BY 
@@ -374,21 +372,21 @@ SleepDetails AS (
 -- Extracts the hour and minute components from both bedtime and waketime to calculate the total 
 -- minutes past midnight for each. It also extracts the day of the week
     SELECT
-        bedtime,
-        waketime,
-        DATEPART(HOUR, bedtime) * 60 + DATEPART(MINUTE, bedtime) AS bedtime_minutes,
-        DATEPART(HOUR, waketime) * 60 + DATEPART(MINUTE, waketime) AS waketime_minutes,
-        DATEPART(WEEKDAY, bedtime) AS weekday
+        bedtime
+        ,waketime
+        ,DATEPART(HOUR, bedtime) * 60 + DATEPART(MINUTE, bedtime) AS bedtime_minutes
+        ,DATEPART(HOUR, waketime) * 60 + DATEPART(MINUTE, waketime) AS waketime_minutes
+        ,DATEPART(WEEKDAY, bedtime) AS weekday
     FROM 
         SleepTimes
 ),
 AverageSleepTimesOverall AS (
 -- Calculate average bedtime and waketime overall
     SELECT 
-        'Overall' AS Category,
-        CONVERT(TIME, DATEADD(MINUTE, AVG(bedtime_minutes), 0)) AS AverageBedtime,
-        CONVERT(TIME, DATEADD(MINUTE, AVG(waketime_minutes), 0)) AS AverageWaketime,
-        NULL AS weekday
+        'Overall' AS Category
+        ,CONVERT(TIME, DATEADD(MINUTE, AVG(bedtime_minutes), 0)) AS AverageBedtime
+        ,CONVERT(TIME, DATEADD(MINUTE, AVG(waketime_minutes), 0)) AS AverageWaketime
+        ,NULL AS weekday
     FROM 
         SleepDetails
 ),
@@ -403,10 +401,10 @@ AverageSleepTimesByDay AS (
             WHEN weekday = 5 THEN 'Thursday'
             WHEN weekday = 6 THEN 'Friday'
             WHEN weekday = 7 THEN 'Saturday'
-        END AS Category,
-        CONVERT(TIME, DATEADD(MINUTE, AVG(bedtime_minutes), 0)) AS AverageBedtime,
-        CONVERT(TIME, DATEADD(MINUTE, AVG(waketime_minutes), 0)) AS AverageWaketime,
-        weekday
+        END AS Category
+        ,CONVERT(TIME, DATEADD(MINUTE, AVG(bedtime_minutes), 0)) AS AverageBedtime
+        ,CONVERT(TIME, DATEADD(MINUTE, AVG(waketime_minutes), 0)) AS AverageWaketime
+        ,weekday
     FROM 
         SleepDetails
     GROUP BY 
@@ -414,25 +412,25 @@ AverageSleepTimesByDay AS (
 )
 -- Combines the overall averages with the daily averages, adding a SortOrder column to ensure correct ordering
 SELECT 
-    Category,
-    AverageBedtime,
-    AverageWaketime
+    Category
+    ,AverageBedtime
+    ,AverageWaketime
 FROM (
     SELECT 
-        Category,
-        AverageBedtime,
-        AverageWaketime,
-        0 AS SortOrder
+        Category
+        ,AverageBedtime
+        ,AverageWaketime
+        ,0 AS SortOrder
     FROM 
         AverageSleepTimesOverall
 
     UNION ALL
 
     SELECT 
-        Category,
-        AverageBedtime,
-        AverageWaketime,
-        CASE 
+        Category
+        ,AverageBedtime
+        ,AverageWaketime
+        ,CASE 
             WHEN Category = 'Sunday' THEN 1
             WHEN Category = 'Monday' THEN 2
             WHEN Category = 'Tuesday' THEN 3
@@ -446,7 +444,6 @@ FROM (
 ) AS CombinedResults
 ORDER BY 
     SortOrder;
-
 
 /*
 Finding the number of records for each day of the week of the weight_log table.
