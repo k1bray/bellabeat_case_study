@@ -1,4 +1,5 @@
-[bellabeat-logo]
+![bellabeat-logo](https://github.com/k1bray/bellabeat_case_study/blob/main/Images/bellabeat-logo.png)
+
 ## Introduction and Company Profile
 Hello, my name is Kevin, and for the purposes of this case study I’m a Junior Data Analyst in the marketing department for Bellabeat.  Our company is a high-tech manufacturer of health-focused products for women that was founded in 2013 by Urska Srsen and Sando Mur.
 
