@@ -4,7 +4,7 @@
 Hello, my name is Kevin, and for the purposes of this case study I’m a Junior Data Analyst in the marketing department for Bellabeat.  Our company is a high-tech manufacturer of health-focused products for women that was founded in 2013 by Urska Srsen and Sando Mur.
 
 ## Table of Contents
-[Summary of the Business Task and Stakeholders]
+[Summary of the Business Task and Stakeholders](https://github.com/k1bray/bellabeat_case_study?tab=readme-ov-file#summary-of-the-business-task-and-stakeholders)
 
 [Examining the Data Profile]
 
