@@ -188,7 +188,6 @@ SELECT *
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME='daily_activity';
 
-
 -- Updating the weight_log table
 
 ALTER TABLE weight_log
