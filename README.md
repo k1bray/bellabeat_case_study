@@ -24,11 +24,11 @@ Specifically, the questions being asked are:
 3.	How could these trends help influence the Bellabeat marketing strategy?
 
 ### Key Stakeholders
-  • Urška Sršen: Bellabeat’s cofounder and Chief Creative Officer
+  - Urška Sršen: Bellabeat’s cofounder and Chief Creative Officer
 
-  • Sando Mur: Mathematician and Bellabeat’s cofounder; key member of the Bellabeat executive team 
+  - Sando Mur: Mathematician and Bellabeat’s cofounder; key member of the Bellabeat executive team 
 
-  • Bellabeat marketing analytics team
+  - Bellabeat marketing analytics team
 
 
 ## Examining the Data Profile
