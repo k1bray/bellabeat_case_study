@@ -6,13 +6,13 @@ Hello, my name is Kevin, and for the purposes of this case study I’m a Junior 
 ## Table of Contents
 [Summary of the Business Task and Stakeholders](https://github.com/k1bray/bellabeat_case_study?tab=readme-ov-file#summary-of-the-business-task-and-stakeholders)
 
-[Examining the Data Profile]
+[Examining the Data Profile](https://github.com/k1bray/bellabeat_case_study?tab=readme-ov-file#examining-the-data-profile)
 
-[Cleaning and Manipulation of Data]
+[Cleaning and Manipulation of Data](https://github.com/k1bray/bellabeat_case_study?tab=readme-ov-file#cleaning-and-manipulation-of-data)
 
-[Analysis and Discussion]
+[Analysis and Discussion](https://github.com/k1bray/bellabeat_case_study?tab=readme-ov-file#analysis-and-discussion)
 
-[Recommendations and Possible Further Actions Based on Analysis]
+[Recommendations and Possible Further Actions Based on Analysis](https://github.com/k1bray/bellabeat_case_study?tab=readme-ov-file#recommendations-and-possible-further-actions-based-on-analysis)
 
 ## Summary of the Business Task and Stakeholders
 ### The Business Task
