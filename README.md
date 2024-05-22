@@ -68,13 +68,13 @@ Another issue with ambiguity regarding how data was collected and populated seem
 The tools used during the cleaning process and data manipulation for analysis was VSCode accessing a locally installed Microsoft SQL Server Management Studio Express Server utilizing the SQL database language.
 
 ### Steps Taken During the Cleaning Process
-• Renamed all tables to maintain consistency and standardization
+- Renamed all tables to maintain consistency and standardization
 
-• Explored database tables to determine which tables would be most useful
+- Explored database tables to determine which tables would be most useful
 
-• Checked each table schema
+- Checked each table schema
 
-  o Updated and converted column datatypes from default import as varchar(50)
+  -  o Updated and converted column datatypes from default import as varchar(50)
 
 • Created minute_activity table from joining all minute-timeframe tables
 
