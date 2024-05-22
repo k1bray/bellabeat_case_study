@@ -291,4 +291,3 @@ FROM
 	daily_activity
 WHERE
 	LoggedActivitiesDistance != 0;
-
