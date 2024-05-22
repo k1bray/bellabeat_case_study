@@ -240,36 +240,36 @@ A logical conclusion from analyzation of the weight_log information is that weig
 
 ### Session Duration
 
-[daily-avg-active-hours-per-id]
+![daily-avg-active-hours-per-id](https://github.com/k1bray/bellabeat_case_study/blob/main/Images/daily-avg-active-hours-per-id.png(
 
 In the chart above, the results were ordered by the recorded daily average active hours per Id and ranked from highest to lowest.  These figures disregard the overall count of records per Id.  The highest average daily wear time of the participants was 24 hours, and the lowest was 15.2 hours.
 
-[daily-count-of-hourly-wear-time-distribution]
+![daily-count-of-hourly-wear-time](https://github.com/k1bray/bellabeat_case_study/blob/main/Images/daily-count-of-hourly-wear-time.png)
 
 The chart above is looking at a distribution of daily count of hourly wear times.  Similarly to the previous chart, these results overlook variations in the number of daily records among users.  The way the figures were calculated was to add together all the minutes spent at the various activity levels (Very Active, Fairly Active, Lightly Active, and Sedentary), and then count the number in each specified time group.  As can be seen above, the largest portion of records represent days where participants wore their devices for the entire day.  The next two most populated time slots would represent days where participants most likely put their fitness trackers on in the morning and took them off in the evening before bed.
 
-[avg-daily-steps-per-ids-avg-active-hours-per-id]
+![avg-daily-steps-per-ids-avg-active-hours-per-id](https://github.com/k1bray/bellabeat_case_study/blob/main/Images/avg-daily-steps-per-ids-avg-active-hours-per-id.png)
 
 After analyzing the data with the available tools, it is unclear whether there is any correlation between the average hours a participant wore their device, the average number of steps they took each day, and the number of days that each of them wore their devices during the study.
 As can be seen in the above chart, the values for average active hours per day per Id ranged from a high of 24 to a low of 15.2, and the average daily steps per Id ranged from a high of 16,040 to a low of 916.
 
-[daily-activity-records-count-per-id]
+![daily-activity-records-count-per-id](https://github.com/k1bray/bellabeat_case_study/blob/main/Images/daily-activity-records-count-per-id.png)
 
 The total count of daily records per Id ranged from a high of 31 (the full length of the study period) and a low of only 4.  Out of the 33 total participants in the study group, 21 of them were active with their fitness trackers in some way for all 31 days of the study.
 
 ### Activity by Days of the Week
 
-[count-of-daily-records-by-day-of-the-week]
+![count-of-daily-records-by-day-of-the-week](https://github.com/k1bray/bellabeat_case_study/blob/main/Images/count-of-daily-records-by-day-of-the-week.png)
 
 On average during the study period, Tuesday was the day of the week that the participants were most likely to wear their fitness trackers.  This can be seen by looking at a count of records grouped by the day of the week.  Monday was the day that participants were least likely to wear their fitness trackers.
 
 ### Device Usage During Sleep
  
-[daily-activity-records-count-per-id]
+![daily-activity-records-count-per-id](https://github.com/k1bray/bellabeat_case_study/blob/main/Images/daily-activity-records-count-per-id.png)
 
 The chart above has been repeated from a previous section but is included again to show the contrast in participation rate between the daily_activity records per Id and the daily_sleep records per Id, which can be seen below.
 
-[daily-sleep-records-count-per-id]
+![daily-sleep-records-count-per-id](https://github.com/k1bray/bellabeat_case_study/blob/main/Images/daily-sleep-records-count-per-id.png)
 
 Taking a count of the records per Id in both the daily_activity and daily_sleep tables shows that 9 of the 33 total participants in the group did not log sleep data through manual or automatic collection methods at any point during the study period.  If you also include participants who only wore their devices five times or less, it’s roughly half of the group.  There is the possibility that those 9 participants use devices that don’t include sleep tracking capabilities, or they chose to not wear their devices while they slept as well as not reporting their sleep data manually.  Either way, there were participants in the group that wore their devices to bed or logged their sleep data with less consistency than others.
 
@@ -278,26 +278,26 @@ Another possibility that should at least be acknowledged is that some Fitbit use
 
 ### Averages of Sleep Records by Day of the Week
 
-[daily-sleep-records-by-day-of-the-week]
+![daily-sleep-records-by-day-of-the-week](https://github.com/k1bray/bellabeat_case_study/blob/main/Images/daily-sleep-records-by-day-of-the-week.png)
 
 Looking at a count of the sleep records by day of the week shows that participants tended to wear their fitness trackers to bed the most in the middle of the week and less on the weekends, but especially on Mondays.
 
 ### Manual Data Logging vs. Paired Device and Automatic Collection
 The dataset’s dictionary makes references to the ability for users to manually log their fitness data in connection with several different available features offered by Fitbit.  However, the weight_log table is the only one that offers a notation for the specific data collection method that was used.  This is done through a column called ‘IsManualReport’ and offers results in a binary form with values of either ‘True’ or ‘False’.  It is unfortunate the table for that feature is the one that shows the lowest participation rate among the population of the testing pool.
 
-[weight-log-info-matrix]
+![weight-log-info-matrix](https://github.com/k1bray/bellabeat_case_study/blob/main/Images/weight-log-info-matrix.png)
 
 What we are able to see from viewing the weight_log table is that the split between participants that manually logged their weight versus participants that used a connected device wasn’t evenly distributed.  However, most of the occurrences were dominated by two distinct participants.  One of those participants logged their weight a total of 30 times and did so using a manual logging method in the app and the other automatically logged their weight 24 times using an unknown connected device.  Two other participants used a connected device, but both logged their weight only once during the study period.  All other participants used a manual logging method.  In total, there were 41 records collected manually and 26 that were collected automatically using a connected device.
 
 ### Weight Logging Data by Day of the Week
 
-[daily-weight-records-by-day-of-the-week]
+![daily-weight-records-by-day-of-the-week](https://github.com/k1bray/bellabeat_case_study/blob/main/Images/daily-weight-records-by-day-of-the-week.png)
 
 The eight participants out of the group that utilized the weight logging feature tended to weigh themselves most between Sunday and Thursday.  Friday and Saturday had the lowest number of records for the week with 6 and 7 weigh sessions, respectively.  Mondays and Wednesdays were tied for first place with 12 each.
 
 ### Weight Change Over Study Period
 
-[weight-change-info-matrix]
+![weight-change-info-matrix](https://github.com/k1bray/bellabeat_case_study/blob/main/Images/weight-change-info-matrix.png)
 
 Five of the eight participants saw no change in their weight over the course of the study period.  However, it should be noted that those participants only logged their weight 1 or 2 times in total.  The remaining three saw an increase in their weight over the study period.  This includes participants that logged their weight 30, 24, and 5 times, making up the bulk of the 67 total records.  The average weight increase in those users was 1-2kg over the course of the study period.
 
