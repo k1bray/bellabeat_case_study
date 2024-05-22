@@ -340,7 +340,6 @@ ORDER BY
 	DATEPART(WEEKDAY, ActivityDate)
 	,DATENAME(WEEKDAY, ActivityDate);
 
-
 /*
 What hour of the day are users most active based on average steps per hour?
 */
