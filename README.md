@@ -59,7 +59,7 @@ According to the [database dictionary](https://www.fitabase.com/media/1546/fitab
 
 >    _**Intensity**_
 >
->    Description: Time spent in one of <span style="text-decoration: underline;">four</span> intensity categories.
+>    Description: Time spent in one of _**four**_ intensity categories.
 >
 >    Note: The cut points for intensity classifications and METs are not determined by Fitabase, but by proprietary algorithms from Fitbit.
 
