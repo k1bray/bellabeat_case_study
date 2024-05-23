@@ -244,7 +244,7 @@ A logical conclusion from analyzation of the weight_log information is that weig
 
 ### Session Duration
 
-![daily-avg-active-hours-per-id](https://github.com/k1bray/bellabeat_case_study/blob/main/Images/daily-avg-active-hours-per-id.png(
+![daily-avg-active-hours-per-id](https://github.com/k1bray/bellabeat_case_study/blob/main/Images/daily-avg-active-hours-per-id.png)
 
 In the chart above, the results were ordered by the recorded daily average active hours per Id and ranked from highest to lowest.  These figures disregard the overall count of records per Id.  The highest average daily wear time of the participants was 24 hours, and the lowest was 15.2 hours.
 
