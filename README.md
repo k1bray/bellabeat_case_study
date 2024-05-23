@@ -57,7 +57,7 @@ An additional issue to consider with the participant profiles is that there is n
 
 According to the [database dictionary](https://www.fitabase.com/media/1546/fitabasedatadictionary.pdf) provided by Fitbit (Fitabase):
 
->    <span style="text-decoration: underline;">Intensity</span>
+>    _**Intensity**_
 >
 >    Description: Time spent in one of <span style="text-decoration: underline;">four</span> intensity categories.
 >
