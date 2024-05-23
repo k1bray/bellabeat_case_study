@@ -33,7 +33,7 @@ Specifically, the questions being asked are:
 
 ## Examining the Data Profile
 ### Data availability and License
-The dataset made available for this study can be accessed here under this license and appears to be comprised of mainly quantitative, structured data in 18 tables with varying degrees of granularity regarding the period length that is under examination.  The dataset is from Fitbit, who, according to this article from CNET.com, had a 22% market share on unit shipments during the timeframe of the study in 2016, outselling Apple and Garmin devices combined.
+The dataset made available for this study can be accessed [here](https://www.kaggle.com/datasets/arashnic/fitbit/download?datasetVersionNumber=1) under this [license](https://creativecommons.org/publicdomain/zero/1.0/) and appears to be comprised of mainly quantitative, structured data in 18 tables with varying degrees of granularity regarding the period length that is under examination.  The dataset is from Fitbit, who, according to this article from [CNET.com](https://creativecommons.org/publicdomain/zero/1.0/), had a 22% market share on unit shipments during the timeframe of the study in 2016, outselling Apple and Garmin devices combined.
 
 ### Overview Description of The Dataset
 The available tables have data covering many aspects of health and activity.  Areas of focus consist of activity levels and duration including step counting, distance tracking, and calorie usage.  Also, there is data regarding heartrates, sleep tracking, and weight logging.  Further calculations were made in the dataset using metrics to determine levels of activity intensity.
@@ -54,10 +54,15 @@ Another issue is that we don’t have any information on the profiles of the ind
 Keeping the gender assumption of the dataset in mind, one of the features of the LEAF is that it helps with tracking user menstruation and ovulation.  There is nothing in the provided dataset that can be used to mimic or validate the function of that feature in even a rudimentary sense.
 
 An additional issue to consider with the participant profiles is that there is no assumption for age or level of physical conditioning.  It may or may not be safe to assume that a condition of inclusion in the participant test pool is that they are all at least of legal adult age.  Also, without some metric regarding individual participant level of physical conditioning, some potential desirable insights would lack context and therefore be of little or no value to this study.  For example, someone who is young and has a physical condition capable of running a marathon would have a different activity intensity reaction to walking up a flight of stairs in comparison to an elderly obese man that maintains a predominantly sedentary lifestyle.  With that in mind, there is no clear definition for how the intensity values were calculated throughout the various timeframes.  Additionally, at initial glance, the METs figures in the minute-related timeframe do not appear to corroborate the corresponding intensity values.
+
 According to the database dictionary provided by Fitbit (Fitabase):
-Intensity
-Description: Time spent in one of four intensity categories.
-Note: The cut points for intensity classifications and METs are not determined by Fitabase, but by proprietary algorithms from Fitbit.
+
+  Intensity
+
+  Description: Time spent in one of four intensity categories.
+
+  Note: The cut points for intensity classifications and METs are not determined by Fitabase, but by proprietary algorithms from Fitbit.
+
 Upon examination, the minute-related Intensity values are either “0” or “1” regardless of the METs value, giving only two intensity-level classification possibilities.
 Given that information, it was determined that the Intensity or METs data will not be useful for the purposes of this study.
 
