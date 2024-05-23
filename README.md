@@ -55,13 +55,13 @@ Keeping the gender assumption of the dataset in mind, one of the features of the
 
 An additional issue to consider with the participant profiles is that there is no assumption for age or level of physical conditioning.  It may or may not be safe to assume that a condition of inclusion in the participant test pool is that they are all at least of legal adult age.  Also, without some metric regarding individual participant level of physical conditioning, some potential desirable insights would lack context and therefore be of little or no value to this study.  For example, someone who is young and has a physical condition capable of running a marathon would have a different activity intensity reaction to walking up a flight of stairs in comparison to an elderly obese man that maintains a predominantly sedentary lifestyle.  With that in mind, there is no clear definition for how the intensity values were calculated throughout the various timeframes.  Additionally, at initial glance, the METs figures in the minute-related timeframe do not appear to corroborate the corresponding intensity values.
 
-According to the database dictionary provided by Fitbit (Fitabase):
+According to the [database dictionary](https://www.fitabase.com/media/1546/fitabasedatadictionary.pdf) provided by Fitbit (Fitabase):
 
->  Intensity
+>    Intensity
 
-  Description: Time spent in one of four intensity categories.
+>    Description: Time spent in one of four intensity categories.
 
-  Note: The cut points for intensity classifications and METs are not determined by Fitabase, but by proprietary algorithms from Fitbit.
+>    Note: The cut points for intensity classifications and METs are not determined by Fitabase, but by proprietary algorithms from Fitbit.
 
 Upon examination, the minute-related Intensity values are either “0” or “1” regardless of the METs value, giving only two intensity-level classification possibilities.
 Given that information, it was determined that the Intensity or METs data will not be useful for the purposes of this study.
