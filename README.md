@@ -57,9 +57,9 @@ An additional issue to consider with the participant profiles is that there is n
 
 According to the [database dictionary](https://www.fitabase.com/media/1546/fitabasedatadictionary.pdf) provided by Fitbit (Fitabase):
 
->    Intensity
+>    <u>Intensity</u>
 >
->    Description: Time spent in one of four intensity categories.
+>    Description: Time spent in one of <u>four</u> intensity categories.
 >
 >    Note: The cut points for intensity classifications and METs are not determined by Fitabase, but by proprietary algorithms from Fitbit.
 
