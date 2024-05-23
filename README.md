@@ -57,7 +57,7 @@ An additional issue to consider with the participant profiles is that there is n
 
 According to the database dictionary provided by Fitbit (Fitabase):
 
-  Intensity
+>  Intensity
 
   Description: Time spent in one of four intensity categories.
 
