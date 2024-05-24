@@ -36,6 +36,7 @@ Specifically, the questions being asked are:
 The dataset made available for this study can be accessed [here](https://www.kaggle.com/datasets/arashnic/fitbit/download?datasetVersionNumber=1) under this [license](https://creativecommons.org/publicdomain/zero/1.0/) and appears to be comprised of mainly quantitative, structured data in 18 tables with varying degrees of granularity regarding the period length that is under examination.  The dataset is from Fitbit, who, according to this article from [CNET.com](https://creativecommons.org/publicdomain/zero/1.0/), had a 22% market share on unit shipments during the timeframe of the study in 2016, outselling Apple and Garmin devices combined.
 
 ### Overview Description of The Dataset
+The SQL queries used during the dataset exploration and profiling can be seen [here](https://github.com/k1bray/bellabeat_case_study/blob/main/bellabeat_sql/bellabeat_profiling.sql)
 The available tables have data covering many aspects of health and activity.  Areas of focus consist of activity levels and duration including step counting, distance tracking, and calorie usage.  Also, there is data regarding heartrates, sleep tracking, and weight logging.  Further calculations were made in the dataset using metrics to determine levels of activity intensity.
 
 The table that is the most readily usable in its raw form for the purposes of this project is the daily_activity table.  There are narrowly focused subsequent tables that contain identical data that were possibly coalesced to form the component columns of the daily_activity table.  All the data that is contained in the daily_calories, daily_intensities, and daily_steps tables is repeated from/to the daily_activites table.  The data includes metrics regarding ID, date, step counts, distances, activity intensity, and calories burned.  There are other tables measuring similar fitness and activity metrics based on varying time scales ranging from hours down to seconds.
@@ -70,7 +71,7 @@ Another issue with ambiguity regarding how data was collected and populated seem
 
 ## Cleaning and Manipulation of Data
 ### Overview of the Cleaning Process
-The tools used during the cleaning process and data manipulation for analysis was VSCode accessing a locally installed Microsoft SQL Server Management Studio Express Server utilizing the SQL database language.
+The tools used during the cleaning process and data manipulation for analysis was VSCode accessing a locally installed Microsoft SQL Server Management Studio Express Server utilizing the SQL database language.  The SQL queries used during the cleaning process can be seen [here](https://github.com/k1bray/bellabeat_case_study/blob/main/bellabeat_sql/bellabeat_cleaning.sql)
 
 ### Steps Taken During the Cleaning Process
 - Renamed all tables to maintain consistency and standardization
@@ -222,7 +223,7 @@ The tools used during the cleaning process and data manipulation for analysis wa
 ### Overview of the Analysis Process
 The initial question posed regarding trends in smart device usage led to an examination of the measurable features available from the Fitbit data and how they appear to be used by the members of the test pool.  A series of metrics can be extrapolated from those features for the purposes of objective analyzation for marketing while keeping subjective metrics in mind for the customer experience and which available features might be most likely to have influence by leading to a potential change in activity or behavior by the individual user.
 
-Generally, summary statistics were calculated using different options for each metric based on various available time frames.  
+Generally, summary statistics were calculated using different options for each metric based on various available time frames.  The SQL queries used during the analysis process can be seen [here](https://github.com/k1bray/bellabeat_case_study/blob/main/bellabeat_sql/bellabeat_analyzation.sql) and [here](https://github.com/k1bray/bellabeat_case_study/blob/main/bellabeat_sql/bellabeat_report_organization.sql)
 
 ### Daily Active Users and Churn Rate
 
