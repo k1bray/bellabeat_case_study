@@ -32,7 +32,7 @@ Specifically, the questions being asked are:
 
 
 ## Examining the Data Profile
-### Data availability and License
+### Data Availability and License
 The dataset made available for this study can be accessed [here](https://www.kaggle.com/datasets/arashnic/fitbit/download?datasetVersionNumber=1) under this [license](https://creativecommons.org/publicdomain/zero/1.0/) and appears to be comprised of mainly quantitative, structured data in 18 tables with varying degrees of granularity regarding the period length that is under examination.  The dataset is from Fitbit, who, according to this article from [CNET.com](https://creativecommons.org/publicdomain/zero/1.0/), had a 22% market share on unit shipments during the timeframe of the study in 2016, outselling Apple and Garmin devices combined.
 
 ### Overview Description of The Dataset
